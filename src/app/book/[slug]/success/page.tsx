@@ -1,15 +1,41 @@
+"use client";
+
+import * as React from "react";
 import { Suspense } from "react";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { CheckCircle2, Copy } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/shared/loading-state";
 import { SectionCard } from "@/components/shared/section-card";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { bookingMockService } from "@/features/bookings/services/booking.mock-service";
+import { formatDateId, formatDuration, formatRupiah } from "@/lib/format";
+import type { Booking } from "@/types";
 
-async function BookingSuccessContent({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+function BookingSuccessView({ slug }: { slug: string }) {
+  const searchParams = useSearchParams();
+  const refParam = searchParams.get("ref") ?? "BK-20261106-8F92A1";
+
+  const [booking, setBooking] = React.useState<Booking | null>(null);
+
+  React.useEffect(() => {
+    let active = true;
+    bookingMockService.getBookingByReference(refParam).then((data) => {
+      if (!active) return;
+      setBooking(data);
+    });
+    return () => {
+      active = false;
+    };
+  }, [refParam]);
+
+  const handleCopyReference = () => {
+    const code = booking?.reference ?? refParam;
+    navigator.clipboard.writeText(code);
+    toast.success("Kode referensi berhasil disalin!", { description: code });
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
@@ -19,33 +45,105 @@ async function BookingSuccessContent({
             <div className="flex size-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
               <CheckCircle2 className="size-8" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Reservasi Berhasil Dibuat!
-            </h1>
-            <p className="text-sm text-slate-600">
-              Simpan kode referensi berikut sebagai bukti reservasi Anda di{" "}
-              <span className="font-semibold text-slate-900 capitalize">
-                {slug.replace(/-/g, " ")}
-              </span>
-              .
-            </p>
-            <div className="w-full rounded-lg border border-indigo-200 bg-indigo-50/60 px-4 py-3">
-              <p className="text-xs text-slate-500">Kode Referensi Booking</p>
-              <p className="mt-0.5 font-mono text-lg font-bold tracking-wider text-indigo-700">
-                BK-20261105-DEMO01
+
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-slate-900">
+                Reservasi Berhasil Dibuat!
+              </h1>
+              <p className="text-sm text-slate-600">
+                Simpan kode referensi berikut sebagai bukti reservasi Anda.
               </p>
             </div>
-            <Link
-              href={`/book/${slug}`}
-              className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700"
-            >
-              Kembali ke Halaman Bisnis
-            </Link>
+
+            {/* Reference Code Box */}
+            <div className="w-full rounded-xl border border-indigo-200 bg-indigo-50/60 px-4 py-3.5 flex items-center justify-between">
+              <div className="text-left">
+                <p className="text-xs text-slate-500">Kode Referensi Booking</p>
+                <p className="mt-0.5 font-mono text-lg font-bold tracking-wider text-indigo-700">
+                  {booking?.reference ?? refParam}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleCopyReference}
+                className="gap-1.5 text-xs"
+              >
+                <Copy className="size-3.5" />
+                <span>Salin</span>
+              </Button>
+            </div>
+
+            {/* Booking Details Summary */}
+            {booking && (
+              <div className="w-full rounded-xl border border-slate-200 bg-slate-50/70 p-4 text-left space-y-2.5 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Status</span>
+                  <StatusBadge status={booking.status} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Pelanggan</span>
+                  <span className="font-semibold text-slate-900">
+                    {booking.customerName}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Layanan</span>
+                  <span className="font-semibold text-slate-900">
+                    {booking.serviceNameSnapshot} (
+                    {formatDuration(booking.durationMinutesSnapshot)})
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Staf Penyedia</span>
+                  <span className="font-medium text-slate-800">
+                    {booking.staffName}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Jadwal</span>
+                  <span className="font-mono text-xs font-semibold text-slate-900">
+                    {formatDateId(booking.date)} • {booking.time} WIB
+                  </span>
+                </div>
+                <div className="flex items-center justify-between border-t border-slate-200 pt-2">
+                  <span className="font-semibold text-slate-900">Total Biaya</span>
+                  <span className="font-bold text-indigo-600">
+                    {formatRupiah(booking.servicePriceSnapshot)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row w-full gap-2.5 pt-2">
+              <Link
+                href={`/book/${slug}`}
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700"
+              >
+                Buat Reservasi Lain
+              </Link>
+              <Link
+                href="/dashboard/bookings"
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                Lihat di Dashboard
+              </Link>
+            </div>
           </div>
         </SectionCard>
       </div>
     </div>
   );
+}
+
+async function BookingSuccessSlugResolver({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  return <BookingSuccessView slug={slug} />;
 }
 
 export default function BookingSuccessPage({
@@ -61,8 +159,7 @@ export default function BookingSuccessPage({
         </div>
       }
     >
-      <BookingSuccessContent params={params} />
+      <BookingSuccessSlugResolver params={params} />
     </Suspense>
   );
 }
-

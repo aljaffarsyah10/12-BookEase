@@ -1,15 +1,51 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SectionCard } from "@/components/shared/section-card";
+import {
+  loginSchema,
+  type LoginFormValues,
+} from "@/lib/validations/auth.schema";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "budi@glowstudio.id",
+      password: "Password123!",
+    },
+  });
+
+  const onSubmit = async (values: LoginFormValues) => {
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    toast.success("Berhasil masuk ke workspace bisnis!", {
+      description: `Selamat datang kembali, ${values.email}`,
+    });
+    router.push("/dashboard");
+  };
+
   return (
     <SectionCard
       title="Masuk ke Akun Bisnis"
-      description="Kelola jadwal, layanan, dan reservasi pelanggan Anda."
+      description="Kelola jadwal, layanan, staf, dan reservasi pelanggan Anda."
     >
-      <form className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="email">Alamat Email</Label>
           <Input
@@ -17,25 +53,56 @@ export default function LoginPage() {
             type="email"
             placeholder="owner@bisnisanda.id"
             autoComplete="email"
+            aria-invalid={!!errors.email}
+            {...register("email")}
           />
+          {errors.email && (
+            <p className="text-xs text-red-600">{errors.email.message}</p>
+          )}
         </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            autoComplete="current-password"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              aria-invalid={!!errors.password}
+              className="pr-10"
+              {...register("password")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={
+                showPassword ? "Sembunyikan password" : "Tampilkan password"
+              }
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 hover:text-slate-600"
+            >
+              {showPassword ? (
+                <EyeOff className="size-4" />
+              ) : (
+                <Eye className="size-4" />
+              )}
+            </button>
+          </div>
+          {errors.password && (
+            <p className="text-xs text-red-600">{errors.password.message}</p>
+          )}
         </div>
 
-        <Link
-          href="/dashboard"
-          className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700"
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="h-10 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-2"
         >
-          Masuk ke Dashboard
-        </Link>
+          {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+          <span>
+            {isSubmitting ? "Memverifikasi Akun..." : "Masuk ke Dashboard"}
+          </span>
+        </Button>
       </form>
 
       <p className="mt-5 text-center text-xs text-slate-500">
@@ -50,4 +117,3 @@ export default function LoginPage() {
     </SectionCard>
   );
 }
-

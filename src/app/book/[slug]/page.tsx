@@ -1,89 +1,135 @@
-import { Suspense } from "react";
-import Link from "next/link";
-import { CalendarCheck, Clock, MapPin } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { LoadingState } from "@/components/shared/loading-state";
-import { SectionCard } from "@/components/shared/section-card";
+"use client";
 
-async function PublicBookingContent({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+import * as React from "react";
+import { Suspense } from "react";
+import { CalendarCheck, Clock, MapPin, Phone } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { BookingWizard } from "@/components/booking/booking-wizard";
+import { ErrorState } from "@/components/shared/error-state";
+import { LoadingState } from "@/components/shared/loading-state";
+import { businessMockService } from "@/features/business/services/business.mock-service";
+import { serviceMockService } from "@/features/services/services/service.mock-service";
+import { staffMockService } from "@/features/staff/services/staff.mock-service";
+import type { Business, Service, Staff } from "@/types";
+
+function PublicBookingView({ slug }: { slug: string }) {
+  const [business, setBusiness] = React.useState<Business | null>(null);
+  const [services, setServices] = React.useState<Service[]>([]);
+  const [staffList, setStaffList] = React.useState<Staff[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    let active = true;
+    Promise.all([
+      businessMockService.getPublicBusinessBySlug(slug),
+      serviceMockService.listServices(true),
+      staffMockService.listStaff(true),
+    ]).then(([biz, srv, stf]) => {
+      if (!active) return;
+      setBusiness(biz);
+      setServices(srv);
+      setStaffList(stf);
+      setIsLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [slug]);
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-5xl p-6 space-y-6">
+        <LoadingState variant="detail" />
+        <LoadingState variant="cards" count={3} />
+      </div>
+    );
+  }
+
+  if (!business) {
+    return (
+      <div className="mx-auto max-w-xl py-16 px-4">
+        <ErrorState
+          title="Halaman Bisnis Tidak Ditemukan (404)"
+          message={`Tidak ditemukan bisnis dengan alamat URL "/book/${slug}". Pastikan tautan yang Anda buka sudah benar.`}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 space-y-6">
         {/* Business Identity Header */}
         <div className="rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2.5">
-                <span className="flex size-9 items-center justify-center rounded-lg bg-indigo-600 text-white">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="flex size-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-xs">
                   <CalendarCheck className="size-5" />
                 </span>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 capitalize">
-                  {slug.replace(/-/g, " ")}
-                </h1>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    {business.name}
+                  </h1>
+                  <p className="text-xs font-medium text-indigo-600">
+                    {business.category}
+                  </p>
+                </div>
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-500 pt-1">
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="size-4 text-slate-400" />
-                  Jl. Sudirman No. 45, Jakarta
-                </span>
+
+              {business.description && (
+                <p className="text-sm text-slate-600 max-w-2xl">
+                  {business.description}
+                </p>
+              )}
+
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-slate-500 pt-1">
+                {business.address && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="size-4 text-slate-400" />
+                    {business.address}
+                  </span>
+                )}
+                {business.phone && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Phone className="size-4 text-slate-400" />
+                    {business.phone}
+                  </span>
+                )}
                 <span className="inline-flex items-center gap-1.5">
                   <Clock className="size-4 text-slate-400" />
-                  Zona Waktu: Asia/Jakarta (WIB)
+                  Zona Waktu: {business.timezone}
                 </span>
               </div>
             </div>
+
             <Badge
               variant="outline"
-              className="w-fit bg-emerald-50 text-emerald-700 border-emerald-200"
+              className="w-fit bg-emerald-50 text-emerald-700 border-emerald-200 shrink-0"
             >
               Menerima Reservasi Online
             </Badge>
           </div>
         </div>
 
-        {/* 2-Column Booking Wizard Shell */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="lg:col-span-8">
-            <SectionCard
-              title="Langkah 1 — Pilih Layanan"
-              description="Pilih layanan yang ingin Anda pesan untuk melihat jadwal tersedia."
-            >
-              <p className="text-sm text-slate-600">
-                Kerangka halaman Booking Wizard publik untuk bisnis{" "}
-                <span className="font-mono font-semibold text-slate-900">
-                  {slug}
-                </span>
-                . Interaksi penuh akan diimplementasikan pada Phase 5.
-              </p>
-            </SectionCard>
-          </div>
-
-          <div className="lg:col-span-4">
-            <SectionCard
-              title="Ringkasan Reservasi"
-              description="Detail pilihan jadwal Anda."
-            >
-              <div className="space-y-3 text-sm text-slate-600">
-                <p>Belum ada layanan yang dipilih.</p>
-                <Link
-                  href={`/book/${slug}/success`}
-                  className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-indigo-600 px-4 text-xs font-semibold text-white hover:bg-indigo-700"
-                >
-                  Pratinjau Halaman Konfirmasi
-                </Link>
-              </div>
-            </SectionCard>
-          </div>
-        </div>
+        {/* Interactive Booking Wizard */}
+        <BookingWizard
+          business={business}
+          services={services}
+          staffList={staffList}
+        />
       </div>
     </div>
   );
+}
+
+async function PublicBookingSlugResolver({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  return <PublicBookingView slug={slug} />;
 }
 
 export default function PublicBookingPage({
@@ -99,8 +145,7 @@ export default function PublicBookingPage({
         </div>
       }
     >
-      <PublicBookingContent params={params} />
+      <PublicBookingSlugResolver params={params} />
     </Suspense>
   );
 }
-
