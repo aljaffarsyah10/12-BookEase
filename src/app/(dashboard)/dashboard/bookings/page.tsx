@@ -1,7 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { CalendarDays, RotateCcw, Search } from "lucide-react";
+import {
+  CalendarDays,
+  CalendarRange,
+  ChevronLeft,
+  ChevronRight,
+  List,
+  RotateCcw,
+  Search,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,19 +18,26 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
+import { BookingCalendarView } from "@/features/bookings/components/booking-calendar-view";
 import { BookingTable } from "@/features/bookings/components/booking-table";
 import { bookingApi } from "@/features/bookings/services/booking.api";
 import type { Booking, BookingStatus } from "@/types";
 
 export default function BookingsManagementPage() {
+  const [viewMode, setViewMode] = React.useState<"table" | "calendar">("table");
   const [bookings, setBookings] = React.useState<Booking[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
   const [search, setSearch] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<BookingStatus | "ALL">(
-    "ALL",
+    "ALL"
   );
   const [dateFilter, setDateFilter] = React.useState("");
+
+  // Pagination state
+  const [page, setPage] = React.useState<number>(1);
+  const [totalPages, setTotalPages] = React.useState<number>(1);
+  const [totalCount, setTotalCount] = React.useState<number>(0);
 
   const [pendingAction, setPendingAction] = React.useState<{
     booking: Booking;
@@ -32,14 +47,27 @@ export default function BookingsManagementPage() {
 
   const reloadBookings = React.useCallback(async () => {
     setIsLoading(true);
-    const data = await bookingApi.listBookings({
-      search,
-      status: statusFilter,
-      date: dateFilter || undefined,
-    });
-    setBookings(data);
-    setIsLoading(false);
-  }, [search, statusFilter, dateFilter]);
+    try {
+      const res = await bookingApi.listBookings({
+        search,
+        status: statusFilter,
+        date: dateFilter || undefined,
+        ...(viewMode === "table" ? { page, limit: 10 } : {}),
+      });
+
+      if (Array.isArray(res)) {
+        setBookings(res);
+        setTotalCount(res.length);
+        setTotalPages(1);
+      } else {
+        setBookings(res.items);
+        setTotalCount(res.pagination.total);
+        setTotalPages(res.pagination.totalPages);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [search, statusFilter, dateFilter, page, viewMode]);
 
   React.useEffect(() => {
     let active = true;
@@ -48,44 +76,97 @@ export default function BookingsManagementPage() {
         search,
         status: statusFilter,
         date: dateFilter || undefined,
+        ...(viewMode === "table" ? { page, limit: 10 } : {}),
       })
-      .then((data) => {
+      .then((res) => {
+        if (!active) return;
+        if (Array.isArray(res)) {
+          setBookings(res);
+          setTotalCount(res.length);
+          setTotalPages(1);
+        } else {
+          setBookings(res.items);
+          setTotalCount(res.pagination.total);
+          setTotalPages(res.pagination.totalPages);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load bookings:", err);
+      })
+      .finally(() => {
         if (active) {
-          setBookings(data);
           setIsLoading(false);
         }
       });
+
     return () => {
       active = false;
     };
-  }, [search, statusFilter, dateFilter]);
+  }, [search, statusFilter, dateFilter, page, viewMode]);
 
   const handleResetFilters = () => {
+    setIsLoading(true);
     setSearch("");
     setStatusFilter("ALL");
     setDateFilter("");
+    setPage(1);
   };
 
   const handleConfirmStatusUpdate = async () => {
     if (!pendingAction) return;
     setIsUpdating(true);
-    const updated = await bookingApi.updateBookingStatus(
-      pendingAction.booking.id,
-      pendingAction.nextStatus,
-    );
-    toast.success(
-      `Status reservasi ${updated.reference} diperbarui menjadi ${updated.status}`,
-    );
-    setIsUpdating(false);
-    setPendingAction(null);
-    await reloadBookings();
+    try {
+      const updated = await bookingApi.updateBookingStatus(
+        pendingAction.booking.id,
+        pendingAction.nextStatus
+      );
+      toast.success(
+        `Status reservasi ${updated.reference} diperbarui menjadi ${updated.status}`
+      );
+      setPendingAction(null);
+      await reloadBookings();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Gagal memperbarui status reservasi."
+      );
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Daftar Reservasi (Bookings)"
-        description="Kelola semua reservasi pelanggan, filter jadwal harian, dan perbarui status kehadiran."
+        description="Kelola seluruh reservasi pelanggan, filter jadwal harian, dan perbarui status kehadiran."
+        actions={
+          <div className="flex items-center rounded-lg border border-slate-200 bg-white p-1 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setViewMode("table")}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
+                viewMode === "table"
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <List className="size-3.5" />
+              <span>Tabel</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("calendar")}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
+                viewMode === "calendar"
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <CalendarRange className="size-3.5" />
+              <span>Kalender</span>
+            </button>
+          </div>
+        }
       />
 
       {/* Filter Bar */}
@@ -96,8 +177,12 @@ export default function BookingsManagementPage() {
             <Input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari nama pelanggan, telepon, atau kode BK-..."
+              onChange={(e) => {
+                setIsLoading(true);
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Cari nama, email, telepon, atau ref BK-..."
               className="pl-9"
             />
           </div>
@@ -106,14 +191,16 @@ export default function BookingsManagementPage() {
             <select
               aria-label="Filter Status Reservasi"
               value={statusFilter}
-              onChange={(e) =>
-                setStatusFilter(e.target.value as BookingStatus | "ALL")
-              }
-              className="flex h-9 w-full rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+              onChange={(e) => {
+                setIsLoading(true);
+                setStatusFilter(e.target.value as BookingStatus | "ALL");
+                setPage(1);
+              }}
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-500 focus:outline-none"
             >
               <option value="ALL">Semua Status</option>
               <option value="PENDING">Menunggu Konfirmasi (PENDING)</option>
-              <option value="CONFIRMED">Terkonfirmasi (CONFIRMED)</option>
+              <option value="CONFIRMED">Dikonfirmasi (CONFIRMED)</option>
               <option value="COMPLETED">Selesai (COMPLETED)</option>
               <option value="CANCELLED">Dibatalkan (CANCELLED)</option>
               <option value="NO_SHOW">Tidak Hadir (NO_SHOW)</option>
@@ -125,7 +212,11 @@ export default function BookingsManagementPage() {
               type="date"
               aria-label="Filter Tanggal Reservasi"
               value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
+              onChange={(e) => {
+                setIsLoading(true);
+                setDateFilter(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
 
@@ -144,7 +235,7 @@ export default function BookingsManagementPage() {
         </div>
       </SectionCard>
 
-      {/* Bookings List / Table */}
+      {/* Bookings View: Table or Calendar */}
       {isLoading ? (
         <LoadingState variant="table" count={5} />
       ) : bookings.length === 0 ? (
@@ -158,13 +249,75 @@ export default function BookingsManagementPage() {
             </Button>
           }
         />
-      ) : (
-        <BookingTable
+      ) : viewMode === "calendar" ? (
+        <BookingCalendarView
           bookings={bookings}
           onRequestStatusChange={(booking, nextStatus) =>
             setPendingAction({ booking, nextStatus })
           }
         />
+      ) : (
+        <div className="space-y-4">
+          <BookingTable
+            bookings={bookings}
+            onRequestStatusChange={(booking, nextStatus) =>
+              setPendingAction({ booking, nextStatus })
+            }
+          />
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-xs text-slate-600 shadow-2xs">
+              <div>
+                Menampilkan{" "}
+                <span className="font-semibold text-slate-900">
+                  {(page - 1) * 10 + 1}
+                </span>{" "}
+                –{" "}
+                <span className="font-semibold text-slate-900">
+                  {Math.min(page * 10, totalCount)}
+                </span>{" "}
+                dari{" "}
+                <span className="font-semibold text-slate-900">{totalCount}</span>{" "}
+                reservasi
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={page <= 1}
+                  onClick={() => {
+                    setIsLoading(true);
+                    setPage((p) => Math.max(1, p - 1));
+                  }}
+                  className="gap-1 h-8 text-xs"
+                >
+                  <ChevronLeft className="size-3.5" />
+                  <span>Sebelumnya</span>
+                </Button>
+                <span className="px-2 font-medium">
+                  {page} / {totalPages}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={page >= totalPages}
+                  onClick={() => {
+                    setIsLoading(true);
+                    setPage((p) => Math.min(totalPages, p + 1));
+                  }}
+                  className="gap-1 h-8 text-xs"
+                >
+                  <span>Berikutnya</span>
+                  <ChevronRight className="size-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       <ConfirmDialog
@@ -173,7 +326,7 @@ export default function BookingsManagementPage() {
         title={`Ubah Status ke ${pendingAction?.nextStatus}?`}
         description={
           pendingAction?.nextStatus === "CANCELLED"
-            ? `Reservasi ${pendingAction.booking.reference} atas nama ${pendingAction.booking.customerName} akan dibatalkan. Data tidak dihapus dari histori dan slot waktu akan dibuka kembali.`
+            ? `Reservasi ${pendingAction.booking.reference} atas nama ${pendingAction.booking.customerName} akan dibatalkan. Slot waktu akan dibuka kembali.`
             : `Konfirmasi perubahan status reservasi ${pendingAction?.booking.reference} (${pendingAction?.booking.customerName}) menjadi ${pendingAction?.nextStatus}.`
         }
         confirmLabel="Ya, Perbarui Status"

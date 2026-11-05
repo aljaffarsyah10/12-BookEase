@@ -13,6 +13,10 @@ export type AppErrorCode =
   | "SLOT_UNAVAILABLE"
   | "BOOKING_CONFLICT"
   | "INVALID_STATUS_TRANSITION"
+  | "INVALID_TOKEN"
+  | "ALREADY_CANCELLED"
+  | "CANNOT_CANCEL_FINAL"
+  | "TIME_POLICY_VIOLATION"
   | "RATE_LIMIT_EXCEEDED"
   | "INTERNAL_SERVER_ERROR";
 
@@ -34,4 +38,3 @@ export class AppError extends Error {
     this.details = details;
   }
 }
-

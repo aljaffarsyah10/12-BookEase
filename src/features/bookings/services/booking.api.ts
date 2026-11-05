@@ -10,20 +10,36 @@ export interface AvailabilityResponse {
   slots: TimeSlot[];
 }
 
+export interface PaginatedBookingsResponse {
+  items: Booking[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export const bookingApi = {
   async listBookings(filters?: {
     search?: string;
     status?: BookingStatus | "ALL";
     date?: string;
-  }): Promise<Booking[]> {
+    page?: number;
+    limit?: number;
+  }): Promise<Booking[] | PaginatedBookingsResponse> {
     const params = new URLSearchParams();
     if (filters?.search) params.set("search", filters.search);
     if (filters?.status && filters.status !== "ALL")
       params.set("status", filters.status);
     if (filters?.date) params.set("date", filters.date);
+    if (filters?.page) params.set("page", String(filters.page));
+    if (filters?.limit) params.set("limit", String(filters.limit));
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
-    return apiClient.get<Booking[]>(`/api/v1/bookings${queryString}`);
+    return apiClient.get<Booking[] | PaginatedBookingsResponse>(
+      `/api/v1/bookings${queryString}`
+    );
   },
 
   async getBookingById(id: string): Promise<Booking> {
@@ -31,7 +47,9 @@ export const bookingApi = {
   },
 
   async getBookingByReference(reference: string): Promise<Booking> {
-    return apiClient.get<Booking>(`/api/v1/bookings/reference/${encodeURIComponent(reference)}`);
+    return apiClient.get<Booking>(
+      `/api/v1/bookings/reference/${encodeURIComponent(reference)}`
+    );
   },
 
   async updateBookingStatus(
@@ -43,6 +61,14 @@ export const bookingApi = {
       status,
       cancelReason,
     });
+  },
+
+  async customerCancel(params: {
+    reference: string;
+    token: string;
+    reason?: string;
+  }): Promise<Booking> {
+    return apiClient.post<Booking>("/api/v1/bookings/customer-cancel", params);
   },
 
   async createBooking(values: CreateBookingFormValues): Promise<Booking> {
@@ -63,6 +89,8 @@ export const bookingApi = {
     if (params.staffId && params.staffId !== "any") {
       query.set("staffId", params.staffId);
     }
-    return apiClient.get<AvailabilityResponse>(`/api/v1/availability?${query.toString()}`);
+    return apiClient.get<AvailabilityResponse>(
+      `/api/v1/availability?${query.toString()}`
+    );
   },
 };

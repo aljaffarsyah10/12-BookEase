@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function DashboardLayout({
   children,
@@ -23,4 +31,3 @@ export default function DashboardLayout({
     </div>
   );
 }
-

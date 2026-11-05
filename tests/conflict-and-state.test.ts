@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error Node experimental strip types requires extension
 import { parseZonedTimeToUTC } from "../src/lib/timezone.ts";
+// @ts-expect-error Node experimental strip types requires extension
+import { generateCancellationSignature, verifyCancellationSignature } from "../src/lib/cancellation-token.ts";
 
 // 1. Conflict detection algorithm check (mirrors booking.service & availability.service)
 function isOverlapping(
@@ -118,4 +120,55 @@ test("Booking reference: matches BK-YYYYMMDD-XXXXXX format", () => {
   const dummyDate = "2026-11-10".replace(/-/g, "");
   const dummyRef = `BK-${dummyDate}-A1B2C3`;
   assert.match(dummyRef, referenceRegex);
+});
+
+// 5. Customer Cancellation Token verification
+test("Cancellation Token: generate and verify valid HMAC signature", () => {
+  const ref = "BK-20261110-XYZ123";
+  const bookingId = "cm123abc456";
+
+  const token = generateCancellationSignature(ref, bookingId);
+  assert.equal(typeof token, "string");
+  assert.equal(token.length, 64);
+
+  // Valid token
+  assert.equal(verifyCancellationSignature(ref, bookingId, token), true);
+
+  // Tampered token
+  const tampered = token.slice(0, 63) + (token[63] === "a" ? "b" : "a");
+  assert.equal(verifyCancellationSignature(ref, bookingId, tampered), false);
+
+  // Wrong reference
+  assert.equal(verifyCancellationSignature("BK-OTHER-REF", bookingId, token), false);
+});
+
+// 6. Buffer time window verification
+test("Buffer Time: expands occupied interval accurately", () => {
+  const serviceMinutes = 45;
+  const bufferMinutes = 15;
+  const startAt = new Date("2026-11-10T09:00:00Z");
+
+  const endAt = new Date(startAt.getTime() + serviceMinutes * 60000);
+  const occupiedEndAt = new Date(endAt.getTime() + bufferMinutes * 60000);
+
+  // 45m service ends at 09:45
+  assert.equal(endAt.toISOString(), "2026-11-10T09:45:00.000Z");
+  // 15m buffer extends occupied period to 10:00
+  assert.equal(occupiedEndAt.toISOString(), "2026-11-10T10:00:00.000Z");
+
+  // An overlapping slot attempting to book 09:45 (during buffer period) must conflict
+  const slotDuringBuffer = new Date("2026-11-10T09:45:00Z");
+  const slotDuringBufferEnd = new Date("2026-11-10T10:15:00Z");
+  assert.equal(
+    isOverlapping(slotDuringBuffer, slotDuringBufferEnd, startAt, occupiedEndAt),
+    true
+  );
+
+  // A slot starting right when buffer finishes at 10:00 does not conflict
+  const slotAfterBuffer = new Date("2026-11-10T10:00:00Z");
+  const slotAfterBufferEnd = new Date("2026-11-10T10:30:00Z");
+  assert.equal(
+    isOverlapping(slotAfterBuffer, slotAfterBufferEnd, startAt, occupiedEndAt),
+    false
+  );
 });

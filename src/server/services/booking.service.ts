@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
+import { verifyCancellationSignature } from "@/lib/cancellation-token";
+import { sendBookingConfirmationEmail } from "@/lib/email";
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 import { parseZonedTimeToUTC } from "@/lib/timezone";
@@ -16,6 +18,24 @@ export interface CreateBookingInput {
   customerEmail: string;
   customerPhone: string;
   customerNotes?: string;
+}
+
+export interface BookingListFilters {
+  search?: string;
+  status?: BookingStatus | "ALL";
+  date?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedBookings {
+  items: Booking[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 interface RawBookingRecord {
@@ -80,35 +100,42 @@ function mapBookingToDto(
 export const bookingService = {
   async listByOwner(
     businessId: string,
-    filters?: {
-      search?: string;
-      status?: BookingStatus | "ALL";
-      date?: string;
-    }
-  ) {
+    filters?: BookingListFilters
+  ): Promise<Booking[] | PaginatedBookings> {
     const business = await prisma.business.findUnique({
       where: { id: businessId },
       select: { timezone: true },
     });
     const timezone = business?.timezone || "Asia/Jakarta";
 
+    const whereClause: {
+      businessId: string;
+      status?: BookingStatus;
+      OR?: Array<{
+        customerName?: { contains: string; mode: "insensitive" };
+        customerEmail?: { contains: string; mode: "insensitive" };
+        customerPhone?: { contains: string; mode: "insensitive" };
+        reference?: { contains: string; mode: "insensitive" };
+      }>;
+    } = {
+      businessId,
+      ...(filters?.status && filters.status !== "ALL"
+        ? { status: filters.status }
+        : {}),
+      ...(filters?.search
+        ? {
+            OR: [
+              { customerName: { contains: filters.search, mode: "insensitive" } },
+              { customerEmail: { contains: filters.search, mode: "insensitive" } },
+              { customerPhone: { contains: filters.search, mode: "insensitive" } },
+              { reference: { contains: filters.search, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    };
+
     const bookings = await prisma.booking.findMany({
-      where: {
-        businessId,
-        ...(filters?.status && filters.status !== "ALL"
-          ? { status: filters.status }
-          : {}),
-        ...(filters?.search
-          ? {
-              OR: [
-                { customerName: { contains: filters.search, mode: "insensitive" } },
-                { customerEmail: { contains: filters.search, mode: "insensitive" } },
-                { customerPhone: { contains: filters.search, mode: "insensitive" } },
-                { reference: { contains: filters.search, mode: "insensitive" } },
-              ],
-            }
-          : {}),
-      },
+      where: whereClause,
       include: {
         service: true,
         staff: true,
@@ -116,10 +143,28 @@ export const bookingService = {
       orderBy: { startAt: "desc" },
     });
 
-    const mapped = bookings.map((b) => mapBookingToDto(b, timezone));
+    let mapped = bookings.map((b) => mapBookingToDto(b, timezone));
 
     if (filters?.date) {
-      return mapped.filter((b) => b.date === filters.date);
+      mapped = mapped.filter((b) => b.date === filters.date);
+    }
+
+    if (filters?.page) {
+      const page = Math.max(1, filters.page);
+      const limit = Math.max(1, filters.limit || 10);
+      const total = mapped.length;
+      const totalPages = Math.ceil(total / limit) || 1;
+      const paginatedItems = mapped.slice((page - 1) * limit, page * limit);
+
+      return {
+        items: paginatedItems,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages,
+        },
+      };
     }
 
     return mapped;
@@ -185,6 +230,129 @@ export const bookingService = {
     });
 
     return mapBookingToDto(updated, updated.business.timezone);
+  },
+
+  async cancelByCustomer(params: {
+    reference: string;
+    token: string;
+    reason?: string;
+  }) {
+    const booking = await prisma.booking.findUnique({
+      where: { reference: params.reference },
+      include: { business: true, service: true, staff: true },
+    });
+
+    if (!booking) {
+      throw new AppError("BOOKING_NOT_FOUND", "Data reservasi tidak ditemukan.", 404);
+    }
+
+    const isValid = verifyCancellationSignature(
+      booking.reference,
+      booking.id,
+      params.token
+    );
+
+    if (!isValid) {
+      throw new AppError(
+        "INVALID_TOKEN",
+        "Tautan pembatalan tidak sah atau telah kedaluwarsa.",
+        403
+      );
+    }
+
+    if (booking.status === "CANCELLED") {
+      throw new AppError(
+        "ALREADY_CANCELLED",
+        "Reservasi ini sudah dibatalkan sebelumnya.",
+        400
+      );
+    }
+
+    if (booking.status === "COMPLETED" || booking.status === "NO_SHOW") {
+      throw new AppError(
+        "CANNOT_CANCEL_FINAL",
+        "Reservasi yang telah selesai tidak dapat dibatalkan.",
+        400
+      );
+    }
+
+    // Cancellation policy: harus dilakukan sebelum waktu janji dimulai
+    if (booking.startAt <= new Date()) {
+      throw new AppError(
+        "TIME_POLICY_VIOLATION",
+        "Jadwal reservasi sudah berlangsung atau terlewat dan tidak dapat dibatalkan.",
+        400
+      );
+    }
+
+    const cancelled = await prisma.booking.update({
+      where: { id: booking.id },
+      data: {
+        status: "CANCELLED",
+        cancelledAt: new Date(),
+        cancelReason: params.reason || "Dibatalkan oleh pelanggan melalui tautan pembatalan.",
+      },
+      include: { business: true, service: true, staff: true },
+    });
+
+    return mapBookingToDto(cancelled, cancelled.business.timezone);
+  },
+
+  async getDashboardStats(businessId: string) {
+    const business = await prisma.business.findUnique({
+      where: { id: businessId },
+      select: { timezone: true },
+    });
+    const timezone = business?.timezone || "Asia/Jakarta";
+
+    const allBookings = await prisma.booking.findMany({
+      where: { businessId },
+      select: {
+        startAt: true,
+        status: true,
+        servicePriceSnapshot: true,
+      },
+    });
+
+    const now = new Date();
+    const todayStr = format(toZonedTime(now, timezone), "yyyy-MM-dd");
+
+    let totalBookings = 0;
+    let todayBookingsCount = 0;
+    let upcomingBookingsCount = 0;
+    let completedBookingsCount = 0;
+    let cancelledBookingsCount = 0;
+    let estimatedRevenue = 0;
+
+    for (const b of allBookings) {
+      totalBookings++;
+      const zonedDate = toZonedTime(b.startAt, timezone);
+      const bDateStr = format(zonedDate, "yyyy-MM-dd");
+
+      if (b.status === "COMPLETED") {
+        completedBookingsCount++;
+        estimatedRevenue += b.servicePriceSnapshot;
+      } else if (b.status === "CANCELLED") {
+        cancelledBookingsCount++;
+      }
+
+      if (bDateStr === todayStr && (b.status === "CONFIRMED" || b.status === "PENDING")) {
+        todayBookingsCount++;
+      }
+
+      if (b.startAt >= now && (b.status === "CONFIRMED" || b.status === "PENDING")) {
+        upcomingBookingsCount++;
+      }
+    }
+
+    return {
+      totalBookings,
+      todayBookingsCount,
+      upcomingBookingsCount,
+      completedBookingsCount,
+      cancelledBookingsCount,
+      estimatedRevenue,
+    };
   },
 
   async create(input: CreateBookingInput) {
@@ -259,7 +427,7 @@ export const bookingService = {
     }
 
     // Lakukan transaksi database dengan concurrency prevention
-    return prisma.$transaction(async (tx) => {
+    const mapped = await prisma.$transaction(async (tx) => {
       // 1. Ambil seluruh booking aktif yang berkonflik
       const conflicts = await tx.booking.findMany({
         where: {
@@ -318,5 +486,15 @@ export const bookingService = {
 
       return mapBookingToDto(created, business.timezone);
     });
+
+    // Send confirmation email asynchronously (does not block or fail booking)
+    sendBookingConfirmationEmail({
+      booking: mapped,
+      businessName: business.name,
+      businessPhone: business.phone,
+      businessAddress: business.address,
+    }).catch((err) => console.error("[ASYNC_CONFIRMATION_EMAIL_ERROR]", err));
+
+    return mapped;
   },
 };

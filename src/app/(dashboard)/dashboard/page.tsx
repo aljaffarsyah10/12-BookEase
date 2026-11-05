@@ -40,12 +40,13 @@ export default function DashboardOverviewPage() {
     Promise.all([bookingApi.listBookings(), businessApi.getBusiness()])
       .then(([bks, biz]) => {
         if (!active) return;
-        setBookings(bks);
+        const bksList = Array.isArray(bks) ? bks : bks.items;
+        setBookings(bksList);
         setBusiness(biz);
 
         const tz = biz.timezone || "Asia/Jakarta";
         const todayStr = format(toZonedTime(new Date(), tz), "yyyy-MM-dd");
-        setStats(computeDashboardStats(bks, todayStr));
+        setStats(computeDashboardStats(bksList, todayStr));
         setIsLoading(false);
       })
       .catch((err) => {

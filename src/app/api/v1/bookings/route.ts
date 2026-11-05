@@ -14,11 +14,17 @@ export async function GET(request: NextRequest) {
     const statusParam = searchParams.get("status") || "ALL";
     const status = statusParam as BookingStatus | "ALL";
     const date = searchParams.get("date") || undefined;
+    const pageParam = searchParams.get("page");
+    const limitParam = searchParams.get("limit");
+    const page = pageParam ? parseInt(pageParam, 10) : undefined;
+    const limit = limitParam ? parseInt(limitParam, 10) : undefined;
 
     const bookings = await bookingService.listByOwner(user.businessId, {
       search,
       status,
       date,
+      page,
+      limit,
     });
 
     return apiSuccess(bookings);
@@ -42,4 +48,3 @@ export async function POST(request: NextRequest) {
     return handleApiError(err);
   }
 }
-
