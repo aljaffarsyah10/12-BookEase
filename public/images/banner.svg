@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#31104b" />
+    </linearGradient>
+    <linearGradient id="primaryGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="420" fill="url(#bgGrad)" />
+
+  <!-- Ambient Light Orbs -->
+  <circle cx="200" cy="100" r="180" fill="#4f46e5" opacity="0.25" filter="blur(60px)" />
+  <circle cx="1000" cy="300" r="220" fill="#db2777" opacity="0.2" filter="blur(70px)" />
+
+  <!-- Grid Accent Pattern -->
+  <g opacity="0.06" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="60" x2="1200" y2="60" />
+    <line x1="0" y1="120" x2="1200" y2="120" />
+    <line x1="0" y1="180" x2="1200" y2="180" />
+    <line x1="0" y1="240" x2="1200" y2="240" />
+    <line x1="0" y1="300" x2="1200" y2="300" />
+    <line x1="0" y1="360" x2="1200" y2="360" />
+    <line x1="100" y1="0" x2="100" y2="420" />
+    <line x1="250" y1="0" x2="250" y2="420" />
+    <line x1="400" y1="0" x2="400" y2="420" />
+    <line x1="550" y1="0" x2="550" y2="420" />
+    <line x1="700" y1="0" x2="700" y2="420" />
+    <line x1="850" y1="0" x2="850" y2="420" />
+    <line x1="1000" y1="0" x2="1000" y2="420" />
+    <line x1="1150" y1="0" x2="1150" y2="420" />
+  </g>
+
+  <!-- Content Container -->
+  <g transform="translate(80, 70)">
+    <!-- Brand Badge -->
+    <rect x="0" y="0" width="180" height="34" rx="17" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.2" />
+    <circle cx="18" cy="17" r="5" fill="#10b981" />
+    <text x="32" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#a5b4fc" letter-spacing="1">BOOKEASE v1.0 GA</text>
+
+    <!-- Main Title -->
+    <text x="0" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="800" fill="#ffffff" letter-spacing="-1.5">
+      Book<tspan fill="url(#primaryGlow)">Ease</tspan>
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="500" fill="#cbd5e1">
+      Online Appointment &amp; Booking Management System
+    </text>
+    <text x="0" y="175" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="400" fill="#94a3b8">
+      Solusi reservasi instan bebas antre untuk Barbershop, Salon, Klinik &amp; Bisnis Jasa Lokal
+    </text>
+
+    <!-- Feature Pills -->
+    <g transform="translate(0, 215)">
+      <!-- Pill 1: Guest Checkout -->
+      <g transform="translate(0, 0)">
+        <rect width="185" height="36" rx="8" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.15" />
+        <text x="14" y="23" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#e2e8f0">⚡ Frictionless Guest Booking</text>
+      </g>
+      <!-- Pill 2: Anti-Conflict Lock -->
+      <g transform="translate(195, 0)">
+        <rect width="180" height="36" rx="8" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.15" />
+        <text x="14" y="23" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#e2e8f0">🔒 Anti-Conflict Slot Engine</text>
+      </g>
+      <!-- Pill 3: Multi-Timezone -->
+      <g transform="translate(385, 0)">
+        <rect width="195" height="36" rx="8" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.15" />
+        <text x="14" y="23" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#e2e8f0">🌏 Timezone WIB/WITA/WIT</text>
+      </g>
+      <!-- Pill 4: Customer Cancel -->
+      <g transform="translate(590, 0)">
+        <rect width="190" height="36" rx="8" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.15" />
+        <text x="14" y="23" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#e2e8f0">🛡️ HMAC-SHA256 Token Cancel</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Right Side Mockup Graphic (Calendar / Reservation Card) -->
+  <g transform="translate(860, 55)" filter="url(#shadow)">
+    <!-- Glass Card -->
+    <rect width="260" height="310" rx="16" fill="url(#cardGrad)" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.5" />
+    
+    <!-- Card Header -->
+    <rect x="20" y="24" width="40" height="40" rx="10" fill="#4f46e5" />
+    <path d="M32 44 L38 50 L48 38" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="70" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Reservasi Berhasil</text>
+    <text x="70" y="58" font-family="monospace" font-size="11" font-weight="600" fill="#a5b4fc">BK-20261106-9X4K2P</text>
+
+    <!-- Divider -->
+    <line x1="20" y1="80" x2="240" y2="80" stroke="#ffffff" stroke-opacity="0.1" />
+
+    <!-- Details Box -->
+    <g transform="translate(20, 95)">
+      <text x="0" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">Layanan</text>
+      <text x="0" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#f8fafc">Gentleman Cut &amp; Shave</text>
+
+      <text x="0" y="64" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">Waktu &amp; Tanggal</text>
+      <text x="0" y="82" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#38bdf8">Jumat, 06 Nov • 14:00 WIB</text>
+
+      <text x="0" y="112" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">Staf Kapster</text>
+      <text x="0" y="130" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#f8fafc">Budi Pratama (Senior)</text>
+    </g>
+
+    <!-- Status Badge -->
+    <rect x="20" y="250" width="220" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.4" />
+    <circle cx="36" cy="267" r="4" fill="#10b981" />
+    <text x="48" y="272" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#34d399">Status: CONFIRMED</text>
+  </g>
+</svg>

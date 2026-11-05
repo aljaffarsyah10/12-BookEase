@@ -1,0 +1,38 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres_secure_pass@db:5432/bookease?schema=public
+      - DIRECT_URL=postgresql://postgres:postgres_secure_pass@db:5432/bookease?schema=public
+      - AUTH_SECRET=production_super_secret_auth_key_min_32_characters
+      - CANCELLATION_TOKEN_SECRET=production_cancellation_hmac_secret_32_chars
+      - NEXT_PUBLIC_APP_URL=https://bookease.example.com
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres_secure_pass
+      - POSTGRES_DB=bookease
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
