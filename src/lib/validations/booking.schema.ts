@@ -50,3 +50,22 @@ export type BookingStatusUpdateValues = z.infer<
   typeof bookingStatusUpdateSchema
 >;
 
+export const createBookingSchema = z.object({
+  businessSlug: z.string().trim().min(1, "Slug bisnis wajib diisi"),
+  serviceId: z.string().trim().min(1, "Layanan wajib dipilih"),
+  staffId: z.string().trim().optional(),
+  date: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Format tanggal harus YYYY-MM-DD"),
+  time: z
+    .string()
+    .trim()
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Format jam harus HH:mm"),
+  customerName: customerDetailsSchema.shape.customerName,
+  customerEmail: customerDetailsSchema.shape.customerEmail,
+  customerPhone: customerDetailsSchema.shape.customerPhone,
+  customerNotes: customerDetailsSchema.shape.customerNotes,
+});
+
+export type CreateBookingFormValues = z.infer<typeof createBookingSchema>;

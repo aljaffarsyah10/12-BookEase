@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ExternalLink, Loader2, Save } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ export default function BusinessProfilePage() {
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<BusinessProfileFormValues>({
     resolver: zodResolver(businessProfileSchema),
@@ -63,7 +63,7 @@ export default function BusinessProfilePage() {
     };
   }, [reset]);
 
-  const currentSlug = watch("slug");
+  const currentSlug = useWatch({ control, name: "slug" });
 
   const onSubmit = async (values: BusinessProfileFormValues) => {
     const updated = await businessMockService.updateBusiness(values);

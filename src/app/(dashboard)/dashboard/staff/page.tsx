@@ -33,8 +33,21 @@ export default function StaffManagementPage() {
   }, []);
 
   React.useEffect(() => {
-    loadAll();
-  }, [loadAll]);
+    let active = true;
+    Promise.all([
+      staffMockService.listStaff(false),
+      serviceMockService.listServices(false),
+    ]).then(([stfData, srvData]) => {
+      if (active) {
+        setStaffList(stfData);
+        setServices(srvData);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleOpenAdd = () => {
     setEditingStaff(null);

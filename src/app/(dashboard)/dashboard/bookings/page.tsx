@@ -30,7 +30,7 @@ export default function BookingsManagementPage() {
   } | null>(null);
   const [isUpdating, setIsUpdating] = React.useState(false);
 
-  const fetchBookings = React.useCallback(async () => {
+  const reloadBookings = React.useCallback(async () => {
     setIsLoading(true);
     const data = await bookingMockService.listBookings({
       search,
@@ -42,8 +42,23 @@ export default function BookingsManagementPage() {
   }, [search, statusFilter, dateFilter]);
 
   React.useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings]);
+    let active = true;
+    bookingMockService
+      .listBookings({
+        search,
+        status: statusFilter,
+        date: dateFilter || undefined,
+      })
+      .then((data) => {
+        if (active) {
+          setBookings(data);
+          setIsLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, [search, statusFilter, dateFilter]);
 
   const handleResetFilters = () => {
     setSearch("");
@@ -63,7 +78,7 @@ export default function BookingsManagementPage() {
     );
     setIsUpdating(false);
     setPendingAction(null);
-    await fetchBookings();
+    await reloadBookings();
   };
 
   return (

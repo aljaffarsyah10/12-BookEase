@@ -40,8 +40,21 @@ export default function ServicesManagementPage() {
   }, []);
 
   React.useEffect(() => {
-    loadAll();
-  }, [loadAll]);
+    let active = true;
+    Promise.all([
+      serviceMockService.listServices(false),
+      staffMockService.listStaff(false),
+    ]).then(([srvData, stfData]) => {
+      if (active) {
+        setServices(srvData);
+        setStaffList(stfData);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleOpenAdd = () => {
     setEditingService(null);
