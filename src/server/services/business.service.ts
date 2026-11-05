@@ -17,9 +17,17 @@ export const businessService = {
     const business = await prisma.business.findUnique({
       where: { slug: slug.toLowerCase() },
       include: {
-        services: { where: { isActive: true } },
-        staff: { where: { isActive: true } },
-        operatingHours: true,
+        services: {
+          where: { isActive: true },
+          include: { staffServices: { select: { staffId: true } } },
+        },
+        staff: {
+          where: { isActive: true },
+          include: { staffServices: { select: { serviceId: true } } },
+        },
+        operatingHours: {
+          orderBy: { dayOfWeek: "asc" },
+        },
       },
     });
 
@@ -27,7 +35,28 @@ export const businessService = {
       throw new AppError("BUSINESS_NOT_FOUND", "Halaman bisnis tidak ditemukan.", 404);
     }
 
-    return business;
+    return {
+      ...business,
+      services: business.services.map((s) => ({
+        id: s.id,
+        businessId: s.businessId,
+        name: s.name,
+        description: s.description,
+        price: s.price,
+        durationMinutes: s.durationMinutes,
+        isActive: s.isActive,
+        staffIds: s.staffServices.map((ss) => ss.staffId),
+      })),
+      staff: business.staff.map((st) => ({
+        id: st.id,
+        businessId: st.businessId,
+        name: st.name,
+        roleOrTitle: st.roleOrTitle,
+        bio: st.bio,
+        isActive: st.isActive,
+        serviceIds: st.staffServices.map((ss) => ss.serviceId),
+      })),
+    };
   },
 
   async update(businessId: string, input: BusinessProfileFormValues) {
@@ -58,4 +87,3 @@ export const businessService = {
     });
   },
 };
-

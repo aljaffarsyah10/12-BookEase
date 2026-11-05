@@ -7,9 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { BookingWizard } from "@/components/booking/booking-wizard";
 import { ErrorState } from "@/components/shared/error-state";
 import { LoadingState } from "@/components/shared/loading-state";
-import { businessMockService } from "@/features/business/services/business.mock-service";
-import { serviceMockService } from "@/features/services/services/service.mock-service";
-import { staffMockService } from "@/features/staff/services/staff.mock-service";
+import { businessApi } from "@/features/business/services/business.api";
 import type { Business, Service, Staff } from "@/types";
 
 function PublicBookingView({ slug }: { slug: string }) {
@@ -20,17 +18,21 @@ function PublicBookingView({ slug }: { slug: string }) {
 
   React.useEffect(() => {
     let active = true;
-    Promise.all([
-      businessMockService.getPublicBusinessBySlug(slug),
-      serviceMockService.listServices(true),
-      staffMockService.listStaff(true),
-    ]).then(([biz, srv, stf]) => {
-      if (!active) return;
-      setBusiness(biz);
-      setServices(srv);
-      setStaffList(stf);
-      setIsLoading(false);
-    });
+    businessApi
+      .getPublicBySlug(slug)
+      .then((data) => {
+        if (!active) return;
+        setBusiness(data);
+        setServices(data.services);
+        setStaffList(data.staff);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setBusiness(null);
+        setIsLoading(false);
+      });
+
     return () => {
       active = false;
     };

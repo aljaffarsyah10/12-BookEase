@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SectionCard } from "@/components/shared/section-card";
+import { authApi } from "@/features/auth/services/auth.api";
+import { ApiClientError } from "@/lib/api-client";
 import { slugify } from "@/lib/format";
 import {
   registerSchema,
@@ -25,7 +27,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     setValue,
-    control,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -39,22 +41,28 @@ export default function RegisterPage() {
     },
   });
 
-  const watchedSlug = useWatch({ control, name: "businessSlug" });
+  const watchedSlug = watch("businessSlug");
 
-  const handleBusinessNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleBusinessNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setValue("businessName", val, { shouldValidate: true });
     setValue("businessSlug", slugify(val), { shouldValidate: true });
   };
 
   const onSubmit = async (values: RegisterFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    toast.success("Akun & Workspace Bisnis Berhasil Dibuat!", {
-      description: `Halaman publik: /book/${values.businessSlug}`,
-    });
-    router.push("/dashboard");
+    try {
+      const result = await authApi.register(values);
+      toast.success("Akun & Workspace Bisnis Berhasil Dibuat!", {
+        description: `Halaman publik: /book/${result.business.slug}`,
+      });
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        toast.error(err.message);
+      } else {
+        toast.error("Gagal mendaftarkan bisnis. Silakan periksa kembali data Anda.");
+      }
+    }
   };
 
   return (

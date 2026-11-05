@@ -4,7 +4,7 @@ import type { StaffFormValues } from "@/lib/validations/staff.schema";
 
 export const staffService = {
   async list(businessId: string, onlyActive = false) {
-    return prisma.staff.findMany({
+    const staff = await prisma.staff.findMany({
       where: {
         businessId,
         ...(onlyActive ? { isActive: true } : {}),
@@ -16,6 +16,16 @@ export const staffService = {
       },
       orderBy: { createdAt: "asc" },
     });
+
+    return staff.map((st) => ({
+      id: st.id,
+      businessId: st.businessId,
+      name: st.name,
+      roleOrTitle: st.roleOrTitle,
+      bio: st.bio,
+      isActive: st.isActive,
+      serviceIds: st.staffServices.map((ss) => ss.serviceId),
+    }));
   },
 
   async create(businessId: string, input: StaffFormValues) {
@@ -39,7 +49,15 @@ export const staffService = {
         });
       }
 
-      return staff;
+      return {
+        id: staff.id,
+        businessId: staff.businessId,
+        name: staff.name,
+        roleOrTitle: staff.roleOrTitle,
+        bio: staff.bio,
+        isActive: staff.isActive,
+        serviceIds: input.serviceIds,
+      };
     });
   },
 
@@ -72,8 +90,15 @@ export const staffService = {
         });
       }
 
-      return updated;
+      return {
+        id: updated.id,
+        businessId: updated.businessId,
+        name: updated.name,
+        roleOrTitle: updated.roleOrTitle,
+        bio: updated.bio,
+        isActive: updated.isActive,
+        serviceIds: input.serviceIds,
+      };
     });
   },
 };
-

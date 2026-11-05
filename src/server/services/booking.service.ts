@@ -1,8 +1,10 @@
 import crypto from "crypto";
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 import { parseZonedTimeToUTC } from "@/lib/timezone";
-import type { BookingStatus } from "@/types";
+import type { Booking, BookingStatus } from "@/types";
 
 export interface CreateBookingInput {
   businessSlug: string;
@@ -16,6 +18,65 @@ export interface CreateBookingInput {
   customerNotes?: string;
 }
 
+interface RawBookingRecord {
+  id: string;
+  reference: string;
+  businessId: string;
+  serviceId: string;
+  staffId: string;
+  serviceNameSnapshot: string;
+  servicePriceSnapshot: number;
+  durationMinutesSnapshot: number;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerNotes?: string | null;
+  startAt: Date | string;
+  endAt: Date | string;
+  status: string;
+  cancelReason?: string | null;
+  createdAt: Date | string;
+  staff?: { name: string } | null;
+  business?: { timezone: string } | null;
+}
+
+function mapBookingToDto(
+  b: RawBookingRecord,
+  fallbackTimezone = "Asia/Jakarta"
+): Booking {
+  const timezone = b.business?.timezone || fallbackTimezone;
+  const startAtDate = b.startAt instanceof Date ? b.startAt : new Date(b.startAt);
+  const endAtDate = b.endAt instanceof Date ? b.endAt : new Date(b.endAt);
+  const createdAtDate = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+
+  const zonedStart = toZonedTime(startAtDate, timezone);
+  const dateStr = format(zonedStart, "yyyy-MM-dd");
+  const timeStr = format(zonedStart, "HH:mm");
+
+  return {
+    id: b.id,
+    reference: b.reference,
+    businessId: b.businessId,
+    serviceId: b.serviceId,
+    staffId: b.staffId,
+    serviceNameSnapshot: b.serviceNameSnapshot,
+    servicePriceSnapshot: b.servicePriceSnapshot,
+    durationMinutesSnapshot: b.durationMinutesSnapshot,
+    staffName: b.staff?.name ?? "Staf",
+    customerName: b.customerName,
+    customerEmail: b.customerEmail,
+    customerPhone: b.customerPhone,
+    customerNotes: b.customerNotes,
+    date: dateStr,
+    time: timeStr,
+    startAt: startAtDate.toISOString(),
+    endAt: endAtDate.toISOString(),
+    status: b.status as BookingStatus,
+    cancelReason: b.cancelReason,
+    createdAt: createdAtDate.toISOString(),
+  };
+}
+
 export const bookingService = {
   async listByOwner(
     businessId: string,
@@ -25,7 +86,13 @@ export const bookingService = {
       date?: string;
     }
   ) {
-    return prisma.booking.findMany({
+    const business = await prisma.business.findUnique({
+      where: { id: businessId },
+      select: { timezone: true },
+    });
+    const timezone = business?.timezone || "Asia/Jakarta";
+
+    const bookings = await prisma.booking.findMany({
       where: {
         businessId,
         ...(filters?.status && filters.status !== "ALL"
@@ -48,17 +115,36 @@ export const bookingService = {
       },
       orderBy: { startAt: "desc" },
     });
+
+    const mapped = bookings.map((b) => mapBookingToDto(b, timezone));
+
+    if (filters?.date) {
+      return mapped.filter((b) => b.date === filters.date);
+    }
+
+    return mapped;
   },
 
   async getById(businessId: string, id: string) {
     const booking = await prisma.booking.findFirst({
       where: { id, businessId },
-      include: { service: true, staff: true },
+      include: { service: true, staff: true, business: true },
     });
     if (!booking) {
       throw new AppError("BOOKING_NOT_FOUND", "Reservasi tidak ditemukan.", 404);
     }
-    return booking;
+    return mapBookingToDto(booking, booking.business.timezone);
+  },
+
+  async getByReference(reference: string) {
+    const booking = await prisma.booking.findUnique({
+      where: { reference },
+      include: { service: true, staff: true, business: true },
+    });
+    if (!booking) {
+      throw new AppError("BOOKING_NOT_FOUND", "Reservasi tidak ditemukan.", 404);
+    }
+    return mapBookingToDto(booking, booking.business.timezone);
   },
 
   async updateStatus(
@@ -69,6 +155,7 @@ export const bookingService = {
   ) {
     const booking = await prisma.booking.findFirst({
       where: { id, businessId },
+      include: { business: true },
     });
     if (!booking) {
       throw new AppError("BOOKING_NOT_FOUND", "Reservasi tidak ditemukan.", 404);
@@ -84,7 +171,7 @@ export const bookingService = {
       );
     }
 
-    return prisma.booking.update({
+    const updated = await prisma.booking.update({
       where: { id },
       data: {
         status: nextStatus,
@@ -94,7 +181,10 @@ export const bookingService = {
             : null,
         cancelledAt: nextStatus === "CANCELLED" ? new Date() : null,
       },
+      include: { service: true, staff: true, business: true },
     });
+
+    return mapBookingToDto(updated, updated.business.timezone);
   },
 
   async create(input: CreateBookingInput) {
@@ -200,7 +290,7 @@ export const bookingService = {
       const randomHex = crypto.randomBytes(3).toString("hex").toUpperCase();
       const reference = `BK-${compactDate}-${randomHex}`;
 
-      return tx.booking.create({
+      const created = await tx.booking.create({
         data: {
           reference,
           businessId: business.id,
@@ -225,7 +315,8 @@ export const bookingService = {
           business: true,
         },
       });
+
+      return mapBookingToDto(created, business.timezone);
     });
   },
 };
-

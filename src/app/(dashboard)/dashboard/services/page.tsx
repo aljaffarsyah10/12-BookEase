@@ -10,8 +10,8 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { ServiceCard } from "@/features/services/components/service-card";
 import { ServiceFormDialog } from "@/features/services/components/service-form-dialog";
-import { serviceMockService } from "@/features/services/services/service.mock-service";
-import { staffMockService } from "@/features/staff/services/staff.mock-service";
+import { serviceApi } from "@/features/services/services/service.api";
+import { staffApi } from "@/features/staff/services/staff.api";
 import type { ServiceFormValues } from "@/lib/validations/service.schema";
 import type { Service, Staff } from "@/types";
 
@@ -31,8 +31,8 @@ export default function ServicesManagementPage() {
 
   const loadAll = React.useCallback(async () => {
     const [srvData, stfData] = await Promise.all([
-      serviceMockService.listServices(false),
-      staffMockService.listStaff(false),
+      serviceApi.listServices(false),
+      staffApi.listStaff(false),
     ]);
     setServices(srvData);
     setStaffList(stfData);
@@ -42,8 +42,8 @@ export default function ServicesManagementPage() {
   React.useEffect(() => {
     let active = true;
     Promise.all([
-      serviceMockService.listServices(false),
-      staffMockService.listStaff(false),
+      serviceApi.listServices(false),
+      staffApi.listStaff(false),
     ]).then(([srvData, stfData]) => {
       if (active) {
         setServices(srvData);
@@ -68,17 +68,17 @@ export default function ServicesManagementPage() {
 
   const handleSaveService = async (values: ServiceFormValues) => {
     if (editingService) {
-      await serviceMockService.updateService(editingService.id, values);
+      await serviceApi.updateService(editingService.id, values);
       toast.success("Layanan berhasil diperbarui!");
     } else {
-      await serviceMockService.createService(values);
+      await serviceApi.createService(values);
       toast.success("Layanan baru berhasil ditambahkan!");
     }
     await loadAll();
   };
 
   const handleToggleActive = async (service: Service) => {
-    const updated = await serviceMockService.toggleServiceActive(service.id);
+    const updated = await serviceApi.toggleServiceActive(service);
     toast.success(
       updated.isActive
         ? `Layanan "${updated.name}" diaktifkan.`
@@ -90,7 +90,7 @@ export default function ServicesManagementPage() {
   const handleConfirmDelete = async () => {
     if (!deletingService) return;
     setIsDeleting(true);
-    await serviceMockService.deleteService(deletingService.id);
+    await serviceApi.deleteService(deletingService.id);
     toast.success(`Layanan "${deletingService.name}" berhasil dihapus.`);
     setIsDeleting(false);
     setDeletingService(null);

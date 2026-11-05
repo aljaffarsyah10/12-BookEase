@@ -11,7 +11,7 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { BookingTable } from "@/features/bookings/components/booking-table";
-import { bookingMockService } from "@/features/bookings/services/booking.mock-service";
+import { bookingApi } from "@/features/bookings/services/booking.api";
 import type { Booking, BookingStatus } from "@/types";
 
 export default function BookingsManagementPage() {
@@ -32,7 +32,7 @@ export default function BookingsManagementPage() {
 
   const reloadBookings = React.useCallback(async () => {
     setIsLoading(true);
-    const data = await bookingMockService.listBookings({
+    const data = await bookingApi.listBookings({
       search,
       status: statusFilter,
       date: dateFilter || undefined,
@@ -43,7 +43,7 @@ export default function BookingsManagementPage() {
 
   React.useEffect(() => {
     let active = true;
-    bookingMockService
+    bookingApi
       .listBookings({
         search,
         status: statusFilter,
@@ -69,7 +69,7 @@ export default function BookingsManagementPage() {
   const handleConfirmStatusUpdate = async () => {
     if (!pendingAction) return;
     setIsUpdating(true);
-    const updated = await bookingMockService.updateBookingStatus(
+    const updated = await bookingApi.updateBookingStatus(
       pendingAction.booking.id,
       pendingAction.nextStatus,
     );

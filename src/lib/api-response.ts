@@ -41,10 +41,10 @@ export function apiError(
 }
 
 export function handleApiError(err: unknown): NextResponse<ApiResponseError> {
-  // Let Next.js internal control flow errors (bailout, redirect, notFound) bubble up
+  // Let Next.js internal control flow errors (bailout, redirect, notFound, dynamic cookies) bubble up
   if (typeof err === "object" && err !== null && "digest" in err) {
     const digest = String((err as { digest: unknown }).digest);
-    if (digest.startsWith("NEXT_")) {
+    if (digest.startsWith("NEXT_") || digest === "HANGING_PROMISE_REJECTION") {
       throw err;
     }
   }

@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
-import { businessMockService } from "@/features/business/services/business.mock-service";
-import { scheduleMockService } from "@/features/schedule/services/schedule.mock-service";
+import { businessApi } from "@/features/business/services/business.api";
+import { scheduleApi } from "@/features/schedule/services/schedule.api";
 import { DAY_NAMES_ID } from "@/lib/format";
 import { scheduleFormSchema } from "@/lib/validations/schedule.schema";
 import type { OperatingHour } from "@/types";
@@ -27,8 +27,8 @@ export default function ScheduleManagementPage() {
   React.useEffect(() => {
     let active = true;
     Promise.all([
-      scheduleMockService.getSchedule(),
-      businessMockService.getBusiness(),
+      scheduleApi.getSchedule(),
+      businessApi.getBusiness(),
     ]).then(([sched, biz]) => {
       if (!active) return;
       setHours(sched);
@@ -79,22 +79,14 @@ export default function ScheduleManagementPage() {
     }
 
     setIsSaving(true);
-    const currentBiz = await businessMockService.getBusiness();
-    await Promise.all([
-      scheduleMockService.updateSchedule(parsed.data.schedule),
-      businessMockService.updateBusiness({
-        name: currentBiz.name,
-        slug: currentBiz.slug,
-        category: currentBiz.category,
-        description: currentBiz.description ?? "",
-        phone: currentBiz.phone ?? "+6281234567890",
-        address: currentBiz.address ?? "Jl. Sudirman No. 45",
-        timezone: currentBiz.timezone,
-        bufferTimeMinutes: parsed.data.bufferTimeMinutes,
-      }),
-    ]);
-    setIsSaving(false);
-    toast.success("Jadwal operasional mingguan berhasil disimpan!");
+    try {
+      await scheduleApi.saveSchedule(parsed.data);
+      toast.success("Jadwal operasional mingguan berhasil disimpan!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Gagal menyimpan jadwal.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (isLoading) {

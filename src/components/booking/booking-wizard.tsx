@@ -21,7 +21,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingState } from "@/components/shared/loading-state";
 import { SectionCard } from "@/components/shared/section-card";
-import { bookingMockService } from "@/features/bookings/services/booking.mock-service";
+import { addDays, format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import { bookingApi } from "@/features/bookings/services/booking.api";
+import { ApiClientError } from "@/lib/api-client";
 import { formatDateId, formatDuration, formatRupiah } from "@/lib/format";
 import {
   customerDetailsSchema,
@@ -36,15 +39,17 @@ interface BookingWizardProps {
   staffList: Staff[];
 }
 
-const UPCOMING_DATES = [
-  "2026-11-06", // Jumat
-  "2026-11-07", // Sabtu
-  "2026-11-08", // Minggu (Libur default)
-  "2026-11-09", // Senin
-  "2026-11-10", // Selasa
-  "2026-11-11", // Rabu
-  "2026-11-12", // Kamis
-];
+function generateUpcomingDates(
+  daysCount = 7,
+  timezone = "Asia/Jakarta"
+): string[] {
+  const nowZoned = toZonedTime(new Date(), timezone);
+  const result: string[] = [];
+  for (let i = 0; i < daysCount; i++) {
+    result.push(format(addDays(nowZoned, i), "yyyy-MM-dd"));
+  }
+  return result;
+}
 
 const STEPS = [
   { id: 1, title: "Layanan" },
@@ -65,8 +70,12 @@ export function BookingWizard({
     services[0]?.id ?? ""
   );
   const [selectedStaffId, setSelectedStaffId] = React.useState<string>("any");
+  const upcomingDates = React.useMemo(
+    () => generateUpcomingDates(7, business.timezone || "Asia/Jakarta"),
+    [business.timezone]
+  );
   const [selectedDate, setSelectedDate] = React.useState<string>(
-    UPCOMING_DATES[0]
+    upcomingDates[0] || ""
   );
   const [selectedTime, setSelectedTime] = React.useState<string>("");
 
@@ -96,11 +105,7 @@ export function BookingWizard({
     setIsLoadingSlots(true);
     setSlotError(null);
     try {
-      const res = await bookingMockService.getAvailableSlots({
-        date: selectedDate,
-        serviceId: selectedServiceId,
-        staffId: selectedStaffId,
-      });
+      const res = await bookingApi.getAvailability({ slug: business.slug, date: selectedDate, serviceId: selectedServiceId, staffId: selectedStaffId });
       setIsDayClosed(res.isClosed);
       setSlots(res.slots);
       setSelectedTime((prev) =>
@@ -113,13 +118,14 @@ export function BookingWizard({
     } finally {
       setIsLoadingSlots(false);
     }
-  }, [selectedDate, selectedServiceId, selectedStaffId]);
+  }, [business.slug, selectedDate, selectedServiceId, selectedStaffId]);
 
   React.useEffect(() => {
     let active = true;
     if (!selectedServiceId || !selectedDate) return;
-    bookingMockService
-      .getAvailableSlots({
+    bookingApi
+      .getAvailability({
+        slug: business.slug,
         date: selectedDate,
         serviceId: selectedServiceId,
         staffId: selectedStaffId,
@@ -143,7 +149,7 @@ export function BookingWizard({
     return () => {
       active = false;
     };
-  }, [selectedDate, selectedServiceId, selectedStaffId]);
+  }, [business.slug, selectedDate, selectedServiceId, selectedStaffId]);
 
   const {
     register,
@@ -166,16 +172,16 @@ export function BookingWizard({
     }
 
     try {
-      const created = await bookingMockService.createBooking({
+      const created = await bookingApi.createBooking({
         businessSlug: business.slug,
         serviceId: selectedService.id,
-        staffId: selectedStaffId,
+        staffId: selectedStaffId === "any" ? undefined : selectedStaffId,
         date: selectedDate,
         time: selectedTime,
         customerName: values.customerName,
         customerEmail: values.customerEmail,
         customerPhone: values.customerPhone,
-        customerNotes: values.customerNotes,
+        customerNotes: values.customerNotes || undefined,
       });
 
       toast.success("Reservasi berhasil dikonfirmasi!", {
@@ -186,13 +192,19 @@ export function BookingWizard({
         `/book/${business.slug}/success?ref=${encodeURIComponent(created.reference)}`
       );
     } catch (err) {
+      if (err instanceof ApiClientError && err.status === 409) {
+        toast.error("Slot Waktu Tidak Tersedia", {
+          description: err.message || "Slot yang Anda pilih baru saja terisi. Silakan pilih jam lain.",
+        });
+        await fetchSlots();
+        setStep(3);
+        return;
+      }
       const message =
         err instanceof Error
           ? err.message
-          : "Terjadi konflik jadwal. Silakan pilih jam lain.";
-      toast.error("Slot tidak tersedia", { description: message });
-      await fetchSlots();
-      setStep(3);
+          : "Terjadi kesalahan saat memproses booking.";
+      toast.error("Gagal melakukan reservasi", { description: message });
     }
   };
 
@@ -429,7 +441,7 @@ export function BookingWizard({
                 <div className="space-y-2">
                   <Label htmlFor="booking-date">Pilih Tanggal Kunjungan</Label>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {UPCOMING_DATES.map((dateStr) => {
+                    {upcomingDates.map((dateStr) => {
                       const active = selectedDate === dateStr;
                       return (
                         <button

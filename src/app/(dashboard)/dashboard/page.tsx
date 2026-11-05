@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import {
   ArrowRight,
   Calendar,
@@ -18,33 +20,45 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { bookingMockService } from "@/features/bookings/services/booking.mock-service";
+import { bookingApi } from "@/features/bookings/services/booking.api";
+import { businessApi } from "@/features/business/services/business.api";
 import {
-  computeDashboardMockStats,
+  computeDashboardStats,
   type DashboardSummaryStats,
-} from "@/features/dashboard/mocks/dashboard.mock";
+} from "@/features/dashboard/services/dashboard.service";
 import { formatDateId, formatRupiah } from "@/lib/format";
-import type { Booking } from "@/types";
+import type { Booking, Business } from "@/types";
 
 export default function DashboardOverviewPage() {
   const [bookings, setBookings] = React.useState<Booking[]>([]);
+  const [business, setBusiness] = React.useState<Business | null>(null);
   const [stats, setStats] = React.useState<DashboardSummaryStats | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     let active = true;
-    bookingMockService.listBookings().then((data) => {
-      if (!active) return;
-      setBookings(data);
-      setStats(computeDashboardMockStats(data, "2026-11-06"));
-      setIsLoading(false);
-    });
+    Promise.all([bookingApi.listBookings(), businessApi.getBusiness()])
+      .then(([bks, biz]) => {
+        if (!active) return;
+        setBookings(bks);
+        setBusiness(biz);
+
+        const tz = biz.timezone || "Asia/Jakarta";
+        const todayStr = format(toZonedTime(new Date(), tz), "yyyy-MM-dd");
+        setStats(computeDashboardStats(bks, todayStr));
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load dashboard overview:", err);
+        if (active) setIsLoading(false);
+      });
+
     return () => {
       active = false;
     };
   }, []);
 
-  if (isLoading || !stats) {
+  if (isLoading || !stats || !business) {
     return (
       <div className="space-y-6">
         <PageHeader
@@ -57,7 +71,9 @@ export default function DashboardOverviewPage() {
     );
   }
 
-  const todayBookings = bookings.filter((b) => b.date === "2026-11-06");
+  const tz = business.timezone || "Asia/Jakarta";
+  const todayStr = format(toZonedTime(new Date(), tz), "yyyy-MM-dd");
+  const todayBookings = bookings.filter((b) => b.date === todayStr);
   const recentBookings = bookings.slice(0, 5);
 
   return (
@@ -68,7 +84,8 @@ export default function DashboardOverviewPage() {
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
             <Link
-              href="/book/glow-beauty-studio"
+              href={`/book/${business.slug}`}
+              target="_blank"
               className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
               <span>Halaman Booking Publik</span>
@@ -158,7 +175,7 @@ export default function DashboardOverviewPage() {
                     <p className="text-xs text-slate-500">
                       {formatDateId(booking.date)} pukul{" "}
                       <span className="font-mono font-medium text-slate-700">
-                        {booking.time} WIB
+                        {booking.time}
                       </span>{" "}
                       • {formatRupiah(booking.servicePriceSnapshot)}
                     </p>
@@ -198,7 +215,7 @@ export default function DashboardOverviewPage() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-xs font-bold text-indigo-600">
-                        {item.time} WIB
+                        {item.time}
                       </span>
                       <StatusBadge status={item.status} />
                     </div>

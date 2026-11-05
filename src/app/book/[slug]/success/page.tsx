@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/shared/loading-state";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { bookingMockService } from "@/features/bookings/services/booking.mock-service";
+import { bookingApi } from "@/features/bookings/services/booking.api";
 import { formatDateId, formatDuration, formatRupiah } from "@/lib/format";
 import type { Booking } from "@/types";
 
@@ -22,7 +22,7 @@ function BookingSuccessView({ slug }: { slug: string }) {
 
   React.useEffect(() => {
     let active = true;
-    bookingMockService.getBookingByReference(refParam).then((data) => {
+    bookingApi.getBookingByReference(refParam).then((data) => {
       if (!active) return;
       setBooking(data);
     });

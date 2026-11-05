@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
-import { serviceMockService } from "@/features/services/services/service.mock-service";
+import { serviceApi } from "@/features/services/services/service.api";
 import { StaffCard } from "@/features/staff/components/staff-card";
 import { StaffFormDialog } from "@/features/staff/components/staff-form-dialog";
-import { staffMockService } from "@/features/staff/services/staff.mock-service";
+import { staffApi } from "@/features/staff/services/staff.api";
 import type { StaffFormValues } from "@/lib/validations/staff.schema";
 import type { Service, Staff } from "@/types";
 
@@ -24,8 +24,8 @@ export default function StaffManagementPage() {
 
   const loadAll = React.useCallback(async () => {
     const [stfData, srvData] = await Promise.all([
-      staffMockService.listStaff(false),
-      serviceMockService.listServices(false),
+      staffApi.listStaff(false),
+      serviceApi.listServices(false),
     ]);
     setStaffList(stfData);
     setServices(srvData);
@@ -35,8 +35,8 @@ export default function StaffManagementPage() {
   React.useEffect(() => {
     let active = true;
     Promise.all([
-      staffMockService.listStaff(false),
-      serviceMockService.listServices(false),
+      staffApi.listStaff(false),
+      serviceApi.listServices(false),
     ]).then(([stfData, srvData]) => {
       if (active) {
         setStaffList(stfData);
@@ -61,17 +61,17 @@ export default function StaffManagementPage() {
 
   const handleSaveStaff = async (values: StaffFormValues) => {
     if (editingStaff) {
-      await staffMockService.updateStaff(editingStaff.id, values);
+      await staffApi.updateStaff(editingStaff.id, values);
       toast.success("Data staf berhasil diperbarui!");
     } else {
-      await staffMockService.createStaff(values);
+      await staffApi.createStaff(values);
       toast.success("Staf baru berhasil ditambahkan!");
     }
     await loadAll();
   };
 
   const handleToggleActive = async (staff: Staff) => {
-    const updated = await staffMockService.toggleStaffActive(staff.id);
+    const updated = await staffApi.toggleStaffActive(staff);
     toast.success(
       updated.isActive
         ? `Staf "${updated.name}" diaktifkan kembali.`

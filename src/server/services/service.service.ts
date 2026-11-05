@@ -4,7 +4,7 @@ import type { ServiceFormValues } from "@/lib/validations/service.schema";
 
 export const serviceService = {
   async list(businessId: string, onlyActive = false) {
-    return prisma.service.findMany({
+    const services = await prisma.service.findMany({
       where: {
         businessId,
         ...(onlyActive ? { isActive: true } : {}),
@@ -16,6 +16,17 @@ export const serviceService = {
       },
       orderBy: { createdAt: "desc" },
     });
+
+    return services.map((s) => ({
+      id: s.id,
+      businessId: s.businessId,
+      name: s.name,
+      description: s.description,
+      price: s.price,
+      durationMinutes: s.durationMinutes,
+      isActive: s.isActive,
+      staffIds: s.staffServices.map((ss) => ss.staffId),
+    }));
   },
 
   async create(businessId: string, input: ServiceFormValues) {
@@ -40,7 +51,16 @@ export const serviceService = {
         });
       }
 
-      return service;
+      return {
+        id: service.id,
+        businessId: service.businessId,
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        durationMinutes: service.durationMinutes,
+        isActive: service.isActive,
+        staffIds: input.staffIds,
+      };
     });
   },
 
@@ -74,7 +94,16 @@ export const serviceService = {
         });
       }
 
-      return updated;
+      return {
+        id: updated.id,
+        businessId: updated.businessId,
+        name: updated.name,
+        description: updated.description,
+        price: updated.price,
+        durationMinutes: updated.durationMinutes,
+        isActive: updated.isActive,
+        staffIds: input.staffIds,
+      };
     });
   },
 
@@ -97,4 +126,3 @@ export const serviceService = {
     return prisma.service.delete({ where: { id } });
   },
 };
-

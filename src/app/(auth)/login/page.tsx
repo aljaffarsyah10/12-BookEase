@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SectionCard } from "@/components/shared/section-card";
+import { authApi } from "@/features/auth/services/auth.api";
+import { ApiClientError } from "@/lib/api-client";
 import {
   loginSchema,
   type LoginFormValues,
@@ -27,17 +29,25 @@ export default function LoginPage() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "budi@glowstudio.id",
-      password: "Password123!",
+      email: "",
+      password: "",
     },
   });
 
   const onSubmit = async (values: LoginFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 450));
-    toast.success("Berhasil masuk ke workspace bisnis!", {
-      description: `Selamat datang kembali, ${values.email}`,
-    });
-    router.push("/dashboard");
+    try {
+      const result = await authApi.login(values);
+      toast.success("Berhasil masuk ke workspace bisnis!", {
+        description: `Selamat datang kembali, ${result.user.name}`,
+      });
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        toast.error(err.message);
+      } else {
+        toast.error("Gagal masuk. Silakan periksa kembali email dan password.");
+      }
+    }
   };
 
   return (
@@ -109,7 +119,7 @@ export default function LoginPage() {
         Belum memiliki akun bisnis?{" "}
         <Link
           href="/register"
-          className="font-semibold text-indigo-600 hover:text-indigo-700"
+          className="font-semibold text-indigo-600 hover:bg-indigo-50 hover:underline"
         >
           Daftar sekarang
         </Link>

@@ -13,7 +13,7 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { BUSINESS_CATEGORIES } from "@/features/business/mocks/business.mock";
-import { businessMockService } from "@/features/business/services/business.mock-service";
+import { businessApi } from "@/features/business/services/business.api";
 import {
   businessProfileSchema,
   type BusinessProfileFormValues,
@@ -44,7 +44,7 @@ export default function BusinessProfilePage() {
 
   React.useEffect(() => {
     let active = true;
-    businessMockService.getBusiness().then((biz) => {
+    businessApi.getBusiness().then((biz) => {
       if (!active) return;
       reset({
         name: biz.name,
@@ -66,7 +66,7 @@ export default function BusinessProfilePage() {
   const currentSlug = useWatch({ control, name: "slug" });
 
   const onSubmit = async (values: BusinessProfileFormValues) => {
-    const updated = await businessMockService.updateBusiness(values);
+    const updated = await businessApi.updateBusiness(values);
     toast.success("Profil bisnis berhasil diperbarui!", {
       description: `Slug publik: /book/${updated.slug}`,
     });

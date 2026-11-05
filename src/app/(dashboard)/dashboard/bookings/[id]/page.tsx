@@ -24,7 +24,7 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { bookingMockService } from "@/features/bookings/services/booking.mock-service";
+import { bookingApi } from "@/features/bookings/services/booking.api";
 import { formatDateId, formatDuration, formatRupiah } from "@/lib/format";
 import type { Booking, BookingStatus } from "@/types";
 
@@ -38,7 +38,7 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
 
   React.useEffect(() => {
     let active = true;
-    bookingMockService.getBookingById(bookingId).then((found) => {
+    bookingApi.getBookingById(bookingId).then((found) => {
       if (!active) return;
       setBooking(found);
       setIsLoading(false);
@@ -51,7 +51,7 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
   const handleConfirmTransition = async () => {
     if (!booking || !targetStatus) return;
     setIsUpdating(true);
-    const updated = await bookingMockService.updateBookingStatus(
+    const updated = await bookingApi.updateBookingStatus(
       booking.id,
       targetStatus
     );
