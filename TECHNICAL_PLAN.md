@@ -1,6 +1,6 @@
 # TECHNICAL_PLAN.md — BookEase Architecture & Technical Specification
 
-**Project:** BookEase — Online Booking & Appointment Management SaaS  
+**Project:** BookEase — Online Booking (Anything Consult, Clinic, etc) & Appointment Management SaaS  
 **Version:** 1.0.0  
 **Phase:** Phase 2 — Technical Planning & Architecture  
 **Architecture Style:** Pragmatic Modular Monolith (Next.js App Router Fullstack)  
