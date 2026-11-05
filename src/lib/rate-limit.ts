@@ -22,4 +22,3 @@ export function checkRateLimit(
   validTimestamps.push(now);
   requestLog.set(identifier, validTimestamps);
 }
-

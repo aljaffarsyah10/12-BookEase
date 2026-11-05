@@ -14,18 +14,20 @@ export async function requireBusinessOwner(): Promise<AuthenticatedUser> {
   const sessionToken = cookieStore.get("bookease_session")?.value;
 
   if (!sessionToken) {
-    // Di development, jika belum login via session cookie, gunakan user pertama sebagai default
-    const firstUser = await prisma.user.findFirst({
-      include: { business: true },
-    });
+    // In development mode only: allow seed fallback for quick local testing
+    if (process.env.NODE_ENV !== "production") {
+      const firstUser = await prisma.user.findFirst({
+        include: { business: true },
+      });
 
-    if (firstUser && firstUser.business) {
-      return {
-        id: firstUser.id,
-        email: firstUser.email,
-        name: firstUser.name,
-        businessId: firstUser.business.id,
-      };
+      if (firstUser && firstUser.business) {
+        return {
+          id: firstUser.id,
+          email: firstUser.email,
+          name: firstUser.name,
+          businessId: firstUser.business.id,
+        };
+      }
     }
 
     throw new AppError(
@@ -55,4 +57,3 @@ export async function requireBusinessOwner(): Promise<AuthenticatedUser> {
     businessId: user.business.id,
   };
 }
-
