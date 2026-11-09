@@ -140,29 +140,33 @@ export function StaffFormDialog({
               id="staff-bio"
               rows={2}
               placeholder="Pengalaman atau spesialisasi staf..."
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+              className="w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-indigo-500/10 focus-visible:border-indigo-500"
               {...register("bio")}
             />
             {errors.bio && (
-              <p className="text-xs text-red-600">{errors.bio.message}</p>
+              <p className="text-xs text-rose-600 font-medium">{errors.bio.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label>Penugasan Layanan (Service Assignment)</Label>
-            <div className="grid grid-cols-1 gap-2 max-h-36 overflow-y-auto rounded-lg border border-slate-200 p-2.5">
+            <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto rounded-lg border border-slate-200/90 p-2.5 bg-slate-50/50">
               {services.map((srv) => {
                 const checked = selectedServiceIds.includes(srv.id);
                 return (
                   <label
                     key={srv.id}
-                    className="flex items-center gap-2 rounded-md p-1.5 text-xs font-medium text-slate-800 hover:bg-slate-50 cursor-pointer"
+                    className={`flex items-center gap-2.5 rounded-md p-2 text-xs font-medium cursor-pointer transition-colors border ${
+                      checked
+                        ? "bg-indigo-50/60 border-indigo-200 text-indigo-900"
+                        : "bg-white border-slate-200/60 text-slate-700 hover:bg-slate-50"
+                    }`}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => handleToggleService(srv.id)}
-                      className="size-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-600"
+                      className="size-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                     />
                     <span className="truncate">{srv.name}</span>
                   </label>
@@ -170,19 +174,19 @@ export function StaffFormDialog({
               })}
             </div>
             {errors.serviceIds && (
-              <p className="text-xs text-red-600">
+              <p className="text-xs text-rose-600 font-medium">
                 {errors.serviceIds.message}
               </p>
             )}
           </div>
 
-          <label className="flex items-center gap-2.5 text-sm font-medium text-slate-800 cursor-pointer">
+          <label className="flex items-center gap-2.5 text-xs sm:text-sm font-medium text-slate-700 cursor-pointer pt-1">
             <input
               type="checkbox"
-              className="size-4 rounded border-slate-300 text-indigo-600"
+              className="size-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
               {...register("isActive")}
             />
-            <span>Staf aktif dan tersedia untuk menerima booking baru</span>
+            <span>Staf aktif dan tersedia untuk menerima reservasi baru</span>
           </label>
 
           <DialogFooter className="gap-2 pt-2">

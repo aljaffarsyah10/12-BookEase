@@ -133,7 +133,7 @@ export default function ScheduleManagementPage() {
 
       <SectionCard
         title="Jadwal Operasional Mingguan"
-        description="Hari yang ditandai Tutup tidak akan menghasilkan slot booking pada halaman publik."
+        description="Hari yang ditandai Tutup tidak akan menampilkan slot reservasi pada halaman publik."
       >
         <div className="divide-y divide-slate-100">
           {ORDERED_DAYS.map((dayNum) => {
@@ -147,35 +147,39 @@ export default function ScheduleManagementPage() {
               >
                 <div className="flex items-center justify-between sm:w-56">
                   <div className="flex items-center gap-2.5">
-                    <Clock className="size-4 text-slate-400" />
-                    <span className="text-sm font-semibold text-slate-900">
+                    <div className="flex size-7 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                      <Clock className="size-3.5" />
+                    </div>
+                    <span className="text-sm font-bold text-slate-900">
                       {DAY_NAMES_ID[dayNum]}
                     </span>
                   </div>
 
-                  <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer">
+                  <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={!item.isClosed}
                       onChange={(e) =>
                         updateDayField(dayNum, { isClosed: !e.target.checked })
                       }
-                      className="size-4 rounded border-slate-300 text-indigo-600"
+                      className="size-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                     />
-                    <span>{item.isClosed ? "Tutup" : "Buka"}</span>
+                    <span className={item.isClosed ? "text-slate-400" : "text-emerald-700"}>
+                      {item.isClosed ? "Tutup" : "Buka"}
+                    </span>
                   </label>
                 </div>
 
                 {item.isClosed ? (
-                  <div className="rounded-lg bg-amber-50/80 border border-amber-200/70 px-3.5 py-2 text-xs font-medium text-amber-700">
-                    Tidak menerima booking pada hari {DAY_NAMES_ID[dayNum]}
+                  <div className="rounded-lg bg-slate-100/80 border border-slate-200/60 px-3.5 py-2 text-xs font-medium text-slate-500">
+                    Tidak menerima reservasi pada hari {DAY_NAMES_ID[dayNum]}
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                       <Label
                         htmlFor={`open-${dayNum}`}
-                        className="text-xs text-slate-500"
+                        className="text-xs font-medium text-slate-500"
                       >
                         Buka
                       </Label>
@@ -186,14 +190,14 @@ export default function ScheduleManagementPage() {
                         onChange={(e) =>
                           updateDayField(dayNum, { openTime: e.target.value })
                         }
-                        className="w-32 font-mono text-xs sm:text-sm"
+                        className="w-32 font-mono text-xs sm:text-sm h-9"
                       />
                     </div>
-                    <span className="text-slate-400">–</span>
+                    <span className="text-slate-300 font-medium">–</span>
                     <div className="flex items-center gap-2">
                       <Label
                         htmlFor={`close-${dayNum}`}
-                        className="text-xs text-slate-500"
+                        className="text-xs font-medium text-slate-500"
                       >
                         Tutup
                       </Label>
@@ -204,7 +208,7 @@ export default function ScheduleManagementPage() {
                         onChange={(e) =>
                           updateDayField(dayNum, { closeTime: e.target.value })
                         }
-                        className="w-32 font-mono text-xs sm:text-sm"
+                        className="w-32 font-mono text-xs sm:text-sm h-9"
                       />
                     </div>
                   </div>
@@ -219,15 +223,17 @@ export default function ScheduleManagementPage() {
         title="Jeda Waktu Antar-Reservasi (Buffer Time)"
         description="Tambahkan jeda otomatis setelah setiap layanan selesai agar staf memiliki waktu persiapan."
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <Label htmlFor="buffer-minutes">Durasi Buffer Time (Menit)</Label>
-            <p className="text-xs text-slate-500">
-              Jika diisi 10 menit, layanan 60 menit pada pukul 09:00 akan
-              memblokir jadwal staf hingga 10:10.
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1 max-w-xl">
+            <Label htmlFor="buffer-minutes" className="text-sm font-semibold text-slate-900">
+              Durasi Buffer Time (Menit)
+            </Label>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Jika diatur 10 menit, layanan berdurasi 60 menit pada pukul 09:00 akan
+              memblokir jadwal staf hingga pukul 10:10 WIB untuk mencegah overlap.
             </p>
           </div>
-          <div className="w-full sm:w-40">
+          <div className="w-full sm:w-44">
             <Input
               id="buffer-minutes"
               type="number"
@@ -236,7 +242,7 @@ export default function ScheduleManagementPage() {
               step={5}
               value={bufferMinutes}
               onChange={(e) => setBufferMinutes(Number(e.target.value) || 0)}
-              className="font-mono"
+              className="font-mono h-10"
             />
           </div>
         </div>

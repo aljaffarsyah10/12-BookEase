@@ -28,17 +28,17 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Pengaturan Akun (Settings)"
-        description="Kelola profil akun pemilik bisnis dan sesi autentikasi Anda."
+        title="Pengaturan Akun"
+        description="Kelola profil akun pemilik bisnis dan konfigurasi keamanan workspace."
         actions={
           <Button
             type="button"
             variant="outline"
             onClick={handleLogout}
-            className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+            className="gap-2 text-rose-600 border-rose-200/80 hover:bg-rose-50 hover:text-rose-700 h-9"
           >
             <LogOut className="size-4" />
-            <span>Keluar (Logout)</span>
+            <span>Keluar Sesi</span>
           </Button>
         }
       />
@@ -46,7 +46,7 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SectionCard
           title="Profil Pemilik Bisnis"
-          description="Identitas akun yang memiliki akses penuh ke workspace bisnis."
+          description="Identitas akun yang memiliki hak akses penuh ke workspace bisnis ini."
         >
           <form onSubmit={handleSaveAccount} className="space-y-4">
             <div className="space-y-1.5">
@@ -60,15 +60,15 @@ export default function SettingsPage() {
 
             <div className="space-y-1.5">
               <Label htmlFor="owner-email">Email Terdaftar</Label>
-              <Input id="owner-email" value={ownerEmail} disabled />
+              <Input id="owner-email" value={ownerEmail} disabled className="bg-slate-50 text-slate-500" />
               <p className="text-xs text-slate-500">
-                Email digunakan sebagai kredensial utama login BookEase.
+                Email digunakan sebagai kredensial utama autentikasi BookEase.
               </p>
             </div>
 
             <Button
               type="submit"
-              className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
             >
               <User className="size-4" />
               <span>Simpan Profil Akun</span>
@@ -77,21 +77,27 @@ export default function SettingsPage() {
         </SectionCard>
 
         <SectionCard
-          title="Keamanan & Isolasi Data"
-          description="Status perlindungan workspace bisnis Anda."
+          title="Keamanan & Proteksi Workspace"
+          description="Status isolasi multi-tenant data bisnis Anda."
         >
-          <div className="space-y-3 text-sm text-slate-600">
-            <div className="flex items-start gap-3 rounded-lg bg-emerald-50/70 border border-emerald-200 p-3.5 text-emerald-800">
+          <div className="space-y-4 text-sm text-slate-600">
+            <div className="flex items-start gap-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200/80 p-4 text-emerald-900">
               <ShieldCheck className="size-5 text-emerald-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-xs sm:text-sm">
-                  Multi-Tenant Workspace Isolation
+                <p className="font-bold text-sm">
+                  Multi-Tenant Workspace Isolation Active
                 </p>
-                <p className="mt-0.5 text-xs">
-                  Seluruh layanan, staf, jadwal, dan data pelanggan terisolasi
-                  khusus untuk workspace bisnis Anda.
+                <p className="mt-1 text-xs text-emerald-800/90 leading-relaxed">
+                  Seluruh katalog layanan, staf penyedia, jam operasional, dan data reservasi pelanggan terisolasi secara kriptografis khusus untuk workspace bisnis Anda.
                 </p>
               </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 space-y-1.5 text-xs text-slate-600">
+              <p className="font-semibold text-slate-900">Enkripsi Data & Token</p>
+              <p className="leading-relaxed">
+                Setiap booking dilengkapi HMAC-SHA256 cancellation token yang tahan terhadap upaya tampering atau IDOR antar pelanggan.
+              </p>
             </div>
           </div>
         </SectionCard>

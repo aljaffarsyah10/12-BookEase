@@ -139,7 +139,7 @@ export default function BusinessProfilePage() {
               <Label htmlFor="category">Kategori Bisnis</Label>
               <select
                 id="category"
-                className="flex h-9 w-full rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                className="flex h-10 w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-1 text-sm font-medium text-slate-800 shadow-2xs transition-colors focus-visible:outline-none focus-visible:border-indigo-500 focus-visible:ring-3 focus-visible:ring-indigo-500/10"
                 {...register("category")}
               >
                 {BUSINESS_CATEGORIES.map((cat) => (
@@ -149,7 +149,7 @@ export default function BusinessProfilePage() {
                 ))}
               </select>
               {errors.category && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-rose-600 font-medium">
                   {errors.category.message}
                 </p>
               )}
@@ -164,7 +164,7 @@ export default function BusinessProfilePage() {
                 {...register("phone")}
               />
               {errors.phone && (
-                <p className="text-xs text-red-600">{errors.phone.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.phone.message}</p>
               )}
             </div>
 
@@ -177,7 +177,7 @@ export default function BusinessProfilePage() {
                 {...register("address")}
               />
               {errors.address && (
-                <p className="text-xs text-red-600">{errors.address.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.address.message}</p>
               )}
             </div>
 
@@ -187,11 +187,11 @@ export default function BusinessProfilePage() {
                 id="description"
                 rows={3}
                 placeholder="Jelaskan keunggulan layanan dan suasana tempat bisnis Anda..."
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                className="w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-indigo-500/10 focus-visible:border-indigo-500"
                 {...register("description")}
               />
               {errors.description && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-rose-600 font-medium">
                   {errors.description.message}
                 </p>
               )}
@@ -207,7 +207,7 @@ export default function BusinessProfilePage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
               >
                 {isSubmitting ? (
                   <Loader2 className="size-4 animate-spin" />
@@ -226,7 +226,7 @@ export default function BusinessProfilePage() {
               <Label htmlFor="timezone">Zona Waktu Operasional Bisnis</Label>
               <select
                 id="timezone"
-                className="flex h-9 w-full rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                className="flex h-10 w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-1 text-sm font-medium text-slate-800 shadow-2xs transition-colors focus-visible:outline-none focus-visible:border-indigo-500 focus-visible:ring-3 focus-visible:ring-indigo-500/10"
                 {...register("timezone")}
               >
                 <option value="Asia/Jakarta">Asia/Jakarta (WIB - UTC+7)</option>
