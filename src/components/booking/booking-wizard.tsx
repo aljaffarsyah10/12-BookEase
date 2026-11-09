@@ -211,7 +211,7 @@ export function BookingWizard({
   return (
     <div className="space-y-6">
       {/* Stepper Indicator */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {STEPS.map((s) => {
           const isCurrent = step === s.id;
           const isCompleted = step > s.id;
@@ -224,27 +224,27 @@ export function BookingWizard({
               }}
               disabled={s.id > step}
               className={cn(
-                "flex items-center gap-2.5 rounded-xl border p-3 text-left transition-all",
+                "flex items-center gap-2.5 rounded-xl border p-3.5 text-left transition-all duration-150",
                 isCurrent
-                  ? "border-indigo-600 bg-indigo-50/70 text-indigo-900 ring-1 ring-indigo-600"
+                  ? "border-indigo-600 bg-indigo-50/60 text-indigo-950 ring-2 ring-indigo-500/10 shadow-2xs"
                   : isCompleted
-                    ? "border-emerald-200 bg-white text-slate-800 hover:bg-slate-50 cursor-pointer"
-                    : "border-slate-200 bg-white/60 text-slate-400 cursor-not-allowed"
+                    ? "border-emerald-200/90 bg-white text-slate-800 hover:bg-slate-50 cursor-pointer shadow-2xs"
+                    : "border-slate-200/70 bg-white/50 text-slate-400 cursor-not-allowed"
               )}
             >
               <span
                 className={cn(
-                  "flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                  "flex size-6.5 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all",
                   isCurrent
                     ? "bg-indigo-600 text-white"
                     : isCompleted
                       ? "bg-emerald-600 text-white"
-                      : "bg-slate-100 text-slate-500"
+                      : "bg-slate-100 text-slate-400"
                 )}
               >
                 {isCompleted ? <Check className="size-3.5" /> : s.id}
               </span>
-              <span className="truncate text-xs sm:text-sm font-semibold">
+              <span className="truncate text-xs sm:text-sm font-semibold tracking-tight">
                 {s.title}
               </span>
             </button>
@@ -287,28 +287,28 @@ export function BookingWizard({
                         setSelectedStaffId("any");
                       }}
                       className={cn(
-                        "w-full rounded-xl border p-4 text-left transition-all",
+                        "w-full rounded-xl border p-4.5 text-left transition-all duration-150 cursor-pointer shadow-2xs",
                         isSelected
-                          ? "border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-600"
-                          : "border-slate-200 bg-white hover:border-indigo-300"
+                          ? "border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-500/10 shadow-xs"
+                          : "border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                       )}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-1">
-                          <p className="text-base font-semibold text-slate-900">
+                          <p className="text-base font-bold text-slate-900 tracking-tight">
                             {srv.name}
                           </p>
-                          <p className="text-xs sm:text-sm text-slate-600">
+                          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                             {srv.description}
                           </p>
                         </div>
-                        <span className="shrink-0 text-base font-bold text-indigo-600">
+                        <span className="shrink-0 text-base font-bold text-indigo-600 bg-indigo-50/80 px-2.5 py-1 rounded-md">
                           {formatRupiah(srv.price)}
                         </span>
                       </div>
-                      <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                      <div className="mt-3.5 flex items-center gap-2 text-xs font-medium text-slate-500 border-t border-slate-100/80 pt-2.5">
                         <Clock className="size-3.5 text-indigo-600" />
-                        <span>Durasi: {formatDuration(srv.durationMinutes)}</span>
+                        <span>Estimasi Pengerjaan: {formatDuration(srv.durationMinutes)}</span>
                       </div>
                     </button>
                   );
@@ -349,22 +349,27 @@ export function BookingWizard({
                   aria-pressed={selectedStaffId === "any"}
                   onClick={() => setSelectedStaffId("any")}
                   className={cn(
-                    "w-full rounded-xl border p-4 text-left transition-all",
+                    "w-full rounded-xl border p-4 text-left transition-all duration-150 cursor-pointer shadow-2xs",
                     selectedStaffId === "any"
-                      ? "border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-600"
-                      : "border-slate-200 bg-white hover:border-indigo-300"
+                      ? "border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-500/10 shadow-xs"
+                      : "border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                   )}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-indigo-100/80 text-indigo-700">
                       <Users className="size-5" />
                     </div>
                     <div>
-                      <p className="text-sm sm:text-base font-semibold text-slate-900">
-                        Siapa Saja yang Tersedia (Any Available)
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        Direkomendasikan — menampilkan pilihan jam paling banyak
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                          Siapa Saja yang Tersedia (Any Available)
+                        </p>
+                        <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                          Rekomendasi
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Menampilkan pilihan jam paling fleksibel dari seluruh staf aktif
                       </p>
                     </div>
                   </div>
@@ -379,26 +384,27 @@ export function BookingWizard({
                       aria-pressed={isSelected}
                       onClick={() => setSelectedStaffId(st.id)}
                       className={cn(
-                        "w-full rounded-xl border p-4 text-left transition-all",
+                        "w-full rounded-xl border p-4 text-left transition-all duration-150 cursor-pointer shadow-2xs",
                         isSelected
-                          ? "border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-600"
-                          : "border-slate-200 bg-white hover:border-indigo-300"
+                          ? "border-indigo-600 bg-indigo-50/40 ring-2 ring-indigo-500/10 shadow-xs"
+                          : "border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                       )}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-700 font-semibold text-xs">
+                      <div className="flex items-center gap-3.5">
+                        <div className="flex size-11 items-center justify-center rounded-xl bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200/60">
                           {st.name
                             .split(" ")
                             .map((n) => n[0])
                             .join("")
-                            .slice(0, 2)}
+                            .slice(0, 2)
+                            .toUpperCase()}
                         </div>
                         <div>
-                          <p className="text-sm sm:text-base font-semibold text-slate-900">
+                          <p className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                             {st.name}
                           </p>
-                          <p className="text-xs text-slate-500">
-                            {st.roleOrTitle}
+                          <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                            {st.roleOrTitle || "Spesialis Layanan"}
                           </p>
                         </div>
                       </div>
@@ -438,9 +444,11 @@ export function BookingWizard({
             >
               <div className="space-y-6">
                 {/* Date Picker */}
-                <div className="space-y-2">
-                  <Label htmlFor="booking-date">Pilih Tanggal Kunjungan</Label>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="space-y-2.5">
+                  <Label htmlFor="booking-date" className="text-sm font-semibold text-slate-900">
+                    Pilih Tanggal Kunjungan
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                     {upcomingDates.map((dateStr) => {
                       const active = selectedDate === dateStr;
                       return (
@@ -449,13 +457,13 @@ export function BookingWizard({
                           type="button"
                           onClick={() => setSelectedDate(dateStr)}
                           className={cn(
-                            "flex flex-col items-center justify-center rounded-lg border px-3 py-2.5 text-xs transition-all min-h-11",
+                            "flex flex-col items-center justify-center rounded-xl border px-3 py-3 text-xs transition-all duration-150 min-h-12 cursor-pointer shadow-2xs",
                             active
-                              ? "border-indigo-600 bg-indigo-600 text-white font-semibold shadow-xs"
-                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                              ? "border-indigo-600 bg-indigo-600 text-white font-bold shadow-xs"
+                              : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
                           )}
                         >
-                          <span>{formatDateId(dateStr)}</span>
+                          <span className="font-semibold text-xs tracking-tight">{formatDateId(dateStr)}</span>
                         </button>
                       );
                     })}
@@ -463,23 +471,25 @@ export function BookingWizard({
                 </div>
 
                 {/* Available Time Slots */}
-                <div className="space-y-2.5">
-                  <Label>Pilih Slot Waktu Tersedia</Label>
+                <div className="space-y-3">
+                  <Label className="text-sm font-semibold text-slate-900">
+                    Pilih Jam Kunjungan Tersedia
+                  </Label>
                   {isLoadingSlots ? (
                     <LoadingState variant="slots" />
                   ) : slotError ? (
-                    <p className="text-xs text-red-600">{slotError}</p>
+                    <p className="text-xs text-rose-600 font-medium">{slotError}</p>
                   ) : isDayClosed ? (
-                    <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-center text-xs sm:text-sm text-amber-800">
+                    <div className="rounded-xl border border-amber-200/90 bg-amber-50/70 p-4 text-center text-xs sm:text-sm font-medium text-amber-800">
                       Bisnis tutup (libur operasional) pada tanggal{" "}
-                      <span className="font-semibold">
+                      <span className="font-bold">
                         {formatDateId(selectedDate)}
                       </span>
                       . Silakan pilih tanggal lain.
                     </div>
                   ) : slots.length === 0 ? (
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-center text-xs sm:text-sm text-slate-600">
-                      Seluruh slot waktu pada tanggal ini sudah penuh. Silakan
+                    <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 p-5 text-center text-xs sm:text-sm font-medium text-slate-600">
+                      Seluruh slot waktu pada tanggal ini sudah terisi penuh. Silakan
                       pilih tanggal atau staf lain.
                     </div>
                   ) : (
@@ -493,10 +503,10 @@ export function BookingWizard({
                             aria-pressed={isPicked}
                             onClick={() => setSelectedTime(slot.time)}
                             className={cn(
-                              "flex min-h-11 items-center justify-center rounded-lg border font-mono text-xs sm:text-sm font-semibold transition-all",
+                              "flex min-h-11 items-center justify-center rounded-xl border font-mono text-xs sm:text-sm font-bold transition-all duration-150 cursor-pointer shadow-2xs",
                               isPicked
                                 ? "border-indigo-600 bg-indigo-600 text-white shadow-xs"
-                                : "border-slate-200 bg-white text-slate-800 hover:border-indigo-300 hover:bg-indigo-50/40"
+                                : "border-slate-200/90 bg-white text-slate-800 hover:border-indigo-400 hover:bg-indigo-50/30"
                             )}
                           >
                             {slot.time}
@@ -579,11 +589,11 @@ export function BookingWizard({
                     id="customerNotes"
                     rows={2}
                     placeholder="Preferensi khusus atau informasi tambahan untuk staf..."
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                    className="w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-indigo-500/10 focus-visible:border-indigo-500"
                     {...register("customerNotes")}
                   />
                   {errors.customerNotes && (
-                    <p className="text-xs text-red-600">
+                    <p className="text-xs text-rose-600 font-medium">
                       {errors.customerNotes.message}
                     </p>
                   )}
@@ -594,7 +604,7 @@ export function BookingWizard({
                     type="button"
                     variant="outline"
                     onClick={() => setStep(3)}
-                    className="gap-1.5"
+                    className="gap-1.5 h-10 text-xs sm:text-sm"
                   >
                     <ArrowLeft className="size-4" />
                     <span>Ubah Jadwal</span>
@@ -603,7 +613,7 @@ export function BookingWizard({
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="h-11 gap-2 bg-indigo-600 hover:bg-indigo-700 px-6 text-white font-semibold"
+                    className="h-11 gap-2 bg-indigo-600 hover:bg-indigo-700 px-6 text-white font-semibold shadow-2xs"
                   >
                     {isSubmitting && (
                       <Loader2 className="size-4 animate-spin" />
@@ -622,28 +632,28 @@ export function BookingWizard({
 
         {/* Right Sticky Column: Live Booking Summary */}
         <div className="lg:col-span-4">
-          <div className="lg:sticky lg:top-20">
+          <div className="lg:sticky lg:top-24">
             <SectionCard
               title="Ringkasan Reservasi"
               description={business.name}
             >
               <div className="space-y-3.5 text-sm">
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-slate-500 flex items-center gap-1.5">
-                    <Sparkles className="size-4 text-indigo-600 shrink-0" />
+                  <span className="text-slate-500 flex items-center gap-1.5 text-xs font-medium">
+                    <Sparkles className="size-3.5 text-indigo-600 shrink-0" />
                     Layanan
                   </span>
-                  <span className="font-semibold text-slate-900 text-right">
+                  <span className="font-bold text-slate-900 text-right text-xs sm:text-sm">
                     {selectedService?.name ?? "-"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-slate-500 flex items-center gap-1.5">
-                    <Clock className="size-4 text-indigo-600 shrink-0" />
+                  <span className="text-slate-500 flex items-center gap-1.5 text-xs font-medium">
+                    <Clock className="size-3.5 text-indigo-600 shrink-0" />
                     Durasi
                   </span>
-                  <span className="font-medium text-slate-800">
+                  <span className="font-medium text-slate-800 text-xs sm:text-sm">
                     {selectedService
                       ? formatDuration(selectedService.durationMinutes)
                       : "-"}
@@ -651,11 +661,11 @@ export function BookingWizard({
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-slate-500 flex items-center gap-1.5">
-                    <UserCheck className="size-4 text-indigo-600 shrink-0" />
+                  <span className="text-slate-500 flex items-center gap-1.5 text-xs font-medium">
+                    <UserCheck className="size-3.5 text-indigo-600 shrink-0" />
                     Staf
                   </span>
-                  <span className="font-medium text-slate-800 text-right">
+                  <span className="font-medium text-slate-800 text-right text-xs sm:text-sm">
                     {selectedStaffId === "any"
                       ? "Siapa Saja yang Tersedia"
                       : selectedStaffObj?.name ?? "-"}
@@ -663,19 +673,19 @@ export function BookingWizard({
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-slate-500 flex items-center gap-1.5">
-                    <Calendar className="size-4 text-indigo-600 shrink-0" />
+                  <span className="text-slate-500 flex items-center gap-1.5 text-xs font-medium">
+                    <Calendar className="size-3.5 text-indigo-600 shrink-0" />
                     Jadwal
                   </span>
-                  <span className="font-mono text-xs font-semibold text-slate-900 text-right">
+                  <span className="font-mono text-xs font-bold text-slate-900 text-right">
                     {selectedDate ? formatDateId(selectedDate) : "-"}
                     {selectedTime ? ` • ${selectedTime} WIB` : ""}
                   </span>
                 </div>
 
-                <div className="border-t border-slate-200 pt-3 flex items-center justify-between">
-                  <span className="font-semibold text-slate-900">
-                    Estimasi Biaya
+                <div className="border-t border-slate-100 pt-3.5 flex items-center justify-between">
+                  <span className="font-bold text-slate-900 text-sm">
+                    Total Biaya
                   </span>
                   <span className="text-lg font-bold text-indigo-600">
                     {selectedService ? formatRupiah(selectedService.price) : "-"}

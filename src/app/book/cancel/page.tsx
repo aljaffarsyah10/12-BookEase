@@ -195,56 +195,55 @@ function CustomerCancellationView() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50/75 px-4 py-12">
       <div className="w-full max-w-lg">
         <SectionCard
           title="Batalkan Reservasi"
           description="Konfirmasi pembatalan reservasi janji temu Anda."
         >
           <div className="space-y-5">
-            <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3.5 flex items-start gap-3">
+            <div className="rounded-xl border border-amber-200/90 bg-amber-50/70 p-4 flex items-start gap-3.5">
               <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-amber-800 space-y-1">
-                <p className="font-semibold">
+              <div className="text-xs text-amber-900 space-y-1">
+                <p className="font-bold">
                   Apakah Anda yakin ingin membatalkan jadwal ini?
                 </p>
-                <p>
-                  Pembatalan bersifat permanen. Slot waktu yang Anda lepaskan dapat
-                  langsung diambil oleh pelanggan lain.
+                <p className="leading-relaxed">
+                  Pembatalan bersifat permanen. Slot waktu yang Anda lepaskan akan dibuka kembali untuk pelanggan lain.
                 </p>
               </div>
             </div>
 
             {/* Booking Summary Box */}
-            <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 space-y-2.5 text-xs sm:text-sm">
+            <div className="rounded-xl border border-slate-200/90 bg-slate-50/75 p-4.5 space-y-2.5 text-xs sm:text-sm">
               <div className="flex justify-between">
-                <span className="text-slate-500">Kode Referensi:</span>
+                <span className="text-slate-500 font-medium">Kode Referensi:</span>
                 <span className="font-mono font-bold text-indigo-700">
                   {booking.reference}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Nama Pelanggan:</span>
+                <span className="text-slate-500 font-medium">Nama Pelanggan:</span>
                 <span className="font-semibold text-slate-800">
                   {booking.customerName}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Layanan:</span>
+                <span className="text-slate-500 font-medium">Layanan:</span>
                 <span className="font-semibold text-slate-800">
                   {booking.serviceNameSnapshot}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Staf:</span>
+                <span className="text-slate-500 font-medium">Staf:</span>
                 <span className="font-medium text-slate-700">
                   {booking.staffName}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Jadwal Janji Temu:</span>
+                <span className="text-slate-500 font-medium">Jadwal:</span>
                 <span className="font-medium text-slate-900">
-                  {formatDateId(booking.date)} pukul {booking.time}
+                  {formatDateId(booking.date)} pukul {booking.time} WIB
                 </span>
               </div>
             </div>
@@ -260,16 +259,16 @@ function CustomerCancellationView() {
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="Contoh: Ada keperluan mendesak / jadwal bentrok"
-                  className="text-xs sm:text-sm"
+                  className="text-xs sm:text-sm h-10"
                 />
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
                 <Button
                   type="submit"
                   variant="destructive"
                   disabled={isCancelling}
-                  className="flex-1 gap-2 text-xs sm:text-sm font-semibold h-10"
+                  className="flex-1 gap-2 text-xs sm:text-sm font-semibold h-10 shadow-2xs"
                 >
                   {isCancelling && <Loader2 className="size-4 animate-spin" />}
                   <span>
@@ -280,7 +279,7 @@ function CustomerCancellationView() {
                 </Button>
                 <Link
                   href="/"
-                  className="inline-flex h-10 flex-1 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  className="inline-flex h-10 flex-1 items-center justify-center rounded-lg border border-slate-200/90 bg-white px-4 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition-colors"
                 >
                   Kembali
                 </Link>

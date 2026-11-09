@@ -58,55 +58,55 @@ export function PublicBookingClientView({ slug }: { slug: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 space-y-6">
+    <div className="min-h-screen bg-slate-50/75 py-8 sm:py-12">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 space-y-7">
         {/* Business Identity Header */}
-        <div className="rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="flex size-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-xs">
-                  <CalendarCheck className="size-5" />
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-3">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-2xs">
+                  <CalendarCheck className="size-5.5" />
                 </span>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                     {business.name}
                   </h1>
-                  <p className="text-xs font-medium text-indigo-600">
+                  <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">
                     {business.category}
                   </p>
                 </div>
               </div>
 
               {business.description && (
-                <p className="text-sm text-slate-600 max-w-2xl">
+                <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
                   {business.description}
                 </p>
               )}
 
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-slate-500 pt-1">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-slate-500 pt-1 font-medium">
                 {business.address && (
                   <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="size-4 text-slate-400" />
+                    <MapPin className="size-4 text-slate-400 shrink-0" />
                     {business.address}
                   </span>
                 )}
                 {business.phone && (
                   <span className="inline-flex items-center gap-1.5">
-                    <Phone className="size-4 text-slate-400" />
+                    <Phone className="size-4 text-slate-400 shrink-0" />
                     {business.phone}
                   </span>
                 )}
                 <span className="inline-flex items-center gap-1.5">
-                  <Clock className="size-4 text-slate-400" />
-                  Zona Waktu: {business.timezone}
+                  <Clock className="size-4 text-slate-400 shrink-0" />
+                  Zona Waktu: <strong className="text-slate-700">{business.timezone}</strong>
                 </span>
               </div>
             </div>
 
             <Badge
               variant="outline"
-              className="w-fit bg-emerald-50 text-emerald-700 border-emerald-200 shrink-0"
+              className="w-fit bg-emerald-50 text-emerald-700 border-emerald-200/80 px-3 py-1 font-semibold text-xs shrink-0 self-start"
             >
               Menerima Reservasi Online
             </Badge>
