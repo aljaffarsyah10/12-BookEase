@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Eye, Phone, User } from "lucide-react";
+import { Calendar, Eye, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,

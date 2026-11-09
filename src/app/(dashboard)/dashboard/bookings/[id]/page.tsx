@@ -8,11 +8,9 @@ import {
   Calendar,
   CheckCheck,
   CheckCircle2,
-  Clock,
   Mail,
   Phone,
   Sparkles,
-  User,
   UserX,
   XCircle,
 } from "lucide-react";

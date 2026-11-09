@@ -21,7 +21,7 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { bookingApi } from "@/features/bookings/services/booking.api";
 import { businessApi } from "@/features/business/services/business.api";
 import {
