@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="100%" height="100%">
+  <defs>
+    <linearGradient id="wizBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <filter id="wizShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1200" height="640" rx="16" fill="url(#wizBg)"/>
+
+  <!-- Top App Window Header -->
+  <g transform="translate(24, 20)">
+    <circle cx="12" cy="12" r="6" fill="#EF4444"/>
+    <circle cx="32" cy="12" r="6" fill="#F59E0B"/>
+    <circle cx="52" cy="12" r="6" fill="#10B981"/>
+    <text x="80" y="16" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500">bookease.com/book/glow-beauty-studio — Public Guest Booking</text>
+    <rect x="960" y="0" width="190" height="26" rx="6" fill="#334155" opacity="0.6"/>
+    <text x="975" y="17" fill="#10B981" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700">🔒 ZERO-FRICTION GUEST</text>
+  </g>
+
+  <!-- Public Web Page Container -->
+  <g transform="translate(48, 54)">
+    <rect width="1104" height="560" rx="12" fill="#F8FAFC"/>
+
+    <!-- Business Brand Banner -->
+    <g transform="translate(24, 20)">
+      <rect width="1056" height="80" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" filter="url(#wizShadow)"/>
+      <rect x="20" y="18" width="44" height="44" rx="10" fill="#4F46E5"/>
+      <text x="32" y="45" fill="#FFFFFF" font-size="20">📅</text>
+      <text x="76" y="38" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700">Glow Beauty Studio</text>
+      <text x="76" y="55" fill="#6366F1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">BEAUTY &amp; SALON • JAKARTA PUSAT (WIB)</text>
+      <rect x="880" y="26" width="156" height="28" rx="6" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1"/>
+      <text x="896" y="44" fill="#065F46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700">● Buka Reservasi Online</text>
+    </g>
+
+    <!-- 4-Step Progress Indicator Bar -->
+    <g transform="translate(24, 114)">
+      <!-- Step 1 Complete -->
+      <g transform="translate(0, 0)">
+        <rect width="250" height="40" rx="8" fill="#FFFFFF" stroke="#10B981" stroke-width="1.5"/>
+        <circle cx="24" cy="20" r="11" fill="#10B981"/>
+        <text x="19" y="24" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700">✓</text>
+        <text x="44" y="25" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">1. Layanan Terpilih</text>
+      </g>
+
+      <!-- Step 2 Complete -->
+      <g transform="translate(268, 0)">
+        <rect width="250" height="40" rx="8" fill="#FFFFFF" stroke="#10B981" stroke-width="1.5"/>
+        <circle cx="24" cy="20" r="11" fill="#10B981"/>
+        <text x="19" y="24" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700">✓</text>
+        <text x="44" y="25" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">2. Staf: Siti Rahma</text>
+      </g>
+
+      <!-- Step 3 Active -->
+      <g transform="translate(536, 0)">
+        <rect width="250" height="40" rx="8" fill="#EEF2FF" stroke="#4F46E5" stroke-width="2"/>
+        <circle cx="24" cy="20" r="11" fill="#4F46E5"/>
+        <text x="21" y="24" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700">3</text>
+        <text x="44" y="25" fill="#4338CA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700">3. Tanggal &amp; Jam</text>
+      </g>
+
+      <!-- Step 4 Pending -->
+      <g transform="translate(804, 0)">
+        <rect width="250" height="40" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+        <circle cx="24" cy="20" r="11" fill="#F1F5F9"/>
+        <text x="21" y="24" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700">4</text>
+        <text x="44" y="25" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500">4. Data Diri &amp; Review</text>
+      </g>
+    </g>
+
+    <!-- Main 2-Column Wizard Interaction -->
+    <g transform="translate(24, 170)">
+      <!-- Left Interaction Column (Date & Slots) -->
+      <g>
+        <rect width="680" height="365" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" filter="url(#wizShadow)"/>
+        <text x="24" y="34" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="700">Pilih Tanggal &amp; Jam Kunjungan</text>
+        <text x="24" y="52" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Slot waktu otomatis terkunci secara real-time dan bebas dari double-booking.</text>
+
+        <!-- Date Selector Row -->
+        <g transform="translate(24, 72)">
+          <text x="0" y="0" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">PILIH TANGGAL</text>
+          
+          <!-- Date 1 Active -->
+          <g transform="translate(0, 10)">
+            <rect width="145" height="44" rx="8" fill="#4F46E5"/>
+            <text x="20" y="27" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700">Sen, 9 Nov 2026</text>
+          </g>
+          <!-- Date 2 -->
+          <g transform="translate(155, 10)">
+            <rect width="145" height="44" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <text x="20" y="27" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500">Sel, 10 Nov 2026</text>
+          </g>
+          <!-- Date 3 -->
+          <g transform="translate(310, 10)">
+            <rect width="145" height="44" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <text x="20" y="27" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500">Rab, 11 Nov 2026</text>
+          </g>
+          <!-- Date 4 -->
+          <g transform="translate(465, 10)">
+            <rect width="145" height="44" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <text x="20" y="27" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500">Kam, 12 Nov 2026</text>
+          </g>
+        </g>
+
+        <!-- Time Slots Grid -->
+        <g transform="translate(24, 158)">
+          <text x="0" y="0" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">JAM KUNJUNGAN TERSEDIA (WIB)</text>
+          
+          <!-- Slot 1 -->
+          <rect x="0" y="10" width="145" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="50" y="35" fill="#334155" font-family="monospace" font-size="13" font-weight="600">09:00</text>
+
+          <!-- Slot 2 Active Picked -->
+          <rect x="155" y="10" width="145" height="40" rx="8" fill="#4F46E5"/>
+          <text x="205" y="35" fill="#FFFFFF" font-family="monospace" font-size="13" font-weight="700">10:00 ✓</text>
+
+          <!-- Slot 3 -->
+          <rect x="310" y="10" width="145" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="360" y="35" fill="#334155" font-family="monospace" font-size="13" font-weight="600">11:00</text>
+
+          <!-- Slot 4 -->
+          <rect x="465" y="10" width="145" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="515" y="35" fill="#334155" font-family="monospace" font-size="13" font-weight="600">13:00</text>
+
+          <!-- Slot 5 -->
+          <rect x="0" y="60" width="145" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="50" y="85" fill="#334155" font-family="monospace" font-size="13" font-weight="600">14:00</text>
+
+          <!-- Slot 6 -->
+          <rect x="155" y="60" width="145" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="205" y="85" fill="#334155" font-family="monospace" font-size="13" font-weight="600">15:30</text>
+
+          <!-- Slot 7 -->
+          <rect x="310" y="60" width="145" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="360" y="85" fill="#334155" font-family="monospace" font-size="13" font-weight="600">17:00</text>
+
+          <!-- Slot 8 -->
+          <rect x="465" y="60" width="145" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="515" y="85" fill="#334155" font-family="monospace" font-size="13" font-weight="600">18:30</text>
+        </g>
+
+        <!-- Bottom Navigation -->
+        <g transform="translate(24, 305)">
+          <rect width="110" height="38" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+          <text x="24" y="24" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">← Kembali</text>
+
+          <rect x="480" y="0" width="150" height="38" rx="8" fill="#4F46E5"/>
+          <text x="500" y="24" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">Lanjut Data Diri →</text>
+        </g>
+      </g>
+
+      <!-- Right Summary Sticky Column -->
+      <g transform="translate(705, 0)">
+        <rect width="350" height="365" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" filter="url(#wizShadow)"/>
+        <text x="20" y="34" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="700">Ringkasan Reservasi</text>
+        <text x="20" y="52" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">Glow Beauty Studio</text>
+
+        <line x1="20" y1="70" x2="330" y2="70" stroke="#F1F5F9" stroke-width="1"/>
+
+        <!-- Service Item -->
+        <g transform="translate(20, 85)">
+          <text x="0" y="16" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Layanan</text>
+          <text x="310" y="16" text-anchor="end" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700">Hydrating Facial</text>
+        </g>
+
+        <!-- Duration Item -->
+        <g transform="translate(20, 125)">
+          <text x="0" y="16" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Durasi Pengerjaan</text>
+          <text x="310" y="16" text-anchor="end" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">60 Menit</text>
+        </g>
+
+        <!-- Staff Item -->
+        <g transform="translate(20, 165)">
+          <text x="0" y="16" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Staf Penyedia</text>
+          <text x="310" y="16" text-anchor="end" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">Siti Rahma</text>
+        </g>
+
+        <!-- Schedule Item -->
+        <g transform="translate(20, 205)">
+          <text x="0" y="16" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12">Waktu Janji Temu</text>
+          <text x="310" y="16" text-anchor="end" fill="#4F46E5" font-family="monospace" font-size="12" font-weight="700">9 Nov 2026 • 10:00 WIB</text>
+        </g>
+
+        <line x1="20" y1="245" x2="330" y2="245" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Total Price -->
+        <g transform="translate(20, 275)">
+          <text x="0" y="20" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700">Estimasi Biaya</text>
+          <text x="310" y="20" text-anchor="end" fill="#4F46E5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800">Rp 250.000</text>
+        </g>
+
+        <!-- Notice -->
+        <rect x="20" y="315" width="310" height="32" rx="6" fill="#F8FAFC"/>
+        <text x="32" y="335" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10">✓ Pembayaran dilakukan langsung di tempat layanan.</text>
+      </g>
+    </g>
+  </g>
+</svg>
