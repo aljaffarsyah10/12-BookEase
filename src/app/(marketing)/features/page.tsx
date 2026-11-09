@@ -51,16 +51,16 @@ const FEATURE_SECTIONS = [
 
 export default function FeaturesPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-10">
+    <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 space-y-10">
       <PageHeader
         title="Fitur Lengkap BookEase"
         description="Dirancang khusus untuk menyederhanakan penjadwalan janji temu dan operasional harian bisnis jasa Anda."
         actions={
           <Link
             href="/register"
-            className="inline-flex h-10 items-center justify-center rounded-lg bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700"
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-indigo-600 px-5 text-xs sm:text-sm font-semibold text-white shadow-2xs hover:bg-indigo-700 transition-colors"
           >
-            Coba Gratis
+            Coba Gratis Sekarang
           </Link>
         }
       />
@@ -69,9 +69,9 @@ export default function FeaturesPage() {
         {FEATURE_SECTIONS.map((item) => {
           const Icon = item.icon;
           return (
-            <SectionCard key={item.title} title={item.title}>
-              <div className="space-y-3">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+            <SectionCard key={item.title} title={item.title} className="hover:border-slate-300 transition-all shadow-2xs">
+              <div className="space-y-3 pt-1">
+                <div className="flex size-10.5 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100/80">
                   <Icon className="size-5" />
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed">

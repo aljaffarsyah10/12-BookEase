@@ -55,7 +55,7 @@ export default function LoginPage() {
       title="Masuk ke Akun Bisnis"
       description="Kelola jadwal, layanan, staf, dan reservasi pelanggan Anda."
     >
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4.5 pt-1">
         <div className="space-y-1.5">
           <Label htmlFor="email">Alamat Email</Label>
           <Input
@@ -64,15 +64,16 @@ export default function LoginPage() {
             placeholder="owner@bisnisanda.id"
             autoComplete="email"
             aria-invalid={!!errors.email}
+            className="h-10.5"
             {...register("email")}
           />
           {errors.email && (
-            <p className="text-xs text-red-600">{errors.email.message}</p>
+            <p className="text-xs text-rose-600 font-medium">{errors.email.message}</p>
           )}
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Password Akun</Label>
           <div className="relative">
             <Input
               id="password"
@@ -80,7 +81,7 @@ export default function LoginPage() {
               placeholder="••••••••"
               autoComplete="current-password"
               aria-invalid={!!errors.password}
-              className="pr-10"
+              className="h-10.5 pr-10"
               {...register("password")}
             />
             <button
@@ -89,7 +90,7 @@ export default function LoginPage() {
               aria-label={
                 showPassword ? "Sembunyikan password" : "Tampilkan password"
               }
-              className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 hover:text-slate-600"
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 hover:text-slate-600 cursor-pointer"
             >
               {showPassword ? (
                 <EyeOff className="size-4" />
@@ -99,14 +100,14 @@ export default function LoginPage() {
             </button>
           </div>
           {errors.password && (
-            <p className="text-xs text-red-600">{errors.password.message}</p>
+            <p className="text-xs text-rose-600 font-medium">{errors.password.message}</p>
           )}
         </div>
 
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="h-10 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-2"
+          className="h-10.5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-2 shadow-2xs mt-2"
         >
           {isSubmitting && <Loader2 className="size-4 animate-spin" />}
           <span>
@@ -115,13 +116,13 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <p className="mt-5 text-center text-xs text-slate-500">
+      <p className="mt-5 text-center text-xs text-slate-500 font-medium">
         Belum memiliki akun bisnis?{" "}
         <Link
           href="/register"
-          className="font-semibold text-indigo-600 hover:bg-indigo-50 hover:underline"
+          className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
         >
-          Daftar sekarang
+          Daftar Sekarang
         </Link>
       </p>
     </SectionCard>

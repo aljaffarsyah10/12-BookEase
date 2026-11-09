@@ -92,17 +92,17 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white py-16 sm:py-24">
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white py-16 sm:py-24 bg-[radial-gradient(ellipse_80%_80%_at_50%_-10%,rgba(79,70,229,0.07),rgba(255,255,255,0))]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div className="lg:col-span-7 text-center lg:text-left">
               <Badge
                 variant="outline"
-                className="mb-4 rounded-full border-indigo-200 bg-indigo-50 px-3.5 py-1 text-xs font-medium text-indigo-700"
+                className="mb-4 rounded-full border-indigo-200/80 bg-indigo-50/80 px-3.5 py-1 text-xs font-semibold text-indigo-700"
               >
                 Platform Reservasi Online Bisnis Jasa
               </Badge>
-              <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 leading-tight">
+              <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-slate-900 leading-[1.15]">
                 Terima Reservasi Pelanggan 24/7 Tanpa Ribet Chat Manual
               </h1>
               <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
@@ -110,32 +110,32 @@ export default function HomePage() {
                 konsultan, dan berbagai bisnis jasa mengelola jadwal layanan,
                 ketersediaan staf, dan reservasi pelanggan dalam satu tempat.
               </p>
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5">
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
                 <Link
                   href="/register"
-                  className="inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-indigo-700"
+                  className="inline-flex h-11.5 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 text-sm font-semibold text-white shadow-xs transition-all hover:bg-indigo-700 hover:shadow-sm"
                 >
                   <span>Buat Halaman Booking Gratis</span>
                   <ArrowRight className="size-4" />
                 </Link>
                 <Link
                   href="/book/glow-beauty-studio"
-                  className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-lg border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
+                  className="inline-flex h-11.5 w-full sm:w-auto items-center justify-center rounded-xl border border-slate-200/90 bg-white px-6 text-sm font-semibold text-slate-800 shadow-2xs transition-all hover:bg-slate-50"
                 >
                   Coba Demo Booking Pelanggan
                 </Link>
               </div>
-              <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-xs text-slate-500">
+              <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-xs font-medium text-slate-500">
                 <span className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="size-4 text-emerald-600" />
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   Tanpa akun bagi pelanggan
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="size-4 text-emerald-600" />
-                  Anti bentrok jadwal (Double-Booking)
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+                  Anti bentrok jadwal otomatis
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="size-4 text-emerald-600" />
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   Dukungan WIB, WITA, WIT
                 </span>
               </div>
@@ -143,58 +143,59 @@ export default function HomePage() {
 
             {/* Interactive Preview Card */}
             <div className="lg:col-span-5">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-5 sm:p-6 shadow-sm">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+              <div className="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-5 sm:p-6 shadow-sm">
+                <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
-                      Contoh Halaman Publik
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-indigo-600">
+                      Pratinjau Halaman Publik
                     </p>
-                    <h2 className="text-lg font-bold text-slate-900">
+                    <h2 className="text-lg font-bold text-slate-900 tracking-tight">
                       Glow Beauty Studio
                     </h2>
                   </div>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 border border-emerald-200">
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200/80">
                     Buka Hari Ini
                   </span>
                 </div>
 
                 <div className="mt-4 space-y-3">
-                  <div className="rounded-xl border border-indigo-600 bg-indigo-50/50 p-3.5">
+                  <div className="rounded-xl border border-indigo-600/90 bg-indigo-50/50 p-4 shadow-2xs">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-slate-900">
+                      <p className="text-sm font-bold text-slate-900">
                         Signature Hydrating Facial
                       </p>
                       <span className="text-sm font-bold text-indigo-700">
                         Rp 250.000
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-600 font-medium">
                       60 menit • Staf: Siti Rahma
                     </p>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 pt-1">
-                    <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-xs font-mono font-medium text-slate-700">
+                    <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-xs font-mono font-medium text-slate-700">
                       09:00
                     </span>
-                    <span className="flex h-9 items-center justify-center rounded-lg bg-indigo-600 text-xs font-mono font-semibold text-white shadow-xs">
+                    <span className="flex h-9 items-center justify-center rounded-lg bg-indigo-600 text-xs font-mono font-semibold text-white shadow-2xs">
                       10:00
                     </span>
-                    <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-xs font-mono font-medium text-slate-700">
+                    <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-xs font-mono font-medium text-slate-700">
                       11:00
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-slate-200 flex items-center justify-between">
+                <div className="mt-5 pt-4 border-t border-slate-200/80 flex items-center justify-between">
                   <span className="text-xs text-slate-500 font-mono">
                     bookease.com/book/glow-beauty-studio
                   </span>
                   <Link
                     href="/book/glow-beauty-studio"
-                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                    className="text-xs font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1"
                   >
-                    Buka Halaman →
+                    <span>Buka Halaman</span>
+                    <span>→</span>
                   </Link>
                 </div>
               </div>

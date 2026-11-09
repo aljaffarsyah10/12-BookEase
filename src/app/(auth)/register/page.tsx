@@ -112,11 +112,12 @@ export default function RegisterPage() {
             aria-invalid={!!errors.businessSlug}
             {...register("businessSlug")}
           />
-          <p className="text-[11px] text-slate-500 font-mono">
-            Pratinjau: bookease.com/book/{watchedSlug || "nama-bisnis"}
-          </p>
+          <div className="rounded-md bg-slate-50 border border-slate-200/60 px-2.5 py-1 text-[11px] text-slate-600 font-mono flex items-center gap-1">
+            <span className="text-slate-400">Pratinjau:</span>
+            <span className="text-indigo-600 font-semibold">bookease.com/book/{watchedSlug || "nama-bisnis"}</span>
+          </div>
           {errors.businessSlug && (
-            <p className="text-xs text-red-600">
+            <p className="text-xs text-rose-600 font-medium">
               {errors.businessSlug.message}
             </p>
           )}
@@ -189,7 +190,7 @@ export default function RegisterPage() {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="h-10 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-2"
+          className="h-10.5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold gap-2 shadow-2xs mt-2"
         >
           {isSubmitting && <Loader2 className="size-4 animate-spin" />}
           <span>
@@ -200,11 +201,11 @@ export default function RegisterPage() {
         </Button>
       </form>
 
-      <p className="mt-5 text-center text-xs text-slate-500">
+      <p className="mt-5 text-center text-xs text-slate-500 font-medium">
         Sudah memiliki akun?{" "}
         <Link
           href="/login"
-          className="font-semibold text-indigo-600 hover:text-indigo-700"
+          className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
         >
           Masuk di sini
         </Link>
