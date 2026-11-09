@@ -31,20 +31,20 @@ export function SectionCard({
   return (
     <Card
       className={cn(
-        "rounded-xl border border-slate-200/80 bg-white shadow-xs",
+        "rounded-xl border border-slate-200/80 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900",
         className
       )}
     >
       {(title || description || headerAction) && (
-        <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-slate-100 pb-4">
+        <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-slate-100 p-5 sm:p-6 dark:border-slate-800">
           <div className="space-y-1">
             {title && (
-              <CardTitle className="text-base sm:text-lg font-semibold text-slate-900">
+              <CardTitle className="text-base sm:text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
                 {title}
               </CardTitle>
             )}
             {description && (
-              <CardDescription className="text-sm text-slate-500">
+              <CardDescription className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                 {description}
               </CardDescription>
             )}
@@ -56,11 +56,10 @@ export function SectionCard({
         {children}
       </CardContent>
       {footer && (
-        <CardFooter className="border-t border-slate-100 bg-slate-50/50 px-5 py-3.5 sm:px-6">
+        <CardFooter className="border-t border-slate-100 p-4 sm:p-5 bg-slate-50/50 rounded-b-xl dark:border-slate-800 dark:bg-slate-950/40">
           {footer}
         </CardFooter>
       )}
     </Card>
   );
 }
-
