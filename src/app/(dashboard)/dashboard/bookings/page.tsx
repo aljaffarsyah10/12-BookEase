@@ -137,16 +137,16 @@ export default function BookingsManagementPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Daftar Reservasi (Bookings)"
+        title="Daftar Reservasi"
         description="Kelola seluruh reservasi pelanggan, filter jadwal harian, dan perbarui status kehadiran."
         actions={
-          <div className="flex items-center rounded-lg border border-slate-200 bg-white p-1 shadow-2xs">
+          <div className="inline-flex items-center rounded-lg border border-slate-200/90 bg-slate-100/80 p-1 shadow-2xs">
             <button
               type="button"
               onClick={() => setViewMode("table")}
-              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-150 cursor-pointer ${
                 viewMode === "table"
-                  ? "bg-indigo-600 text-white shadow-xs"
+                  ? "bg-white text-slate-900 shadow-2xs font-semibold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -156,9 +156,9 @@ export default function BookingsManagementPage() {
             <button
               type="button"
               onClick={() => setViewMode("calendar")}
-              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-150 cursor-pointer ${
                 viewMode === "calendar"
-                  ? "bg-indigo-600 text-white shadow-xs"
+                  ? "bg-white text-slate-900 shadow-2xs font-semibold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -173,7 +173,7 @@ export default function BookingsManagementPage() {
       <SectionCard contentClassName="p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
           <div className="relative sm:col-span-5">
-            <Search className="pointer-events-none absolute top-2.5 left-3 size-4 text-slate-400" />
+            <Search className="pointer-events-none absolute top-3 left-3.5 size-4 text-slate-400" />
             <Input
               type="search"
               value={search}
@@ -183,7 +183,7 @@ export default function BookingsManagementPage() {
                 setPage(1);
               }}
               placeholder="Cari nama, email, telepon, atau ref BK-..."
-              className="pl-9"
+              className="pl-10 h-10 text-sm"
             />
           </div>
 
@@ -196,10 +196,10 @@ export default function BookingsManagementPage() {
                 setStatusFilter(e.target.value as BookingStatus | "ALL");
                 setPage(1);
               }}
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-500 focus:outline-none"
+              className="h-10 w-full rounded-lg border border-slate-200/90 bg-white px-3.5 text-xs sm:text-sm font-medium text-slate-800 shadow-2xs transition-colors focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/10 focus:outline-none"
             >
               <option value="ALL">Semua Status</option>
-              <option value="PENDING">Menunggu Konfirmasi (PENDING)</option>
+              <option value="PENDING">Menunggu (PENDING)</option>
               <option value="CONFIRMED">Dikonfirmasi (CONFIRMED)</option>
               <option value="COMPLETED">Selesai (COMPLETED)</option>
               <option value="CANCELLED">Dibatalkan (CANCELLED)</option>
@@ -217,6 +217,7 @@ export default function BookingsManagementPage() {
                 setDateFilter(e.target.value);
                 setPage(1);
               }}
+              className="h-10 text-sm"
             />
           </div>
 
@@ -226,10 +227,10 @@ export default function BookingsManagementPage() {
               variant="outline"
               onClick={handleResetFilters}
               title="Reset Filter"
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto h-10 px-3 text-slate-600 hover:text-slate-900"
             >
               <RotateCcw className="size-4" />
-              <span className="sm:hidden ml-2">Reset Filter</span>
+              <span className="sm:hidden ml-2 text-xs">Reset</span>
             </Button>
           </div>
         </div>

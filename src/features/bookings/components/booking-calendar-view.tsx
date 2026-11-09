@@ -64,13 +64,13 @@ export function BookingCalendarView({
   return (
     <div className="space-y-4">
       {/* Navigation Bar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-3.5 rounded-xl border border-slate-200">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={handlePrevWeek}
-            className="h-8 px-2"
+            className="h-8.5 px-2.5 text-slate-700"
           >
             <ChevronLeft className="size-4" />
           </Button>
@@ -78,7 +78,7 @@ export function BookingCalendarView({
             variant="outline"
             size="sm"
             onClick={handleCurrentWeek}
-            className="h-8 px-3 text-xs"
+            className="h-8.5 px-3.5 text-xs font-semibold text-slate-800"
           >
             Minggu Ini
           </Button>
@@ -86,18 +86,18 @@ export function BookingCalendarView({
             variant="outline"
             size="sm"
             onClick={handleNextWeek}
-            className="h-8 px-2"
+            className="h-8.5 px-2.5 text-slate-700"
           >
             <ChevronRight className="size-4" />
           </Button>
-          <span className="ml-2 text-sm font-semibold text-slate-800">
-            {formatDateId(weekDays[0].dateStr)} -{" "}
+          <span className="ml-2 text-sm font-semibold text-slate-900 tracking-tight">
+            {formatDateId(weekDays[0].dateStr)} –{" "}
             {formatDateId(weekDays[6].dateStr)}
           </span>
         </div>
 
-        <div className="text-xs text-slate-500">
-          Menampilkan {bookings.length} reservasi di rentang filter aktif
+        <div className="text-xs font-medium text-slate-500">
+          Menampilkan <span className="font-semibold text-slate-900">{bookings.length}</span> reservasi di rentang aktif
         </div>
       </div>
 
@@ -111,18 +111,18 @@ export function BookingCalendarView({
           return (
             <div
               key={day.dateStr}
-              className={`flex flex-col rounded-xl border p-3 min-h-[360px] ${
+              className={`flex flex-col rounded-xl border p-3 min-h-[380px] transition-all ${
                 isToday
-                  ? "border-indigo-300 bg-indigo-50/20 shadow-xs"
-                  : "border-slate-200 bg-white"
+                  ? "border-indigo-400/80 bg-indigo-50/25 ring-2 ring-indigo-500/10 shadow-xs"
+                  : "border-slate-200/90 bg-white shadow-2xs"
               }`}
             >
               {/* Day Header */}
-              <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
+              <div className="pb-2.5 mb-2.5 border-b border-slate-100 flex items-center justify-between">
                 <div>
                   <p
-                    className={`text-xs font-semibold ${
-                      isToday ? "text-indigo-600" : "text-slate-500"
+                    className={`text-[11px] font-semibold uppercase tracking-wider ${
+                      isToday ? "text-indigo-600" : "text-slate-400"
                     }`}
                   >
                     {day.dayName}
@@ -131,7 +131,9 @@ export function BookingCalendarView({
                     {day.dayNumber}
                   </p>
                 </div>
-                <span className="text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                  isToday ? "bg-indigo-100 text-indigo-700" : "bg-slate-100 text-slate-600"
+                }`}>
                   {dayBookings.length}
                 </span>
               </div>
@@ -139,39 +141,39 @@ export function BookingCalendarView({
               {/* Bookings in Day */}
               <div className="flex-1 space-y-2 overflow-y-auto">
                 {dayBookings.length === 0 ? (
-                  <p className="text-[11px] text-slate-400 text-center py-6">
-                    Kosong
+                  <p className="text-[11px] text-slate-400 text-center py-8">
+                    Tidak ada jadwal
                   </p>
                 ) : (
                   dayBookings.map((bk) => (
                     <div
                       key={bk.id}
-                      className="rounded-lg border border-slate-200 bg-white p-2.5 shadow-2xs hover:border-slate-300 transition-colors space-y-1.5"
+                      className="rounded-lg border border-slate-200/90 bg-white p-2.5 shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all space-y-1.5"
                     >
                       <div className="flex items-center justify-between gap-1">
-                        <span className="font-mono text-[11px] font-bold text-indigo-600">
+                        <span className="font-mono text-[11px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
                           {bk.time}
                         </span>
                         <StatusBadge status={bk.status} />
                       </div>
 
-                      <div>
+                      <div className="pt-0.5">
                         <p className="text-xs font-semibold text-slate-900 truncate">
                           {bk.customerName}
                         </p>
-                        <p className="text-[11px] text-slate-500 truncate">
+                        <p className="text-[11px] text-slate-600 truncate">
                           {bk.serviceNameSnapshot}
                         </p>
-                        <p className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                        <p className="text-[10px] text-slate-400 flex items-center gap-1 mt-1">
                           <User className="size-3" />
                           <span className="truncate">{bk.staffName}</span>
                         </p>
                       </div>
 
-                      <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-[11px]">
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 text-[11px]">
                         <Link
                           href={`/dashboard/bookings/${bk.id}`}
-                          className="font-medium text-slate-600 hover:text-indigo-600 truncate"
+                          className="font-semibold text-slate-600 hover:text-indigo-600 truncate transition-colors"
                         >
                           Detail
                         </Link>
@@ -183,7 +185,7 @@ export function BookingCalendarView({
                             onClick={() =>
                               onRequestStatusChange(bk, "CONFIRMED")
                             }
-                            className="font-semibold text-emerald-600 hover:text-emerald-700"
+                            className="font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer"
                           >
                             Konfirmasi
                           </button>
@@ -194,7 +196,7 @@ export function BookingCalendarView({
                             onClick={() =>
                               onRequestStatusChange(bk, "COMPLETED")
                             }
-                            className="font-semibold text-blue-600 hover:text-blue-700"
+                            className="font-semibold text-emerald-600 hover:text-emerald-700 cursor-pointer"
                           >
                             Selesai
                           </button>

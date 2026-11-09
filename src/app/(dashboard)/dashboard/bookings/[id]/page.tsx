@@ -86,7 +86,7 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
         actions={
           <Link
             href="/dashboard/bookings"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-colors"
           >
             <ArrowLeft className="size-3.5" />
             <span>Kembali ke Daftar</span>
@@ -99,41 +99,48 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
         <div className="space-y-6 lg:col-span-2">
           <SectionCard
             title="Informasi Layanan & Jadwal"
-            description="Snapshot layanan dan harga pada saat pelanggan melakukan reservasi."
+            description="Detail layanan dan harga pada saat pelanggan melakukan reservasi."
           >
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="rounded-lg bg-slate-50 p-4 border border-slate-200/70 space-y-1">
-                <p className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+              <div className="rounded-xl bg-slate-50/80 p-4 border border-slate-200/70 space-y-2">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="size-3.5 text-indigo-600" />
                   Layanan Dipesan
                 </p>
-                <p className="text-base font-semibold text-slate-900">
+                <p className="text-lg font-bold text-slate-900">
                   {booking.serviceNameSnapshot}
                 </p>
-                <p className="text-sm font-bold text-indigo-600">
-                  {formatRupiah(booking.servicePriceSnapshot)} •{" "}
-                  {formatDuration(booking.durationMinutesSnapshot)}
-                </p>
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="font-semibold text-sm text-indigo-600 bg-indigo-50/80 px-2.5 py-1 rounded-md">
+                    {formatRupiah(booking.servicePriceSnapshot)}
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">
+                    {formatDuration(booking.durationMinutesSnapshot)}
+                  </span>
+                </div>
               </div>
 
-              <div className="rounded-lg bg-slate-50 p-4 border border-slate-200/70 space-y-1">
-                <p className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+              <div className="rounded-xl bg-slate-50/80 p-4 border border-slate-200/70 space-y-2">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                   <Calendar className="size-3.5 text-indigo-600" />
-                  Jadwal & Staf Penyedia
+                  Waktu & Staf Penyedia
                 </p>
-                <p className="text-base font-semibold text-slate-900">
+                <p className="text-lg font-bold text-slate-900">
                   {formatDateId(booking.date)}
                 </p>
-                <p className="text-sm text-slate-700 font-mono flex items-center gap-1.5">
-                  <Clock className="size-3.5 text-slate-400" />
-                  {booking.time} WIB • Staf: {booking.staffName}
-                </p>
+                <div className="flex items-center gap-2 pt-1 text-xs text-slate-700 font-medium">
+                  <span className="font-mono bg-white border border-slate-200 px-2 py-0.5 rounded text-indigo-700 font-semibold">
+                    {booking.time} WIB
+                  </span>
+                  <span>•</span>
+                  <span>Staf: <strong className="text-slate-900">{booking.staffName}</strong></span>
+                </div>
               </div>
             </div>
 
             {booking.cancelReason && (
-              <div className="mt-4 rounded-lg border border-red-200 bg-red-50/70 p-3.5 text-xs text-red-700">
-                <span className="font-semibold">Alasan Pembatalan:</span>{" "}
+              <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50/70 p-4 text-xs text-rose-800">
+                <span className="font-bold">Alasan Pembatalan:</span>{" "}
                 {booking.cancelReason}
               </div>
             )}
@@ -141,33 +148,38 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
 
           <SectionCard
             title="Informasi Kontak Pelanggan"
-            description="Data ini bersifat privat dan hanya dapat diakses oleh pemilik bisnis."
+            description="Data pelanggan bersifat privat untuk keperluan operasional."
           >
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 text-sm">
-              <div className="space-y-1">
-                <p className="text-xs text-slate-500 flex items-center gap-1.5">
-                  <User className="size-3.5 text-slate-400" />
-                  Nama Pelanggan
-                </p>
-                <p className="font-semibold text-slate-900">
+            <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 font-bold text-base">
+                {booking.customerName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-slate-900">
                   {booking.customerName}
+                </h4>
+                <p className="text-xs text-slate-500 font-mono">
+                  ID: {booking.id.slice(0, 12)}...
                 </p>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-4 text-sm">
               <div className="space-y-1">
-                <p className="text-xs text-slate-500 flex items-center gap-1.5">
+                <p className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
                   <Mail className="size-3.5 text-slate-400" />
-                  Email
+                  Alamat Email
                 </p>
-                <p className="font-medium text-slate-800 break-all">
+                <p className="font-medium text-slate-900 break-all">
                   {booking.customerEmail}
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-slate-500 flex items-center gap-1.5">
+                <p className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
                   <Phone className="size-3.5 text-slate-400" />
-                  Nomor Telepon
+                  Nomor WhatsApp / Telepon
                 </p>
-                <p className="font-mono font-medium text-slate-800">
+                <p className="font-mono font-semibold text-slate-900">
                   {booking.customerPhone}
                 </p>
               </div>
@@ -175,11 +187,11 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
 
             <div className="mt-4 border-t border-slate-100 pt-4">
               <p className="text-xs font-medium text-slate-500">
-                Catatan Pelanggan:
+                Catatan dari Pelanggan:
               </p>
-              <p className="mt-1 text-sm text-slate-700">
-                {booking.customerNotes || "Tidak ada catatan khusus."}
-              </p>
+              <div className="mt-1.5 rounded-lg bg-slate-50 p-3 text-xs text-slate-700 leading-relaxed border border-slate-200/50">
+                {booking.customerNotes || "Tidak ada catatan khusus dari pelanggan."}
+              </div>
             </div>
           </SectionCard>
         </div>
@@ -187,7 +199,7 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
         {/* Right Column: Status Actions */}
         <div>
           <SectionCard
-            title="Tindakan Status Reservasi"
+            title="Tindakan Status"
             description="Perbarui status reservasi sesuai kehadiran pelanggan."
           >
             {canTransition ? (
@@ -196,10 +208,10 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
                   <Button
                     type="button"
                     onClick={() => setTargetStatus("CONFIRMED")}
-                    className="w-full justify-start gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+                    className="w-full justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
                   >
                     <CheckCircle2 className="size-4" />
-                    <span>Konfirmasi Reservasi (CONFIRMED)</span>
+                    <span>Konfirmasi Reservasi</span>
                   </Button>
                 )}
 
@@ -208,16 +220,16 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
                     <Button
                       type="button"
                       onClick={() => setTargetStatus("COMPLETED")}
-                      className="w-full justify-start gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="w-full justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
                     >
                       <CheckCheck className="size-4" />
-                      <span>Tandai Selesai (COMPLETED)</span>
+                      <span>Tandai Selesai</span>
                     </Button>
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => setTargetStatus("NO_SHOW")}
-                      className="w-full justify-start gap-2 text-slate-700"
+                      className="w-full justify-center gap-2 text-slate-700 font-medium"
                     >
                       <UserX className="size-4" />
                       <span>Tandai Tidak Hadir (NO_SHOW)</span>
@@ -229,20 +241,22 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
                   type="button"
                   variant="outline"
                   onClick={() => setTargetStatus("CANCELLED")}
-                  className="w-full justify-start gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+                  className="w-full justify-center gap-2 text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 font-medium"
                 >
                   <XCircle className="size-4" />
-                  <span>Batalkan Reservasi (CANCELLED)</span>
+                  <span>Batalkan Reservasi</span>
                 </Button>
               </div>
             ) : (
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Reservasi ini berada pada status terminal (
-                <span className="font-semibold text-slate-700">
-                  {booking.status}
-                </span>
-                ) dan disimpan sebagai arsip histori operasional bisnis.
-              </p>
+              <div className="rounded-lg bg-slate-50 p-3.5 border border-slate-200/60">
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Reservasi ini berada pada status terminal (
+                  <span className="font-semibold text-slate-800">
+                    {booking.status}
+                  </span>
+                  ) dan disimpan permanen sebagai arsip catatan operasional.
+                </p>
+              </div>
             )}
           </SectionCard>
         </div>
