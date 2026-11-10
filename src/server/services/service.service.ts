@@ -2,6 +2,7 @@ import { cacheDel, cacheGet, cacheInvalidatePrefix, cacheSet } from "@/lib/cache
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 import type { ServiceFormValues } from "@/lib/validations/service.schema";
+import { subscriptionService } from "./subscription.service";
 
 export const serviceService = {
   async list(businessId: string, onlyActive = false) {
@@ -50,6 +51,8 @@ export const serviceService = {
   },
 
   async create(businessId: string, input: ServiceFormValues) {
+    await subscriptionService.enforceLimit(businessId, "services");
+
     const created = await prisma.$transaction(async (tx) => {
       const service = await tx.service.create({
         data: {

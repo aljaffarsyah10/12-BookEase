@@ -14,6 +14,28 @@ enum BookingStatus {
   NO_SHOW
 }
 
+enum SubscriptionPlan {
+  FREE_TRIAL
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+}
+
 model User {
   id           String    @id @default(cuid())
   name         String
@@ -39,6 +61,10 @@ model Business {
   logoUrl           String?
   timezone          String          @default("Asia/Jakarta")
   bufferTimeMinutes Int             @default(0)
+  subscriptionPlan   SubscriptionPlan   @default(FREE_TRIAL)
+  subscriptionStatus SubscriptionStatus @default(TRIALING)
+  trialEndsAt        DateTime?
+  currentPeriodEnd   DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
@@ -47,6 +73,7 @@ model Business {
   staff             Staff[]
   operatingHours    OperatingHour[]
   bookings          Booking[]
+  invoices          Invoice[]
 
   @@map("businesses")
 }
@@ -151,4 +178,25 @@ model Booking {
   @@index([staffId, status, startAt, occupiedEndAt])
   @@index([staffId, startAt, occupiedEndAt])
   @@map("bookings")
+}
+
+model Invoice {
+  id              String           @id @default(cuid())
+  invoiceNumber   String           @unique
+  businessId      String
+  plan            SubscriptionPlan
+  amount          Int              // Dalam Rupiah bulat
+  status          InvoiceStatus    @default(PENDING)
+  paymentProvider String           @default("SANDBOX")
+  paymentMethod   String?          // e.g. "QRIS", "BCA_VA", "MANDIRI_VA", "CREDIT_CARD"
+  paymentUrl      String?
+  paidAt          DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  business        Business         @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, status])
+  @@index([businessId, createdAt])
+  @@map("invoices")
 }

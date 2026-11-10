@@ -1,6 +1,7 @@
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 import type { StaffFormValues } from "@/lib/validations/staff.schema";
+import { subscriptionService } from "./subscription.service";
 
 export const staffService = {
   async list(businessId: string, onlyActive = false) {
@@ -29,6 +30,8 @@ export const staffService = {
   },
 
   async create(businessId: string, input: StaffFormValues) {
+    await subscriptionService.enforceLimit(businessId, "staff");
+
     return prisma.$transaction(async (tx) => {
       const staff = await tx.staff.create({
         data: {

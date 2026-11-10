@@ -7,6 +7,7 @@ import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 import { parseZonedTimeToUTC } from "@/lib/timezone";
 import type { Booking, BookingStatus } from "@/types";
+import { subscriptionService } from "./subscription.service";
 
 export interface CreateBookingInput {
   businessSlug: string;
@@ -442,6 +443,9 @@ export const bookingService = {
     if (!business) {
       throw new AppError("BUSINESS_NOT_FOUND", "Bisnis tidak ditemukan.", 404);
     }
+
+    // Periksa batas kuota reservasi berdasarkan paket langganan bisnis
+    await subscriptionService.enforceLimit(business.id, "bookings");
 
     const service = await prisma.service.findFirst({
       where: { id: input.serviceId, businessId: business.id, isActive: true },

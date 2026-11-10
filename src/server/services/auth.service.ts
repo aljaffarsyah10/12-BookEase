@@ -47,6 +47,10 @@ export const authService = {
           slug: input.businessSlug.toLowerCase(),
           timezone: "Asia/Jakarta",
           bufferTimeMinutes: 10,
+          subscriptionPlan: "FREE_TRIAL",
+          subscriptionStatus: "TRIALING",
+          trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          currentPeriodEnd: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
         },
       });
 

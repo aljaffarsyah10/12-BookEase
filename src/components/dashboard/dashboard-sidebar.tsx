@@ -8,6 +8,7 @@ import {
   CalendarCheck,
   CalendarDays,
   Clock,
+  CreditCard,
   ExternalLink,
   LayoutDashboard,
   Settings,
@@ -35,6 +36,7 @@ const PRIMARY_NAV = [
 
 const SETTINGS_NAV = [
   { title: "Profil Bisnis", href: "/dashboard/business", icon: Store },
+  { title: "Langganan & Billing", href: "/dashboard/billing", icon: CreditCard },
   { title: "Pengaturan Akun", href: "/dashboard/settings", icon: Settings },
 ];
 

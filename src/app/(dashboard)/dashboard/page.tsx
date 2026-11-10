@@ -10,6 +10,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock,
+  CreditCard,
   ExternalLink,
   Plus,
   Sparkles,
@@ -22,6 +23,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { buttonVariants } from "@/components/ui/button";
+import { billingApi } from "@/features/billing/services/billing.api";
 import { bookingApi } from "@/features/bookings/services/booking.api";
 import { businessApi } from "@/features/business/services/business.api";
 import {
@@ -29,6 +31,7 @@ import {
   type DashboardSummaryStats,
 } from "@/features/dashboard/services/dashboard.service";
 import { formatDateId, formatRupiah } from "@/lib/format";
+import type { BusinessUsageSummary } from "@/server/services/subscription.service";
 import type { Booking, Business } from "@/types";
 
 export default function DashboardOverviewPage() {
@@ -36,22 +39,25 @@ export default function DashboardOverviewPage() {
   const [todayBookings, setTodayBookings] = React.useState<Booking[]>([]);
   const [business, setBusiness] = React.useState<Business | null>(null);
   const [stats, setStats] = React.useState<DashboardSummaryStats | null>(null);
+  const [subscription, setSubscription] = React.useState<BusinessUsageSummary | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     let active = true;
     (async () => {
       try {
-        const [biz, backendStats, recentRes] = await Promise.all([
+        const [biz, backendStats, recentRes, sub] = await Promise.all([
           businessApi.getBusiness(),
           dashboardApi.getStats(),
           bookingApi.listBookings({ limit: 5 }),
+          billingApi.getSubscription().catch(() => null),
         ]);
 
         if (!active) return;
         setBusiness(biz);
         setStats(backendStats);
         setRecentBookings(Array.isArray(recentRes) ? recentRes : recentRes.items);
+        setSubscription(sub);
 
         // Fetch up to 10 of today's bookings specifically for the widget
         const tz = biz.timezone || "Asia/Jakarta";
@@ -110,6 +116,108 @@ export default function DashboardOverviewPage() {
           </div>
         }
       />
+
+      {/* Trial Countdown or Onboarding Guide Banner */}
+      {subscription && subscription.plan === "FREE_TRIAL" && (
+        <div className="relative overflow-hidden rounded-2xl border border-indigo-200/90 bg-gradient-to-r from-indigo-50/90 via-violet-50/60 to-white p-5 shadow-2xs dark:border-indigo-900/50 dark:from-indigo-950/40 dark:via-slate-900 dark:to-slate-950">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="flex size-6 items-center justify-center rounded-md bg-indigo-600 text-white">
+                  <Sparkles className="size-3.5" />
+                </span>
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+                  Masa Uji Coba Gratis Sedang Berjalan
+                </span>
+              </div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">
+                Nikmati akses seluruh fitur Pro BookEase ({subscription.trialDaysLeft} hari tersisa).
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Layanan aktif: {subscription.usage.services.used}/{subscription.usage.services.limit} • Staf: {subscription.usage.staff.used}/{subscription.usage.staff.limit} • Reservasi bulan ini: {subscription.usage.bookingsThisMonth.used}/{subscription.usage.bookingsThisMonth.limit}
+              </p>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Link
+                href="/dashboard/billing"
+                className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 transition-all active:scale-[0.98]"
+              >
+                <CreditCard className="size-3.5" />
+                <span>Pilih Paket Langganan</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Onboarding Checklist for New Business */}
+      {stats.totalBookings === 0 && (
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-slate-900/60 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                Panduan Memulai Bisnis Baru Anda
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Selesaikan 4 langkah mudah ini agar halaman reservasi Anda siap digunakan pelanggan.
+              </p>
+            </div>
+            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 border border-indigo-200/80 px-2 py-0.5 rounded-full dark:bg-indigo-950/60 dark:border-indigo-800">
+              Langkah Awal
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="flex items-center gap-3 rounded-xl border border-emerald-200/80 bg-emerald-50/50 p-3 dark:border-emerald-900/60 dark:bg-emerald-950/30">
+              <CheckCircle2 className="size-5 text-emerald-600 shrink-0" />
+              <div className="text-xs space-y-0.5">
+                <p className="font-bold text-emerald-900 dark:text-emerald-300">1. Profil Bisnis</p>
+                <p className="text-[11px] text-emerald-700/80 dark:text-emerald-400">Selesai terkonfigurasi</p>
+              </div>
+            </div>
+
+            <Link
+              href="/dashboard/services"
+              className="group flex items-center justify-between rounded-xl border border-slate-200/80 p-3 hover:border-indigo-400 hover:shadow-2xs transition-all dark:border-slate-800"
+            >
+              <div className="text-xs space-y-0.5">
+                <p className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">
+                  2. Buat Layanan
+                </p>
+                <p className="text-[11px] text-slate-500">Tentukan harga & durasi</p>
+              </div>
+              <ArrowRight className="size-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
+            </Link>
+
+            <Link
+              href="/dashboard/staff"
+              className="group flex items-center justify-between rounded-xl border border-slate-200/80 p-3 hover:border-indigo-400 hover:shadow-2xs transition-all dark:border-slate-800"
+            >
+              <div className="text-xs space-y-0.5">
+                <p className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">
+                  3. Atur Tim Staf
+                </p>
+                <p className="text-[11px] text-slate-500">Hubungkan staf & layanan</p>
+              </div>
+              <ArrowRight className="size-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" />
+            </Link>
+
+            <Link
+              href={`/book/${business.slug}`}
+              target="_blank"
+              className="group flex items-center justify-between rounded-xl border border-slate-200/80 p-3 hover:border-indigo-400 hover:shadow-2xs transition-all dark:border-slate-800"
+            >
+              <div className="text-xs space-y-0.5">
+                <p className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">
+                  4. Uji Coba Booking
+                </p>
+                <p className="text-[11px] text-slate-500">Buka halaman publik</p>
+              </div>
+              <ExternalLink className="size-4 text-slate-400 group-hover:text-indigo-600 transition-all" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Stat Cards Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
