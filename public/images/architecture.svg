@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 480" width="100%" height="100%">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0b0f19" />
@@ -9,86 +9,105 @@
     </filter>
   </defs>
 
-  <rect width="960" height="480" fill="url(#bg)" rx="16" />
+  <rect width="1140" height="480" fill="url(#bg)" rx="16" />
 
   <!-- Title -->
-  <text x="480" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle">BookEase — Alur &amp; Arsitektur Sistem Produksi</text>
-  <text x="480" y="70" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">End-to-End Guest Booking, Anti-Conflict Engine, Multi-Tenant Dashboard, &amp; Cloud Database</text>
+  <text x="570" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle">BookEase — Alur &amp; Arsitektur Sistem Produksi SaaS v1.0.0</text>
+  <text x="570" y="70" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Anti-Conflict Engine, Multi-Tenant Isolation, SaaS Billing Sandbox, Observability &amp; Disaster Recovery</text>
 
-  <!-- Left: Client Users -->
-  <g transform="translate(40, 110)" filter="url(#boxShadow)">
-    <rect width="220" height="320" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-    <rect x="0" y="0" width="220" height="42" rx="12" fill="#3b82f6" fill-opacity="0.2" />
-    <text x="110" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#60a5fa" text-anchor="middle">1. Client / Frontend</text>
+  <!-- Col 1: Client Users -->
+  <g transform="translate(30, 110)" filter="url(#boxShadow)">
+    <rect width="240" height="330" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <rect x="0" y="0" width="240" height="42" rx="12" fill="#3b82f6" fill-opacity="0.2" />
+    <text x="120" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#60a5fa" text-anchor="middle">1. Client / Frontend</text>
 
-    <!-- Sub boxes -->
-    <rect x="15" y="55" width="190" height="75" rx="8" fill="#0f172a" stroke="#475569" />
+    <rect x="15" y="55" width="210" height="75" rx="8" fill="#0f172a" stroke="#475569" />
     <text x="25" y="78" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Public Guest Booking</text>
     <text x="25" y="98" font-family="monospace" font-size="11" fill="#38bdf8">/book/[slug]</text>
     <text x="25" y="116" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Wizard 4-step tanpa registrasi</text>
 
-    <rect x="15" y="140" width="190" height="75" rx="8" fill="#0f172a" stroke="#475569" />
+    <rect x="15" y="140" width="210" height="75" rx="8" fill="#0f172a" stroke="#475569" />
     <text x="25" y="163" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Owner Dashboard</text>
     <text x="25" y="183" font-family="monospace" font-size="11" fill="#818cf8">/dashboard/*</text>
-    <text x="25" y="201" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Katalog, Staf, Kalender &amp; Stats</text>
+    <text x="25" y="201" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Katalog, Staf, Billing &amp; Stats</text>
 
-    <rect x="15" y="225" width="190" height="75" rx="8" fill="#0f172a" stroke="#475569" />
-    <text x="25" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Self-Service Cancel</text>
-    <text x="25" y="268" font-family="monospace" font-size="11" fill="#f472b6">/book/cancel</text>
-    <text x="25" y="286" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Batal mandiri via token HMAC</text>
+    <rect x="15" y="225" width="210" height="85" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Self-Service Cancel &amp; SEO</text>
+    <text x="25" y="268" font-family="monospace" font-size="11" fill="#f472b6">/book/cancel &amp; sitemap.xml</text>
+    <text x="25" y="286" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">HMAC Token + Schema.org JSON-LD</text>
   </g>
 
-  <!-- Middle: Next.js Serverless App Layer -->
-  <g transform="translate(370, 110)" filter="url(#boxShadow)">
-    <rect width="240" height="320" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-    <rect x="0" y="0" width="240" height="42" rx="12" fill="#6366f1" fill-opacity="0.2" />
-    <text x="120" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#a5b4fc" text-anchor="middle">2. Application Core &amp; APIs</text>
+  <!-- Col 2: Core Scheduling Engine -->
+  <g transform="translate(305, 110)" filter="url(#boxShadow)">
+    <rect width="250" height="330" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <rect x="0" y="0" width="250" height="42" rx="12" fill="#6366f1" fill-opacity="0.2" />
+    <text x="125" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#a5b4fc" text-anchor="middle">2. Core Scheduling Engine</text>
 
-    <!-- Sub boxes -->
-    <rect x="15" y="55" width="210" height="75" rx="8" fill="#0f172a" stroke="#475569" />
+    <rect x="15" y="55" width="220" height="75" rx="8" fill="#0f172a" stroke="#475569" />
     <text x="25" y="78" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Availability Engine</text>
     <text x="25" y="96" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Dynamic Slot Calculation</text>
     <text x="25" y="114" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Buffer time + multi-timezone</text>
 
-    <rect x="15" y="140" width="210" height="75" rx="8" fill="#0f172a" stroke="#475569" />
+    <rect x="15" y="140" width="220" height="75" rx="8" fill="#0f172a" stroke="#475569" />
     <text x="25" y="163" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Anti-Conflict Engine</text>
-    <text x="25" y="181" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Row-level ACID Isolation</text>
-    <text x="25" y="199" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Otomatis cegah double booking (409)</text>
+    <text x="25" y="181" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">ACID Transaction Locking</text>
+    <text x="25" y="199" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Pencegahan tabrakan reservasi</text>
 
-    <rect x="15" y="225" width="210" height="75" rx="8" fill="#0f172a" stroke="#475569" />
-    <text x="25" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Security &amp; Policy Layer</text>
-    <text x="25" y="266" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">IDOR Multi-Tenant Guard</text>
-    <text x="25" y="284" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">HMAC Token &amp; Rate Limiter</text>
+    <rect x="15" y="225" width="220" height="85" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Security &amp; Policy Guard</text>
+    <text x="25" y="266" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Tenant Isolation &amp; CSRF</text>
+    <text x="25" y="284" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">HMAC Session + Origin Check</text>
   </g>
 
-  <!-- Right: Storage & External Services -->
-  <g transform="translate(710, 110)" filter="url(#boxShadow)">
-    <rect width="210" height="320" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
-    <rect x="0" y="0" width="210" height="42" rx="12" fill="#10b981" fill-opacity="0.2" />
-    <text x="105" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#34d399" text-anchor="middle">3. Data &amp; External</text>
+  <!-- Col 3: SaaS Billing & Observability -->
+  <g transform="translate(585, 110)" filter="url(#boxShadow)">
+    <rect width="255" height="330" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <rect x="0" y="0" width="255" height="42" rx="12" fill="#f59e0b" fill-opacity="0.2" />
+    <text x="127" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#fbbf24" text-anchor="middle">3. Billing &amp; Observability</text>
 
-    <!-- Sub boxes -->
-    <rect x="15" y="55" width="180" height="115" rx="8" fill="#0f172a" stroke="#475569" />
-    <text x="25" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">PostgreSQL (Supabase)</text>
-    <text x="25" y="100" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Prisma ORM Models:</text>
-    <text x="25" y="120" font-family="monospace" font-size="10" fill="#94a3b8">• Business &amp; Schedule</text>
-    <text x="25" y="136" font-family="monospace" font-size="10" fill="#94a3b8">• Services &amp; Staff</text>
-    <text x="25" y="152" font-family="monospace" font-size="10" fill="#94a3b8">• Bookings (UTC Index)</text>
+    <rect x="15" y="55" width="225" height="75" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="78" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">SaaS Usage Limit Guard</text>
+    <text x="25" y="96" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Starter, Pro, Enterprise</text>
+    <text x="25" y="114" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Free trial 14 hari + kuota staf</text>
 
-    <rect x="15" y="185" width="180" height="115" rx="8" fill="#0f172a" stroke="#475569" />
-    <text x="25" y="210" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Email Notifier (Resend)</text>
-    <text x="25" y="230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Non-Blocking Queue</text>
-    <text x="25" y="250" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">• Booking Confirmed</text>
-    <text x="25" y="266" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">• Cancellation Notice</text>
-    <text x="25" y="282" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">• Graceful dev stub</text>
+    <rect x="15" y="140" width="225" height="75" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="163" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Sandbox Payment Gateway</text>
+    <text x="25" y="181" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">QRIS, VA, CC Simulator</text>
+    <text x="25" y="199" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Webhook listener &amp; invoice PDF</text>
+
+    <rect x="15" y="225" width="225" height="85" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">APM &amp; Health Probes</text>
+    <text x="25" y="266" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">/api/health (live + ready)</text>
+    <text x="25" y="284" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Structured JSON Log + Alerting</text>
   </g>
 
-  <!-- Connectors / Arrows -->
+  <!-- Col 4: Storage & Infrastructure -->
+  <g transform="translate(870, 110)" filter="url(#boxShadow)">
+    <rect width="240" height="330" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <rect x="0" y="0" width="240" height="42" rx="12" fill="#10b981" fill-opacity="0.2" />
+    <text x="120" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#34d399" text-anchor="middle">4. Storage &amp; Resilience</text>
+
+    <rect x="15" y="55" width="210" height="110" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="78" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">PostgreSQL (Prisma 7)</text>
+    <text x="25" y="98" font-family="monospace" font-size="10" fill="#94a3b8">• users &amp; businesses</text>
+    <text x="25" y="114" font-family="monospace" font-size="10" fill="#94a3b8">• services &amp; staff</text>
+    <text x="25" y="130" font-family="monospace" font-size="10" fill="#94a3b8">• bookings (UTC Index)</text>
+    <text x="25" y="146" font-family="monospace" font-size="10" fill="#94a3b8">• invoices &amp; subscriptions</text>
+
+    <rect x="15" y="175" width="210" height="65" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="196" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Automated Backup Cron</text>
+    <text x="25" y="214" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">SHA-256 integrity checksum</text>
+    <text x="25" y="228" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Retensi otomatis 7 hari</text>
+
+    <rect x="15" y="250" width="210" height="60" rx="8" fill="#0f172a" stroke="#475569" />
+    <text x="25" y="272" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Email Queue (Resend)</text>
+    <text x="25" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Notifikasi konfirmasi async</text>
+  </g>
+
+  <!-- Connectors -->
   <g stroke="#6366f1" stroke-width="2" fill="none" opacity="0.8">
-    <path d="M 260 200 L 370 200" marker-end="url(#arrow)" />
-    <path d="M 260 270 L 370 270" />
-    <path d="M 610 200 L 710 200" />
-    <path d="M 610 270 L 710 270" />
+    <path d="M 270 200 L 305 200" />
+    <path d="M 555 200 L 585 200" />
+    <path d="M 840 200 L 870 200" />
   </g>
 </svg>
-

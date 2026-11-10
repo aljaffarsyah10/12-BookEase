@@ -1,0 +1,58 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" rx="16" fill="#0B0F19"/>
+  <rect x="20" y="20" width="1160" height="590" rx="12" fill="#111827" stroke="#1F2937" stroke-width="2"/>
+  
+  <!-- Header Bar -->
+  <rect x="20" y="20" width="1160" height="56" rx="12" fill="#1F2937"/>
+  <circle cx="50" cy="48" r="6" fill="#EF4444"/>
+  <circle cx="70" cy="48" r="6" fill="#F59E0B"/>
+  <circle cx="90" cy="48" r="6" fill="#10B981"/>
+  <text x="120" y="53" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">BookEase System Observability &amp; APM Metrics (/api/health)</text>
+  <rect x="990" y="34" width="160" height="28" rx="6" fill="#065F46"/>
+  <text x="1015" y="52" fill="#34D399" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">● 100% System Healthy</text>
+
+  <!-- Metric Overview Cards -->
+  <!-- Database Latency -->
+  <rect x="50" y="96" width="260" height="130" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+  <text x="75" y="130" fill="#94A3B8" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">DATABASE LATENCY</text>
+  <text x="75" y="175" fill="#34D399" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="900">12 ms</text>
+  <text x="75" y="205" fill="#64748B" font-family="system-ui, -apple-system, sans-serif" font-size="11">PostgreSQL Connection Pool Normal</text>
+
+  <!-- Heap Memory -->
+  <rect x="330" y="96" width="260" height="130" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+  <text x="355" y="130" fill="#94A3B8" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">V8 HEAP MEMORY</text>
+  <text x="355" y="175" fill="#818CF8" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="900">68 MB</text>
+  <text x="355" y="205" fill="#64748B" font-family="system-ui, -apple-system, sans-serif" font-size="11">Optimal GC &amp; Memory Allocation</text>
+
+  <!-- Error Rate -->
+  <rect x="610" y="96" width="260" height="130" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+  <text x="635" y="130" fill="#94A3B8" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">5-MIN ERROR RATE</text>
+  <text x="635" y="175" fill="#F8FAFC" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="900">0.00%</text>
+  <text x="635" y="205" fill="#10B981" font-family="system-ui, -apple-system, sans-serif" font-size="11">Zero 5xx server exceptions</text>
+
+  <!-- Uptime -->
+  <rect x="890" y="96" width="260" height="130" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+  <text x="915" y="130" fill="#94A3B8" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">SERVICE UPTIME</text>
+  <text x="915" y="175" fill="#FBBF24" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="900">99.99%</text>
+  <text x="915" y="205" fill="#64748B" font-family="system-ui, -apple-system, sans-serif" font-size="11">Docker Healthcheck Active</text>
+
+  <!-- Terminal / JSON Log Sample -->
+  <rect x="50" y="246" width="1100" height="340" rx="12" fill="#030712" stroke="#1F2937" stroke-width="1"/>
+  <rect x="50" y="246" width="1100" height="36" rx="12" fill="#111827"/>
+  <text x="75" y="269" fill="#9CA3AF" font-family="monospace" font-size="12">Structured JSON Logs &amp; PII-Redacted Telemetry Stream</text>
+  
+  <text x="75" y="315" fill="#10B981" font-family="monospace" font-size="12">{"timestamp":"2026-11-10T15:00:12.102Z","level":"INFO","message":"[HTTP_REQUEST] GET /api/health","durationMs":8.4,"context":{"ip":"127.0.0.1","userAgent":"BookEase-HealthCheck"}}</text>
+  <text x="75" y="345" fill="#60A5FA" font-family="monospace" font-size="12">{"timestamp":"2026-11-10T15:00:15.821Z","level":"INFO","message":"[BOOKING_CREATED] Reference: BK-20261110-8A19F","context":{"businessId":"biz_9x12","serviceId":"srv_hair","staffId":"stf_budi"}}</text>
+  <text x="75" y="375" fill="#FBBF24" font-family="monospace" font-size="12">{"timestamp":"2026-11-10T15:00:18.412Z","level":"DEBUG","message":"[CACHE_HIT] services:biz_9x12:true","durationMs":0.4}</text>
+  <text x="75" y="405" fill="#E2E8F0" font-family="monospace" font-size="12">{"timestamp":"2026-11-10T15:00:22.980Z","level":"INFO","message":"[BILLING_CHECKOUT] Created INV-20261110-3FA1 for plan PRO","context":{"amount":199000,"paymentMethod":"QRIS"}}</text>
+  <text x="75" y="435" fill="#A78BFA" font-family="monospace" font-size="12">{"timestamp":"2026-11-10T15:00:25.109Z","level":"INFO","message":"[PII_PROTECTION] User login attempt payload sanitized","context":{"user":"budi","password":"[REDACTED]"}}</text>
+  <text x="75" y="465" fill="#10B981" font-family="monospace" font-size="12">{"timestamp":"2026-11-10T15:00:30.000Z","level":"INFO","message":"[BACKUP_CRON] Daily snapshot created with SHA-256 integrity checksum","context":{"filesizeKb":11.03}}</text>
+  
+  <rect x="75" y="500" width="220" height="38" rx="8" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="95" y="524" fill="#38BDF8" font-family="monospace" font-size="12">GET /api/health/ready</text>
+  <rect x="315" y="500" width="220" height="38" rx="8" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="335" y="524" fill="#38BDF8" font-family="monospace" font-size="12">GET /api/health/live</text>
+  <rect x="555" y="500" width="280" height="38" rx="8" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="575" y="524" fill="#38BDF8" font-family="monospace" font-size="12">npm run test:smoke</text>
+</svg>
