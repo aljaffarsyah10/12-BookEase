@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
-import { BUSINESS_CATEGORIES } from "@/features/business/mocks/business.mock";
+import { BUSINESS_CATEGORIES } from "@/constants/business";
 import { businessApi } from "@/features/business/services/business.api";
 import {
   businessProfileSchema,
