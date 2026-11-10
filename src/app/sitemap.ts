@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bookease.id";
 
-  return [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${appUrl}`,
       lastModified: new Date(),
@@ -47,5 +48,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
   ];
-}
 
+  try {
+    const businesses = await prisma.business.findMany({
+      select: {
+        slug: true,
+        updatedAt: true,
+      },
+      take: 1000,
+    });
+
+    const businessRoutes: MetadataRoute.Sitemap = businesses.map((b) => ({
+      url: `${appUrl}/book/${b.slug}`,
+      lastModified: b.updatedAt,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    }));
+
+    return [...staticRoutes, ...businessRoutes];
+  } catch {
+    return staticRoutes;
+  }
+}
