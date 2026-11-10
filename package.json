@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test tests/conflict-and-state.test.ts tests/validations.test.ts tests/security-idor-and-auth.test.ts tests/concurrency-and-availability.test.ts tests/performance-and-cache.test.ts",
+    "test": "node --experimental-strip-types --test tests/conflict-and-state.test.ts tests/validations.test.ts tests/security-idor-and-auth.test.ts tests/concurrency-and-availability.test.ts tests/performance-and-cache.test.ts tests/e2e-workflow.test.ts tests/api-and-integration.test.ts tests/ui-and-edge-cases.test.ts",
     "db:seed": "node --env-file=.env.local prisma/seed.cjs"
   },
   "prisma": {
