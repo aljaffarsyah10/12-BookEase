@@ -58,7 +58,7 @@ export default function FeaturesPage() {
         actions={
           <Link
             href="/register"
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-indigo-600 px-5 text-xs sm:text-sm font-semibold text-white shadow-2xs hover:bg-indigo-700 transition-colors"
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 px-5.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:from-indigo-700 hover:to-indigo-800 transition-all active:scale-[0.98]"
           >
             Coba Gratis Sekarang
           </Link>
@@ -69,9 +69,13 @@ export default function FeaturesPage() {
         {FEATURE_SECTIONS.map((item) => {
           const Icon = item.icon;
           return (
-            <SectionCard key={item.title} title={item.title} className="hover:border-slate-300 transition-all shadow-2xs">
-              <div className="space-y-3 pt-1">
-                <div className="flex size-10.5 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100/80">
+            <SectionCard
+              key={item.title}
+              title={item.title}
+              className="rounded-2xl hover:border-indigo-300 hover:shadow-sm transition-all duration-200 hover:-translate-y-0.5 shadow-2xs"
+            >
+              <div className="space-y-3.5 pt-1">
+                <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-50 to-indigo-100/80 text-indigo-600 border border-indigo-200/60 shadow-2xs">
                   <Icon className="size-5" />
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed">

@@ -68,7 +68,7 @@ export default function SettingsPage() {
 
             <Button
               type="submit"
-              className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
+              className="gap-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold shadow-xs active:scale-[0.98]"
             >
               <User className="size-4" />
               <span>Simpan Profil Akun</span>

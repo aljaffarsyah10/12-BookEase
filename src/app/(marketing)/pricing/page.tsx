@@ -59,8 +59,8 @@ export default function PricingPage() {
                 variant="outline"
                 className={
                   plan.highlighted
-                    ? "bg-indigo-50 text-indigo-700 border-indigo-200/80 font-semibold"
-                    : "bg-slate-100 text-slate-700 border-slate-200 font-semibold"
+                    ? "bg-indigo-50 text-indigo-700 border-indigo-200/80 font-bold text-xs px-3 py-1 shadow-2xs"
+                    : "bg-slate-100 text-slate-700 border-slate-200 font-bold text-xs px-3 py-1"
                 }
               >
                 {plan.badge}
@@ -68,19 +68,19 @@ export default function PricingPage() {
             }
             className={
               plan.highlighted
-                ? "ring-2 ring-indigo-600 border-indigo-600 shadow-sm"
-                : "border-slate-200/90 shadow-2xs"
+                ? "rounded-2xl ring-2 ring-indigo-600 border-indigo-600 shadow-md hover:shadow-lg transition-all"
+                : "rounded-2xl border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all"
             }
           >
             <div className="space-y-6 pt-1 flex flex-col justify-between h-full">
               <div className="space-y-6">
-                <p className="text-3xl font-bold tracking-tight text-slate-900">
+                <p className="text-4xl font-extrabold tracking-tight text-slate-900">
                   {plan.price}
                 </p>
-                <ul className="space-y-3 text-sm text-slate-600">
+                <ul className="space-y-3.5 text-sm text-slate-600">
                   {plan.features.map((feat) => (
-                    <li key={feat} className="flex items-center gap-2.5">
-                      <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                    <li key={feat} className="flex items-center gap-3">
+                      <div className="flex size-5.5 shrink-0 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-600">
                         <Check className="size-3.5" />
                       </div>
                       <span className="font-medium text-slate-700">{feat}</span>
@@ -93,8 +93,8 @@ export default function PricingPage() {
                 href={plan.ctaHref}
                 className={
                   plan.highlighted
-                    ? "inline-flex h-11 w-full items-center justify-center rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors"
-                    : "inline-flex h-11 w-full items-center justify-center rounded-xl border border-slate-200/90 bg-white px-4 text-sm font-semibold text-slate-800 shadow-2xs hover:bg-slate-50 transition-colors"
+                    ? "inline-flex h-11.5 w-full items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 px-4 text-sm font-semibold text-white shadow-xs hover:from-indigo-700 hover:to-indigo-800 transition-all active:scale-[0.98]"
+                    : "inline-flex h-11.5 w-full items-center justify-center rounded-xl border border-slate-200/90 bg-white px-4 text-sm font-semibold text-slate-800 shadow-2xs hover:bg-slate-50 transition-all active:scale-[0.98]"
                 }
               >
                 {plan.ctaLabel}

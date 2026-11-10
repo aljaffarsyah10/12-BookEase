@@ -9,12 +9,12 @@ export function PublicFooter() {
           <div className="md:col-span-2 space-y-3">
             <Link
               href="/"
-              className="inline-flex items-center gap-2.5 text-slate-900 font-semibold"
+              className="inline-flex items-center gap-2.5 text-slate-900 font-bold group"
             >
-              <span className="flex size-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+              <span className="flex size-8.5 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-700 via-indigo-600 to-violet-500 text-white shadow-xs shadow-indigo-500/20 group-hover:scale-105 transition-transform">
                 <CalendarCheck className="size-4" />
               </span>
-              <span className="text-lg font-bold">BookEase</span>
+              <span className="text-lg font-extrabold tracking-tight">BookEase</span>
             </Link>
             <p className="max-w-sm text-sm text-slate-500 leading-relaxed">
               Platform booking online & manajemen jadwal profesional untuk

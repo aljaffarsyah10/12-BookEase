@@ -111,27 +111,30 @@ export function BookingCalendarView({
           return (
             <div
               key={day.dateStr}
-              className={`flex flex-col rounded-xl border p-3 min-h-[380px] transition-all ${
+              className={`flex flex-col rounded-2xl border p-3.5 min-h-[390px] transition-all ${
                 isToday
-                  ? "border-indigo-400/80 bg-indigo-50/25 ring-2 ring-indigo-500/10 shadow-xs"
-                  : "border-slate-200/90 bg-white shadow-2xs"
+                  ? "border-indigo-400/90 bg-indigo-50/30 ring-2 ring-indigo-500/10 shadow-xs"
+                  : "border-slate-200/90 bg-white shadow-2xs hover:border-slate-300"
               }`}
             >
               {/* Day Header */}
               <div className="pb-2.5 mb-2.5 border-b border-slate-100 flex items-center justify-between">
                 <div>
-                  <p
-                    className={`text-[11px] font-semibold uppercase tracking-wider ${
-                      isToday ? "text-indigo-600" : "text-slate-400"
-                    }`}
-                  >
-                    {day.dayName}
-                  </p>
-                  <p className="text-sm font-bold text-slate-900">
+                  <div className="flex items-center gap-1.5">
+                    {isToday && <span className="size-1.5 rounded-full bg-indigo-600 animate-pulse" />}
+                    <p
+                      className={`text-[10px] font-bold uppercase tracking-wider ${
+                        isToday ? "text-indigo-600" : "text-slate-400"
+                      }`}
+                    >
+                      {day.dayName}
+                    </p>
+                  </div>
+                  <p className="text-sm font-bold text-slate-900 mt-0.5">
                     {day.dayNumber}
                   </p>
                 </div>
-                <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                   isToday ? "bg-indigo-100 text-indigo-700" : "bg-slate-100 text-slate-600"
                 }`}>
                   {dayBookings.length}
