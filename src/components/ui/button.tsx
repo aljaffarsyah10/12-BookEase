@@ -8,15 +8,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-indigo-600 text-white shadow-2xs hover:bg-indigo-700 active:scale-[0.99] dark:bg-indigo-600 dark:hover:bg-indigo-500",
+          "bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.08)] hover:from-indigo-500 hover:to-indigo-600 active:scale-[0.98] dark:from-indigo-600 dark:to-indigo-700",
         outline:
-          "border border-slate-200/90 bg-white text-slate-700 shadow-2xs hover:bg-slate-50 hover:text-slate-900 active:scale-[0.99] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700",
+          "border border-slate-200/90 bg-white text-slate-700 shadow-2xs hover:bg-slate-50/90 hover:border-slate-300 hover:text-slate-900 active:scale-[0.98] dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800",
         secondary:
-          "bg-slate-100 text-slate-800 hover:bg-slate-200/80 active:scale-[0.99] dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
+          "bg-slate-100/90 text-slate-800 hover:bg-slate-200/80 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
         ghost:
-          "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100",
+          "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 active:scale-[0.98] dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100",
         destructive:
-          "bg-rose-600 text-white shadow-2xs hover:bg-rose-700 active:scale-[0.99] dark:bg-rose-600 dark:hover:bg-rose-500",
+          "bg-gradient-to-b from-rose-600 to-rose-700 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_1px_2px_rgba(0,0,0,0.08)] hover:from-rose-500 hover:to-rose-600 active:scale-[0.98] dark:from-rose-600 dark:to-rose-700",
         link: "text-indigo-600 underline-offset-4 hover:underline hover:text-indigo-700 dark:text-indigo-400",
       },
       size: {
@@ -24,7 +24,7 @@ const buttonVariants = cva(
         xs: "h-6 gap-1 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1.5 rounded-md px-2.5 text-xs font-medium [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-10 gap-2 px-4 text-sm font-medium",
-        xl: "h-11 gap-2.5 px-5 text-base font-medium",
+        xl: "h-11 gap-2.5 px-5 text-base font-semibold",
         icon: "size-9 rounded-lg",
         "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8 rounded-md [&_svg:not([class*='size-'])]:size-3.5",

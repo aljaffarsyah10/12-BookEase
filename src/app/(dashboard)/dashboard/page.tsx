@@ -112,25 +112,28 @@ export default function DashboardOverviewPage() {
           value={stats.totalBookings}
           subtitle="Seluruh riwayat booking"
           icon={CalendarDays}
+          trend={stats.totalBookings > 0 ? "+100% aktif" : undefined}
         />
         <StatCard
           title="Jadwal Hari Ini"
           value={stats.todayBookingsCount}
           subtitle={`${stats.pendingBookingsCount} menunggu konfirmasi`}
           icon={Calendar}
-          trend={stats.todayBookingsCount > 0 ? "Aktif Hari Ini" : undefined}
+          trend={stats.todayBookingsCount > 0 ? "Hari ini" : undefined}
         />
         <StatCard
           title="Booking Mendatang"
           value={stats.upcomingBookingsCount}
           subtitle="Terjadwal di masa depan"
           icon={Clock}
+          trend={stats.upcomingBookingsCount > 0 ? "Terjadwal" : undefined}
         />
         <StatCard
           title="Layanan Selesai"
           value={stats.completedBookingsCount}
           subtitle="Layanan tuntas berhasil"
           icon={CheckCircle2}
+          trend={stats.completedBookingsCount > 0 ? "Tuntas" : undefined}
         />
       </div>
 

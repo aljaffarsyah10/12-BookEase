@@ -49,10 +49,10 @@ function SidebarNavGroup({
 }) {
   return (
     <div className="space-y-1">
-      <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400 select-none">
+      <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 select-none">
         {label}
       </p>
-      <div className="space-y-0.5">
+      <div className="space-y-1">
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = pathname
@@ -67,15 +67,18 @@ function SidebarNavGroup({
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium transition-all duration-150 select-none",
+                "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium transition-all duration-150 select-none",
                 isActive
-                  ? "bg-indigo-50/80 text-indigo-700 font-semibold shadow-2xs dark:bg-indigo-950/50 dark:text-indigo-300"
-                  : "text-slate-600 hover:bg-slate-100/70 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
+                  ? "bg-indigo-50/90 text-indigo-700 font-semibold shadow-xs ring-1 ring-indigo-500/10 dark:bg-indigo-950/60 dark:text-indigo-300 dark:ring-indigo-800"
+                  : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
               )}
             >
+              {isActive && (
+                <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-indigo-600 dark:bg-indigo-400" />
+              )}
               <Icon
                 className={cn(
-                  "size-4 shrink-0 transition-colors",
+                  "size-4 shrink-0 transition-transform duration-150 group-hover:scale-105",
                   isActive
                     ? "text-indigo-600 dark:text-indigo-400"
                     : "text-slate-400 group-hover:text-slate-600 dark:text-slate-500"
@@ -131,31 +134,48 @@ export function DashboardSidebar({
           onClick={onNavigate}
           className="flex items-center gap-2.5 text-slate-900 font-semibold dark:text-slate-100"
         >
-          <span className="flex size-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-2xs">
-            <CalendarCheck className="size-4" />
+          <span className="flex size-8.5 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-700 via-indigo-600 to-violet-500 text-white shadow-xs shadow-indigo-500/20">
+            <CalendarCheck className="size-4.5" />
           </span>
-          <span className="text-base font-bold tracking-tight">BookEase</span>
+          <div className="flex flex-col">
+            <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
+              BookEase
+            </span>
+          </div>
         </Link>
-        <span className="inline-flex items-center rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-[10px] font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-900">
-          Owner
+        <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-200/80 px-2.5 py-0.5 text-[10px] font-bold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-900">
+          PRO
         </span>
       </div>
 
       {/* Active Workspace Pill */}
       <div className="border-b border-slate-100 p-3.5 dark:border-slate-800">
-        <div className="rounded-xl border border-slate-200/70 bg-slate-50/70 p-3 transition-colors hover:border-slate-300/80 dark:border-slate-800 dark:bg-slate-900/60">
-          <p className="text-[11px] font-medium text-slate-400">Workspace Aktif</p>
-          <p className="mt-0.5 truncate text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+        <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-3 transition-all hover:border-slate-300 hover:shadow-2xs dark:border-slate-800 dark:bg-slate-900/60">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              </span>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                Workspace Aktif
+              </p>
+            </div>
+            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/70 rounded px-1.5 py-0.2">
+              Online
+            </span>
+          </div>
+          <p className="mt-1.5 truncate text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
             {businessName}
           </p>
           <Link
             href={`/book/${businessSlug}`}
             target="_blank"
             onClick={onNavigate}
-            className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+            className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-white border border-slate-200/90 px-2 py-1 text-[11px] font-medium text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-indigo-400"
           >
             <span className="truncate">/book/{businessSlug}</span>
-            <ExternalLink className="size-3 shrink-0" />
+            <ExternalLink className="size-3 shrink-0 text-slate-400" />
           </Link>
         </div>
       </div>

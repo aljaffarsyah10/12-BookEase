@@ -92,111 +92,132 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white py-16 sm:py-24 bg-[radial-gradient(ellipse_80%_80%_at_50%_-10%,rgba(79,70,229,0.07),rgba(255,255,255,0))]">
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white py-16 sm:py-24 bg-[radial-gradient(ellipse_80%_80%_at_50%_-10%,rgba(79,70,229,0.08),rgba(255,255,255,0))]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div className="lg:col-span-7 text-center lg:text-left">
               <Badge
                 variant="outline"
-                className="mb-4 rounded-full border-indigo-200/80 bg-indigo-50/80 px-3.5 py-1 text-xs font-semibold text-indigo-700"
+                className="mb-5 inline-flex items-center gap-2 rounded-full border-indigo-200/80 bg-indigo-50/90 px-4 py-1.5 text-xs font-semibold text-indigo-700 shadow-2xs"
               >
-                Platform Reservasi Online Bisnis Jasa
+                <span className="flex size-2 rounded-full bg-indigo-600 animate-pulse" />
+                Platform Reservasi Online Bisnis Jasa #1 di Indonesia
               </Badge>
-              <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-slate-900 leading-[1.15]">
-                Terima Reservasi Pelanggan 24/7 Tanpa Ribet Chat Manual
+              <h1 className="text-3xl sm:text-5xl lg:text-[3.35rem] font-extrabold tracking-tight text-slate-900 leading-[1.12]">
+                Terima Reservasi Pelanggan 24/7{" "}
+                <span className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-600 bg-clip-text text-transparent">
+                  Tanpa Ribet Chat Manual
+                </span>
               </h1>
               <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                BookEase membantu salon, klinik kecantikan, barbershop,
-                konsultan, dan berbagai bisnis jasa mengelola jadwal layanan,
-                ketersediaan staf, dan reservasi pelanggan dalam satu tempat.
+                BookEase membantu salon, klinik estetika, barbershop, studio, dan konsultan profesional mengelola jadwal, ketersediaan staf, dan reservasi pelanggan dalam satu sistem cerdas anti-bentrok.
               </p>
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5">
                 <Link
                   href="/register"
-                  className="inline-flex h-11.5 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 text-sm font-semibold text-white shadow-xs transition-all hover:bg-indigo-700 hover:shadow-sm"
+                  className="inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 px-6.5 text-sm font-semibold text-white shadow-xs hover:from-indigo-700 hover:to-indigo-800 transition-all active:scale-[0.98]"
                 >
                   <span>Buat Halaman Booking Gratis</span>
                   <ArrowRight className="size-4" />
                 </Link>
                 <Link
                   href="/book/glow-beauty-studio"
-                  className="inline-flex h-11.5 w-full sm:w-auto items-center justify-center rounded-xl border border-slate-200/90 bg-white px-6 text-sm font-semibold text-slate-800 shadow-2xs transition-all hover:bg-slate-50"
+                  className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-xl border border-slate-200/90 bg-white px-6 text-sm font-semibold text-slate-800 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
                 >
                   Coba Demo Booking Pelanggan
                 </Link>
               </div>
-              <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-xs font-medium text-slate-500">
+              <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-xs font-medium text-slate-500">
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
-                  Tanpa akun bagi pelanggan
+                  Tanpa wajib akun pelanggan
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
-                  Anti bentrok jadwal otomatis
+                  Kunci slot otomatis (Anti bentrok)
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
-                  Dukungan WIB, WITA, WIT
+                  Dukungan zona waktu WIB / WITA / WIT
                 </span>
               </div>
             </div>
 
-            {/* Interactive Preview Card */}
+            {/* Interactive Luxury Browser Preview Frame */}
             <div className="lg:col-span-5">
-              <div className="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-5 sm:p-6 shadow-sm">
-                <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-indigo-600">
-                      Pratinjau Halaman Publik
-                    </p>
-                    <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-                      Glow Beauty Studio
-                    </h2>
+              <div className="relative rounded-2xl border border-slate-200/90 bg-white shadow-xl shadow-slate-200/50 overflow-hidden">
+                {/* Browser Top Bar */}
+                <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50/80 px-4 py-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="size-2.5 rounded-full bg-rose-400" />
+                    <span className="size-2.5 rounded-full bg-amber-400" />
+                    <span className="size-2.5 rounded-full bg-emerald-400" />
                   </div>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200/80">
-                    Buka Hari Ini
-                  </span>
+                  <div className="mx-auto flex h-6 w-3/5 items-center justify-center rounded-md border border-slate-200/70 bg-white px-3 text-[10px] font-mono text-slate-500 truncate shadow-2xs">
+                    https://bookease.id/book/glow-beauty-studio
+                  </div>
                 </div>
 
-                <div className="mt-4 space-y-3">
+                {/* Content Mock */}
+                <div className="p-5 sm:p-6 bg-white space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+                        Demo Booking Publik
+                      </span>
+                      <h2 className="text-base font-bold text-slate-900 tracking-tight">
+                        Glow Beauty Studio
+                      </h2>
+                    </div>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200/80">
+                      <span className="size-1.5 rounded-full bg-emerald-500" />
+                      Buka Hari Ini
+                    </span>
+                  </div>
+
+                  {/* Picked Service Box */}
                   <div className="rounded-xl border border-indigo-600/90 bg-indigo-50/50 p-4 shadow-2xs">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold text-slate-900">
+                      <p className="text-xs sm:text-sm font-bold text-slate-900">
                         Signature Hydrating Facial
                       </p>
-                      <span className="text-sm font-bold text-indigo-700">
+                      <span className="text-xs sm:text-sm font-bold text-indigo-700">
                         Rp 250.000
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-slate-600 font-medium">
+                    <p className="mt-1 text-[11px] text-slate-600 font-medium">
                       60 menit • Staf: Siti Rahma
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 pt-1">
-                    <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-xs font-mono font-medium text-slate-700">
-                      09:00
-                    </span>
-                    <span className="flex h-9 items-center justify-center rounded-lg bg-indigo-600 text-xs font-mono font-semibold text-white shadow-2xs">
-                      10:00
-                    </span>
-                    <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-xs font-mono font-medium text-slate-700">
-                      11:00
-                    </span>
+                  {/* Time slots preview */}
+                  <div className="space-y-1.5 pt-1">
+                    <p className="text-[11px] font-semibold text-slate-500">Pilih Jam Kunjungan</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-xs font-mono font-medium text-slate-700">
+                        09:00
+                      </span>
+                      <span className="flex h-9 items-center justify-center rounded-lg bg-indigo-600 text-xs font-mono font-semibold text-white shadow-2xs">
+                        10:00 WIB
+                      </span>
+                      <span className="flex h-9 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-xs font-mono font-medium text-slate-700">
+                        11:00
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-5 pt-4 border-t border-slate-200/80 flex items-center justify-between">
-                  <span className="text-xs text-slate-500 font-mono">
-                    bookease.com/book/glow-beauty-studio
-                  </span>
-                  <Link
-                    href="/book/glow-beauty-studio"
-                    className="text-xs font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1"
-                  >
-                    <span>Buka Halaman</span>
-                    <span>→</span>
-                  </Link>
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-400">
+                      Konfirmasi instan via email & WhatsApp
+                    </span>
+                    <Link
+                      href="/book/glow-beauty-studio"
+                      className="text-xs font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1"
+                    >
+                      <span>Buka Demo</span>
+                      <span>→</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -223,12 +244,12 @@ export default function HomePage() {
               return (
                 <div
                   key={feature.title}
-                  className="rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs"
+                  className="group relative rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-md"
                 >
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                  <div className="flex size-11 items-center justify-center rounded-xl bg-indigo-50 border border-indigo-100/80 text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
                     <Icon className="size-5" />
                   </div>
-                  <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                  <h3 className="mt-4 text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                     {feature.title}
                   </h3>
                   <p className="mt-2 text-sm text-slate-600 leading-relaxed">

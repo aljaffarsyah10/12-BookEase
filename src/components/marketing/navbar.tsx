@@ -18,10 +18,10 @@ export function PublicNavbar() {
           href="/"
           className="flex items-center gap-2.5 text-slate-900 font-bold tracking-tight group"
         >
-          <span className="flex size-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-2xs group-hover:scale-105 transition-transform">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-700 via-indigo-600 to-violet-500 text-white shadow-xs shadow-indigo-500/20 group-hover:scale-105 transition-transform">
             <CalendarCheck className="size-5" />
           </span>
-          <span className="text-lg font-bold tracking-tight">BookEase</span>
+          <span className="text-lg font-extrabold tracking-tight">BookEase</span>
         </Link>
 
         {/* Desktop Nav */}
