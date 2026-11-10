@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error Node experimental strip types requires extension
 import { generateCancellationSignature, verifyCancellationSignature } from "../src/lib/cancellation-token.ts";
+// @ts-expect-error Node experimental strip types requires extension
+import { signSessionToken, verifySessionToken } from "../src/lib/auth-session.ts";
 
 test("Security: IDOR Prevention logic verification", () => {
   // Simulate mock database records for two distinct businesses
@@ -140,3 +142,63 @@ test("Security: Rate Limiter Sliding Window Algorithm Verification", () => {
   // After window expires (now + 65000ms), old timestamps slide out and request succeeds
   assert.equal(simulateRateLimit(id, 5, 60000, now + 65000), true);
 });
+
+test("Security: HMAC-SHA256 Session Token Signing and Tampering Resistance", () => {
+  const userId = "cuid_admin_user_123456789";
+  const signedToken = signSessionToken(userId);
+
+  // 1. Valid signed token verifies correctly
+  assert.equal(verifySessionToken(signedToken), userId);
+
+  // 2. Tampered user ID in signature fails
+  const [extractedUser, sig] = signedToken.split(".");
+  const tamperedToken = `cuid_attacker_999999999.${sig}`;
+  assert.equal(verifySessionToken(tamperedToken), null);
+
+  // 3. Altered signature fails
+  const alteredSigToken = `${extractedUser}.${sig.slice(0, 62)}aa`;
+  assert.equal(verifySessionToken(alteredSigToken), null);
+
+  // 4. Truncated or empty token fails
+  assert.equal(verifySessionToken(""), null);
+  assert.equal(verifySessionToken(undefined), null);
+  assert.equal(verifySessionToken("invalid-format-without-dot"), null);
+});
+
+test("Security: Memory-Bounded Rate Limiter Purge & Cleanup Verification", () => {
+  const store = new Map<string, number[]>();
+
+  function boundedRateLimitSweep(
+    now: number,
+    windowMs: number
+  ): void {
+    for (const [key, timestamps] of store.entries()) {
+      const valid = timestamps.filter((t) => now - t < windowMs);
+      if (valid.length === 0) {
+        store.delete(key);
+      } else {
+        store.set(key, valid);
+      }
+    }
+  }
+
+  // Populate store with 10 expired clients and 2 active clients
+  const now = 2000000;
+  for (let i = 0; i < 10; i++) {
+    store.set(`client-old-${i}`, [now - 120000]); // 2 minutes ago
+  }
+  store.set("client-active-1", [now - 10000]); // 10s ago
+  store.set("client-active-2", [now - 5000]);  // 5s ago
+
+  assert.equal(store.size, 12);
+
+  // Perform memory sweep
+  boundedRateLimitSweep(now, 60000);
+
+  // Expired clients must be completely purged from memory
+  assert.equal(store.size, 2);
+  assert.equal(store.has("client-active-1"), true);
+  assert.equal(store.has("client-active-2"), true);
+  assert.equal(store.has("client-old-0"), false);
+});
+

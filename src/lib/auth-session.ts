@@ -47,8 +47,12 @@ export function verifySessionToken(token: string | undefined | null): string | n
     }
   }
 
-  // Backward compatibility in non-production for legacy raw ID cookies / dev seed testing
-  if (process.env.NODE_ENV !== "production" && /^[a-z0-9_-]{10,40}$/i.test(token)) {
+  // Backward compatibility in non-production for legacy raw CUID/UUID cookies in dev seed testing
+  if (
+    process.env.NODE_ENV !== "production" &&
+    (/^c[a-z0-9]{20,32}$/i.test(token) ||
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token))
+  ) {
     return token;
   }
 
