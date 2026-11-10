@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
+import { alerting } from "@/lib/alerting";
+import { errorTracker } from "@/lib/error-tracker";
 import { AppError } from "@/lib/errors";
+import { logger } from "@/lib/logger";
+import { metrics } from "@/lib/metrics";
 
 export interface ApiResponseSuccess<T> {
   success: true;
@@ -40,7 +44,12 @@ export function apiError(
   );
 }
 
-export function handleApiError(err: unknown): NextResponse<ApiResponseError> {
+export function handleApiError(
+  err: unknown,
+  context?: { path?: string; method?: string }
+): NextResponse<ApiResponseError> {
+  const requestId = logger.generateRequestId();
+
   // Let Next.js internal control flow errors (bailout, redirect, notFound, dynamic cookies) bubble up
   if (typeof err === "object" && err !== null && "digest" in err) {
     const digest = String((err as { digest: unknown }).digest);
@@ -49,7 +58,14 @@ export function handleApiError(err: unknown): NextResponse<ApiResponseError> {
     }
   }
 
+  // AppError: Controlled domain & validation business errors
   if (err instanceof AppError) {
+    logger.warn(`[API_APP_ERROR] ${err.code}: ${err.message}`, {
+      requestId,
+      code: err.code,
+      status: err.status,
+      ...context,
+    });
     return apiError(err.code, err.message, err.status, err.details);
   }
 
@@ -64,6 +80,10 @@ export function handleApiError(err: unknown): NextResponse<ApiResponseError> {
   }
 
   if (err instanceof ZodError) {
+    logger.debug("[API_VALIDATION_ERROR] Zod payload rejection", {
+      requestId,
+      ...context,
+    });
     return apiError(
       "VALIDATION_ERROR",
       "Periksa kembali data yang Anda kirimkan.",
@@ -72,10 +92,28 @@ export function handleApiError(err: unknown): NextResponse<ApiResponseError> {
     );
   }
 
-  console.error("[API_UNCAUGHT_ERROR]", err);
+  // Track unhandled server error with error tracker, metrics, and alerting
+  const trackedEvent = errorTracker.captureException(err, {
+    requestId,
+    ...context,
+  });
+
+  alerting.recordHttpResult(500, context?.path || "api");
+  metrics.recordRequest({
+    path: context?.path || "/api",
+    method: context?.method || "UNKNOWN",
+    statusCode: 500,
+    durationMs: 0,
+    timestamp: Date.now(),
+  });
+
   return apiError(
     "INTERNAL_SERVER_ERROR",
-    "Terjadi kesalahan pada server. Silakan coba lagi nanti.",
-    500
+    "Terjadi kendala pada sistem server. Tim teknis telah diberi notifikasi.",
+    500,
+    {
+      requestId,
+      referenceCode: trackedEvent.fingerprint,
+    }
   );
 }
