@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { generateCancellationSignature } from "@/lib/cancellation-token";
+import { escapeHtml } from "@/lib/security";
 import type { Booking } from "@/types";
 
 const resendApiKey = process.env.RESEND_API_KEY;
@@ -23,12 +24,22 @@ export async function sendBookingConfirmationEmail(
     booking.reference
   )}&token=${token}`;
 
+  const safeCustomerName = escapeHtml(booking.customerName);
+  const safeBusinessName = escapeHtml(businessName);
+  const safeServiceName = escapeHtml(booking.serviceNameSnapshot);
+  const safeStaffName = escapeHtml(booking.staffName);
+  const safeDate = escapeHtml(booking.date);
+  const safeTime = escapeHtml(booking.time);
+  const safeAddress = escapeHtml(businessAddress);
+  const safePhone = escapeHtml(businessPhone);
+  const safeReference = escapeHtml(booking.reference);
+
   const htmlContent = `
     <!DOCTYPE html>
     <html lang="id">
       <head>
         <meta charset="utf-8">
-        <title>Konfirmasi Reservasi - ${booking.reference}</title>
+        <title>Konfirmasi Reservasi - ${safeReference}</title>
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b; }
           .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
@@ -49,44 +60,44 @@ export async function sendBookingConfirmationEmail(
         <div class="container">
           <div class="header">
             <h1>Reservasi Anda Berhasil Terkonfirmasi</h1>
-            <p style="margin: 6px 0 0 0; font-size: 14px; opacity: 0.9;">${businessName}</p>
+            <p style="margin: 6px 0 0 0; font-size: 14px; opacity: 0.9;">${safeBusinessName}</p>
           </div>
           <div class="content">
-            <p>Halo <strong>${booking.customerName}</strong>,</p>
+            <p>Halo <strong>${safeCustomerName}</strong>,</p>
             <p>Terima kasih telah memesan layanan kami. Reservasi Anda telah terdaftar dalam sistem.</p>
             
             <div class="ref-box">
               <div style="font-size: 12px; color: #64748b;">KODE REFERENSI RESERVASI</div>
-              <div class="ref-code">${booking.reference}</div>
+              <div class="ref-code">${safeReference}</div>
             </div>
 
             <div class="detail-row">
               <span class="detail-label">Layanan</span>
-              <span class="detail-value">${booking.serviceNameSnapshot}</span>
+              <span class="detail-value">${safeServiceName}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Staf Penyedia</span>
-              <span class="detail-value">${booking.staffName}</span>
+              <span class="detail-value">${safeStaffName}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Tanggal & Jam</span>
-              <span class="detail-value">${booking.date} pukul ${booking.time}</span>
+              <span class="detail-value">${safeDate} pukul ${safeTime}</span>
             </div>
             ${
-              businessAddress
+              safeAddress
                 ? `
             <div class="detail-row">
               <span class="detail-label">Lokasi</span>
-              <span class="detail-value">${businessAddress}</span>
+              <span class="detail-value">${safeAddress}</span>
             </div>`
                 : ""
             }
             ${
-              businessPhone
+              safePhone
                 ? `
             <div class="detail-row">
               <span class="detail-label">Kontak Bisnis</span>
-              <span class="detail-value">${businessPhone}</span>
+              <span class="detail-value">${safePhone}</span>
             </div>`
                 : ""
             }

@@ -2,6 +2,7 @@ import { type NextRequest } from "next/server";
 import { z } from "zod";
 import { apiSuccess, handleApiError } from "@/lib/api-response";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getClientIpFromHeaders } from "@/lib/security";
 import { bookingService } from "@/server/services/booking.service";
 
 const customerCancelSchema = z.object({
@@ -12,7 +13,7 @@ const customerCancelSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "local";
+    const ip = getClientIpFromHeaders(request.headers);
     checkRateLimit(`customer-cancel:${ip}`, 10, 60000);
 
     const body = await request.json();
@@ -28,4 +29,3 @@ export async function POST(request: NextRequest) {
     return handleApiError(err);
   }
 }
-

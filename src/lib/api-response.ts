@@ -53,6 +53,16 @@ export function handleApiError(err: unknown): NextResponse<ApiResponseError> {
     return apiError(err.code, err.message, err.status, err.details);
   }
 
+  if (
+    err instanceof Error &&
+    "code" in err &&
+    "status" in err &&
+    typeof (err as { status: unknown }).status === "number"
+  ) {
+    const customErr = err as Error & { code: string; status: number };
+    return apiError(customErr.code, customErr.message, customErr.status);
+  }
+
   if (err instanceof ZodError) {
     return apiError(
       "VALIDATION_ERROR",

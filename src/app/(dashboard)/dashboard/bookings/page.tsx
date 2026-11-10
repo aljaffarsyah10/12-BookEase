@@ -51,11 +51,7 @@ export default function BookingsManagementPage() {
 
   // Multi-selection for bulk actions
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
-  const [todayString, setTodayString] = React.useState<string>("");
-
-  React.useEffect(() => {
-    setTodayString(new Date().toISOString().split("T")[0]);
-  }, []);
+  const [isTodaySelected, setIsTodaySelected] = React.useState(false);
 
   // Pagination state
   const [page, setPage] = React.useState<number>(1);
@@ -191,6 +187,7 @@ export default function BookingsManagementPage() {
     setSearch("");
     setStatusFilter("ALL");
     setDateFilter("");
+    setIsTodaySelected(false);
     setPage(1);
   };
 
@@ -200,13 +197,16 @@ export default function BookingsManagementPage() {
     if (type === "ALL") {
       setStatusFilter("ALL");
       setDateFilter("");
+      setIsTodaySelected(false);
     } else if (type === "TODAY") {
       const today = new Date().toISOString().split("T")[0];
       setDateFilter(today);
       setStatusFilter("ALL");
+      setIsTodaySelected(true);
     } else {
       setStatusFilter(type);
       setDateFilter("");
+      setIsTodaySelected(false);
     }
   };
 
@@ -333,7 +333,7 @@ export default function BookingsManagementPage() {
           type="button"
           onClick={() => handleQuickFilter("TODAY")}
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
-            Boolean(todayString && dateFilter === todayString)
+            isTodaySelected
               ? "bg-indigo-600 text-white shadow-2xs"
               : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
           }`}
@@ -437,6 +437,7 @@ export default function BookingsManagementPage() {
               onChange={(e) => {
                 setIsLoading(true);
                 setDateFilter(e.target.value);
+                setIsTodaySelected(false);
                 setPage(1);
               }}
               className="h-10 text-sm"

@@ -4,6 +4,8 @@ import assert from "node:assert/strict";
 import { generateCancellationSignature, verifyCancellationSignature } from "../src/lib/cancellation-token.ts";
 // @ts-expect-error Node experimental strip types requires extension
 import { signSessionToken, verifySessionToken } from "../src/lib/auth-session.ts";
+// @ts-expect-error Node experimental strip types requires extension
+import { escapeHtml, maskEmail, maskPhone, getClientIpFromHeaders, validateCsrfOrigin } from "../src/lib/security.ts";
 
 test("Security: IDOR Prevention logic verification", () => {
   // Simulate mock database records for two distinct businesses
@@ -201,4 +203,62 @@ test("Security: Memory-Bounded Rate Limiter Purge & Cleanup Verification", () =>
   assert.equal(store.has("client-active-2"), true);
   assert.equal(store.has("client-old-0"), false);
 });
+
+test("Security: CSRF Origin validation verifies same-origin and blocks cross-origin", () => {
+  // 1. Same origin passes
+  const validHeaders = new Headers();
+  validHeaders.set("host", "bookease.id");
+  validHeaders.set("origin", "https://bookease.id");
+  assert.doesNotThrow(() => validateCsrfOrigin(validHeaders));
+
+  // 2. Cross-origin browser request is blocked with CSRF error
+  const attackHeaders = new Headers();
+  attackHeaders.set("host", "bookease.id");
+  attackHeaders.set("origin", "https://malicious-attacker.com");
+  assert.throws(() => validateCsrfOrigin(attackHeaders), /Permintaan lintas domain/);
+
+  // 3. No origin header (non-browser or simple request) passes
+  const noOriginHeaders = new Headers();
+  noOriginHeaders.set("host", "bookease.id");
+  assert.doesNotThrow(() => validateCsrfOrigin(noOriginHeaders));
+});
+
+test("Security: PII Data Masking and HTML injection prevention", () => {
+  // 1. Email masking
+  assert.equal(maskEmail("budi.santoso@gmail.com"), "bu***so@gmail.com");
+  assert.equal(maskEmail("me@bookease.id"), "m***@bookease.id");
+  assert.equal(maskEmail(""), "***@***.com");
+
+  // 2. Phone masking
+  assert.equal(maskPhone("081234567890"), "0812****7890");
+  assert.equal(maskPhone("08112233"), "0811****2233");
+  assert.equal(maskPhone("123"), "******");
+
+  // 3. HTML escaping for email / templates
+  assert.equal(
+    escapeHtml("<script>alert('XSS')</script>"),
+    "&lt;script&gt;alert(&#039;XSS&#039;)&lt;/script&gt;"
+  );
+  assert.equal(
+    escapeHtml('Potong "Spesial" & Gaya'),
+    "Potong &quot;Spesial&quot; &amp; Gaya"
+  );
+});
+
+test("Security: Client IP resolution strips proxy chains and extracts first IP", () => {
+  // Direct x-real-ip
+  const h1 = new Headers();
+  h1.set("x-real-ip", "203.0.113.195");
+  assert.equal(getClientIpFromHeaders(h1), "203.0.113.195");
+
+  // Comma-separated x-forwarded-for chain
+  const h2 = new Headers();
+  h2.set("x-forwarded-for", "203.0.113.50, 10.0.0.1, 192.168.1.1");
+  assert.equal(getClientIpFromHeaders(h2), "203.0.113.50");
+
+  // Fallback to loopback
+  const h3 = new Headers();
+  assert.equal(getClientIpFromHeaders(h3), "127.0.0.1");
+});
+
 

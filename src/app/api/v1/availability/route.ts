@@ -1,11 +1,12 @@
 import { type NextRequest } from "next/server";
 import { apiError, apiSuccess, handleApiError } from "@/lib/api-response";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getClientIpFromHeaders } from "@/lib/security";
 import { availabilityService } from "@/server/services/availability.service";
 
 export async function GET(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "local";
+    const ip = getClientIpFromHeaders(request.headers);
     checkRateLimit(`availability:${ip}`, 60, 60000);
 
     const searchParams = request.nextUrl.searchParams;

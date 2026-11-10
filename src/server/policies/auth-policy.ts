@@ -1,7 +1,8 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { verifySessionToken } from "@/lib/auth-session";
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
+import { validateCsrfOrigin } from "@/lib/security";
 
 export interface AuthenticatedUser {
   id: string;
@@ -11,30 +12,18 @@ export interface AuthenticatedUser {
 }
 
 export async function requireBusinessOwner(): Promise<AuthenticatedUser> {
+  const reqHeaders = await headers();
+  // Enforce CSRF Origin validation on requests that pass cookies
+  validateCsrfOrigin(reqHeaders);
+
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get("bookease_session")?.value;
   const userId = verifySessionToken(sessionToken);
 
   if (!userId) {
-    // In development mode only: allow seed fallback for quick local testing
-    if (process.env.NODE_ENV !== "production") {
-      const firstUser = await prisma.user.findFirst({
-        include: { business: true },
-      });
-
-      if (firstUser && firstUser.business) {
-        return {
-          id: firstUser.id,
-          email: firstUser.email,
-          name: firstUser.name,
-          businessId: firstUser.business.id,
-        };
-      }
-    }
-
     throw new AppError(
       "UNAUTHORIZED",
-      "Sesi tidak valid atau telah berakhir. Silakan login.",
+      "Sesi autentikasi tidak valid atau telah berakhir. Silakan login kembali.",
       401
     );
   }
@@ -45,25 +34,9 @@ export async function requireBusinessOwner(): Promise<AuthenticatedUser> {
   });
 
   if (!user || !user.business) {
-    // In development mode: allow seed fallback if stale cookie is present
-    if (process.env.NODE_ENV !== "production") {
-      const firstUser = await prisma.user.findFirst({
-        include: { business: true },
-      });
-
-      if (firstUser && firstUser.business) {
-        return {
-          id: firstUser.id,
-          email: firstUser.email,
-          name: firstUser.name,
-          businessId: firstUser.business.id,
-        };
-      }
-    }
-
     throw new AppError(
       "UNAUTHORIZED",
-      "Pengguna tidak ditemukan atau tidak memiliki workspace bisnis.",
+      "Akun pengguna tidak ditemukan atau belum memiliki workspace bisnis yang terhubung.",
       401
     );
   }

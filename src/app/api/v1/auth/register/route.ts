@@ -3,12 +3,13 @@ import { type NextRequest } from "next/server";
 import { apiSuccess, handleApiError } from "@/lib/api-response";
 import { signSessionToken } from "@/lib/auth-session";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getClientIpFromHeaders } from "@/lib/security";
 import { registerSchema } from "@/lib/validations/auth.schema";
 import { authService } from "@/server/services/auth.service";
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "local";
+    const ip = getClientIpFromHeaders(request.headers);
     checkRateLimit(`register:${ip}`, 10, 60000);
 
     const body = await request.json();
@@ -31,4 +32,3 @@ export async function POST(request: NextRequest) {
     return handleApiError(err);
   }
 }
-

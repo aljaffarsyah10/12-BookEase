@@ -1,16 +1,32 @@
 import crypto from "crypto";
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET ||
-  process.env.CANCELLATION_SECRET ||
-  "bookease-session-hmac-secret-min-32-chars-long";
+function getSessionSecret(): string {
+  const secret =
+    process.env.SESSION_SECRET ||
+    process.env.AUTH_SECRET ||
+    process.env.CANCELLATION_TOKEN_SECRET ||
+    process.env.CANCELLATION_SECRET;
+
+  if (secret && secret.length >= 32) {
+    return secret;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "[FATAL_SECURITY_ERROR] AUTH_SECRET or SESSION_SECRET must be configured with at least 32 characters in production."
+    );
+  }
+
+  return "bookease-session-hmac-secret-min-32-chars-long";
+}
 
 /**
  * Sign a user ID into a tamper-proof session token: `${userId}.${signature}`
  */
 export function signSessionToken(userId: string): string {
+  const secret = getSessionSecret();
   const signature = crypto
-    .createHmac("sha256", SESSION_SECRET)
+    .createHmac("sha256", secret)
     .update(userId)
     .digest("hex");
   return `${userId}.${signature}`;
@@ -31,8 +47,9 @@ export function verifySessionToken(token: string | undefined | null): string | n
       return null;
     }
 
+    const secret = getSessionSecret();
     const expected = crypto
-      .createHmac("sha256", SESSION_SECRET)
+      .createHmac("sha256", secret)
       .update(userId)
       .digest("hex");
 
@@ -45,15 +62,6 @@ export function verifySessionToken(token: string | undefined | null): string | n
     } catch {
       return null;
     }
-  }
-
-  // Backward compatibility in non-production for legacy raw CUID/UUID cookies in dev seed testing
-  if (
-    process.env.NODE_ENV !== "production" &&
-    (/^c[a-z0-9]{20,32}$/i.test(token) ||
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token))
-  ) {
-    return token;
   }
 
   return null;

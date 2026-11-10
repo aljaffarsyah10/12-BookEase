@@ -35,8 +35,12 @@ export const businessService = {
       throw new AppError("BUSINESS_NOT_FOUND", "Halaman bisnis tidak ditemukan.", 404);
     }
 
+    // Omit sensitive internal ownerId from public response
+    const { ownerId: _omittedOwnerId, ...safeBusiness } = business;
+    void _omittedOwnerId;
+
     return {
-      ...business,
+      ...safeBusiness,
       services: business.services.map((s) => ({
         id: s.id,
         businessId: s.businessId,
