@@ -24,7 +24,6 @@ model User {
 
   business     Business?
 
-  @@index([email])
   @@map("users")
 }
 
@@ -49,8 +48,6 @@ model Business {
   operatingHours    OperatingHour[]
   bookings          Booking[]
 
-  @@index([slug])
-  @@index([ownerId])
   @@map("businesses")
 }
 
@@ -117,7 +114,6 @@ model OperatingHour {
   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   @@unique([businessId, dayOfWeek])
-  @@index([businessId])
   @@map("operating_hours")
 }
 
@@ -151,6 +147,5 @@ model Booking {
   @@index([businessId, startAt])
   @@index([businessId, status])
   @@index([staffId, startAt, occupiedEndAt])
-  @@index([reference])
   @@map("bookings")
 }

@@ -108,9 +108,23 @@ export const bookingService = {
     });
     const timezone = business?.timezone || "Asia/Jakarta";
 
+    let startAtFilter: { gte: Date; lt: Date } | undefined;
+    if (filters?.date) {
+      const dayStartUTC = parseZonedTimeToUTC(filters.date, "00:00", timezone);
+      const [y, m, d] = filters.date.split("-").map(Number);
+      const nextDate = new Date(Date.UTC(y, m - 1, d + 1));
+      const nextDateStr = nextDate.toISOString().slice(0, 10);
+      const nextDayStartUTC = parseZonedTimeToUTC(nextDateStr, "00:00", timezone);
+      startAtFilter = {
+        gte: dayStartUTC,
+        lt: nextDayStartUTC,
+      };
+    }
+
     const whereClause: {
       businessId: string;
       status?: BookingStatus;
+      startAt?: { gte: Date; lt: Date };
       OR?: Array<{
         customerName?: { contains: string; mode: "insensitive" };
         customerEmail?: { contains: string; mode: "insensitive" };
@@ -119,6 +133,7 @@ export const bookingService = {
       }>;
     } = {
       businessId,
+      ...(startAtFilter ? { startAt: startAtFilter } : {}),
       ...(filters?.status && filters.status !== "ALL"
         ? { status: filters.status }
         : {}),
@@ -134,30 +149,29 @@ export const bookingService = {
         : {}),
     };
 
-    const bookings = await prisma.booking.findMany({
-      where: whereClause,
-      include: {
-        service: true,
-        staff: true,
-      },
-      orderBy: { startAt: "desc" },
-    });
-
-    let mapped = bookings.map((b) => mapBookingToDto(b, timezone));
-
-    if (filters?.date) {
-      mapped = mapped.filter((b) => b.date === filters.date);
-    }
-
     if (filters?.page) {
       const page = Math.max(1, filters.page);
       const limit = Math.max(1, filters.limit || 10);
-      const total = mapped.length;
+
+      const [total, bookings] = await Promise.all([
+        prisma.booking.count({ where: whereClause }),
+        prisma.booking.findMany({
+          where: whereClause,
+          include: {
+            service: true,
+            staff: true,
+          },
+          orderBy: { startAt: "desc" },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+      ]);
+
+      const items = bookings.map((b) => mapBookingToDto(b, timezone));
       const totalPages = Math.ceil(total / limit) || 1;
-      const paginatedItems = mapped.slice((page - 1) * limit, page * limit);
 
       return {
-        items: paginatedItems,
+        items,
         pagination: {
           total,
           page,
@@ -167,7 +181,16 @@ export const bookingService = {
       };
     }
 
-    return mapped;
+    const bookings = await prisma.booking.findMany({
+      where: whereClause,
+      include: {
+        service: true,
+        staff: true,
+      },
+      orderBy: { startAt: "desc" },
+    });
+
+    return bookings.map((b) => mapBookingToDto(b, timezone));
   },
 
   async getById(businessId: string, id: string) {
