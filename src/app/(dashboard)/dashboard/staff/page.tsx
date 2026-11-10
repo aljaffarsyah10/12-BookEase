@@ -10,6 +10,7 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,10 +20,17 @@ import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { serviceApi } from "@/features/services/services/service.api";
 import { StaffCard } from "@/features/staff/components/staff-card";
-import { StaffFormDialog } from "@/features/staff/components/staff-form-dialog";
 import { staffApi } from "@/features/staff/services/staff.api";
 import type { StaffFormValues } from "@/lib/validations/staff.schema";
 import type { Service, Staff } from "@/types";
+
+const StaffFormDialog = dynamic(
+  () =>
+    import("@/features/staff/components/staff-form-dialog").then(
+      (m) => m.StaffFormDialog
+    ),
+  { ssr: false }
+);
 
 export default function StaffManagementPage() {
   const [staffList, setStaffList] = React.useState<Staff[]>([]);

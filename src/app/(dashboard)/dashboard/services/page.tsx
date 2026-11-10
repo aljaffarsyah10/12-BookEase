@@ -10,6 +10,7 @@ import {
   Sparkles,
   XCircle,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,11 +20,18 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { ServiceCard } from "@/features/services/components/service-card";
-import { ServiceFormDialog } from "@/features/services/components/service-form-dialog";
 import { serviceApi } from "@/features/services/services/service.api";
 import { staffApi } from "@/features/staff/services/staff.api";
 import type { ServiceFormValues } from "@/lib/validations/service.schema";
 import type { Service, Staff } from "@/types";
+
+const ServiceFormDialog = dynamic(
+  () =>
+    import("@/features/services/components/service-form-dialog").then(
+      (m) => m.ServiceFormDialog
+    ),
+  { ssr: false }
+);
 
 type ServiceSortOption =
   | "name_asc"

@@ -383,45 +383,45 @@ export const bookingService = {
     });
     const timezone = business?.timezone || "Asia/Jakarta";
 
-    const allBookings = await prisma.booking.findMany({
-      where: { businessId },
-      select: {
-        startAt: true,
-        status: true,
-        servicePriceSnapshot: true,
-      },
-    });
-
     const now = new Date();
     const todayStr = format(toZonedTime(now, timezone), "yyyy-MM-dd");
+    const todayStartUTC = parseZonedTimeToUTC(todayStr, "00:00", timezone);
+    const tomorrowStartUTC = new Date(todayStartUTC.getTime() + 24 * 60 * 60 * 1000);
 
-    let totalBookings = 0;
-    let todayBookingsCount = 0;
-    let upcomingBookingsCount = 0;
-    let completedBookingsCount = 0;
-    let cancelledBookingsCount = 0;
-    let estimatedRevenue = 0;
-
-    for (const b of allBookings) {
-      totalBookings++;
-      const zonedDate = toZonedTime(b.startAt, timezone);
-      const bDateStr = format(zonedDate, "yyyy-MM-dd");
-
-      if (b.status === "COMPLETED") {
-        completedBookingsCount++;
-        estimatedRevenue += b.servicePriceSnapshot;
-      } else if (b.status === "CANCELLED") {
-        cancelledBookingsCount++;
-      }
-
-      if (bDateStr === todayStr && (b.status === "CONFIRMED" || b.status === "PENDING")) {
-        todayBookingsCount++;
-      }
-
-      if (b.startAt >= now && (b.status === "CONFIRMED" || b.status === "PENDING")) {
-        upcomingBookingsCount++;
-      }
-    }
+    const [
+      totalBookings,
+      todayBookingsCount,
+      upcomingBookingsCount,
+      completedBookingsCount,
+      cancelledBookingsCount,
+      revenueResult,
+    ] = await Promise.all([
+      prisma.booking.count({ where: { businessId } }),
+      prisma.booking.count({
+        where: {
+          businessId,
+          status: { in: ["CONFIRMED", "PENDING"] },
+          startAt: { gte: todayStartUTC, lt: tomorrowStartUTC },
+        },
+      }),
+      prisma.booking.count({
+        where: {
+          businessId,
+          status: { in: ["CONFIRMED", "PENDING"] },
+          startAt: { gte: now },
+        },
+      }),
+      prisma.booking.count({
+        where: { businessId, status: "COMPLETED" },
+      }),
+      prisma.booking.count({
+        where: { businessId, status: "CANCELLED" },
+      }),
+      prisma.booking.aggregate({
+        where: { businessId, status: "COMPLETED" },
+        _sum: { servicePriceSnapshot: true },
+      }),
+    ]);
 
     return {
       totalBookings,
@@ -429,7 +429,7 @@ export const bookingService = {
       upcomingBookingsCount,
       completedBookingsCount,
       cancelledBookingsCount,
-      estimatedRevenue,
+      estimatedRevenue: revenueResult._sum.servicePriceSnapshot || 0,
     };
   },
 

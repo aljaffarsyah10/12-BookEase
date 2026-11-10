@@ -58,6 +58,12 @@ const STEPS = [
   { id: 4, title: "Data Diri & Review" },
 ];
 
+// Client-side cache to make date switching instant without refetch delay
+const clientSlotsCache = new Map<
+  string,
+  { isClosed: boolean; slots: TimeSlot[] }
+>();
+
 export function BookingWizard({
   business,
   services,
@@ -105,7 +111,24 @@ export function BookingWizard({
     setIsLoadingSlots(true);
     setSlotError(null);
     try {
-      const res = await bookingApi.getAvailability({ slug: business.slug, date: selectedDate, serviceId: selectedServiceId, staffId: selectedStaffId });
+      const cacheKey = `${selectedServiceId}:${selectedStaffId || "all"}:${selectedDate}`;
+      const cached = clientSlotsCache.get(cacheKey);
+      const res =
+        cached ??
+        (await bookingApi.getAvailability({
+          slug: business.slug,
+          date: selectedDate,
+          serviceId: selectedServiceId,
+          staffId: selectedStaffId,
+        }));
+
+      if (!cached) {
+        clientSlotsCache.set(cacheKey, {
+          isClosed: res.isClosed,
+          slots: res.slots,
+        });
+      }
+
       setIsDayClosed(res.isClosed);
       setSlots(res.slots);
       setSelectedTime((prev) =>
@@ -123,14 +146,27 @@ export function BookingWizard({
   React.useEffect(() => {
     let active = true;
     if (!selectedServiceId || !selectedDate) return;
-    bookingApi
-      .getAvailability({
-        slug: business.slug,
-        date: selectedDate,
-        serviceId: selectedServiceId,
-        staffId: selectedStaffId,
-      })
-      .then((res) => {
+
+    (async () => {
+      try {
+        const cacheKey = `${selectedServiceId}:${selectedStaffId || "all"}:${selectedDate}`;
+        const cached = clientSlotsCache.get(cacheKey);
+        const res =
+          cached ??
+          (await bookingApi.getAvailability({
+            slug: business.slug,
+            date: selectedDate,
+            serviceId: selectedServiceId,
+            staffId: selectedStaffId,
+          }));
+
+        if (!cached) {
+          clientSlotsCache.set(cacheKey, {
+            isClosed: res.isClosed,
+            slots: res.slots,
+          });
+        }
+
         if (!active) return;
         setIsDayClosed(res.isClosed);
         setSlots(res.slots);
@@ -139,13 +175,17 @@ export function BookingWizard({
             ? prev
             : (res.slots[0]?.time ?? "")
         );
-        setIsLoadingSlots(false);
-      })
-      .catch(() => {
-        if (!active) return;
-        setSlotError("Gagal memuat ketersediaan jadwal.");
-        setIsLoadingSlots(false);
-      });
+      } catch {
+        if (active) {
+          setSlotError("Gagal memuat ketersediaan jadwal.");
+        }
+      } finally {
+        if (active) {
+          setIsLoadingSlots(false);
+        }
+      }
+    })();
+
     return () => {
       active = false;
     };

@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { LoadingState } from "@/components/shared/loading-state";
-import { prisma } from "@/lib/prisma";
+import { businessService } from "@/server/services/business.service";
 import { PublicBookingClientView } from "./public-booking-client";
 
 export async function generateMetadata(
   props: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const business = await prisma.business.findUnique({
-    where: { slug: slug.toLowerCase() },
-    select: { name: true, category: true, description: true },
-  });
+  const business = await businessService.getPublicBySlug(slug).catch(() => null);
 
   if (!business) {
     return {

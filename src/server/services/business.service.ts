@@ -1,6 +1,38 @@
+import { cacheDel, cacheGet, cacheInvalidatePrefix, cacheSet } from "@/lib/cache";
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 import type { BusinessProfileFormValues } from "@/lib/validations/business.schema";
+
+export interface PublicBusinessDto {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  description: string | null;
+  phone: string | null;
+  address: string | null;
+  timezone: string;
+  bufferTimeMinutes: number;
+  services: Array<{
+    id: string;
+    businessId: string;
+    name: string;
+    description: string | null;
+    price: number;
+    durationMinutes: number;
+    isActive: boolean;
+    staffIds: string[];
+  }>;
+  staff: Array<{
+    id: string;
+    businessId: string;
+    name: string;
+    roleOrTitle: string | null;
+    bio: string | null;
+    isActive: boolean;
+    serviceIds: string[];
+  }>;
+}
 
 export const businessService = {
   async getByOwner(businessId: string) {
@@ -13,7 +45,13 @@ export const businessService = {
     return business;
   },
 
-  async getPublicBySlug(slug: string) {
+  async getPublicBySlug(slug: string): Promise<PublicBusinessDto> {
+    const cacheKey = `biz:slug:${slug.toLowerCase()}`;
+    const cached = await cacheGet<PublicBusinessDto>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const business = await prisma.business.findUnique({
       where: { slug: slug.toLowerCase() },
       include: {
@@ -39,7 +77,7 @@ export const businessService = {
     const { ownerId: _omittedOwnerId, ...safeBusiness } = business;
     void _omittedOwnerId;
 
-    return {
+    const result = {
       ...safeBusiness,
       services: business.services.map((s) => ({
         id: s.id,
@@ -61,6 +99,11 @@ export const businessService = {
         serviceIds: st.staffServices.map((ss) => ss.serviceId),
       })),
     };
+
+    // Cache public profile for 120 seconds
+    await cacheSet(cacheKey, result, 120);
+
+    return result;
   },
 
   async update(businessId: string, input: BusinessProfileFormValues) {
@@ -76,7 +119,7 @@ export const businessService = {
       }
     }
 
-    return prisma.business.update({
+    const updated = await prisma.business.update({
       where: { id: businessId },
       data: {
         name: input.name,
@@ -89,5 +132,11 @@ export const businessService = {
         bufferTimeMinutes: input.bufferTimeMinutes,
       },
     });
+
+    // Invalidate cached public pages
+    await cacheDel(`biz:slug:${updated.slug}`);
+    await cacheInvalidatePrefix("biz:slug:");
+
+    return updated;
   },
 };

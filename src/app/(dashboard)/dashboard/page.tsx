@@ -25,36 +25,47 @@ import { buttonVariants } from "@/components/ui/button";
 import { bookingApi } from "@/features/bookings/services/booking.api";
 import { businessApi } from "@/features/business/services/business.api";
 import {
-  computeDashboardStats,
+  dashboardApi,
   type DashboardSummaryStats,
 } from "@/features/dashboard/services/dashboard.service";
 import { formatDateId, formatRupiah } from "@/lib/format";
 import type { Booking, Business } from "@/types";
 
 export default function DashboardOverviewPage() {
-  const [bookings, setBookings] = React.useState<Booking[]>([]);
+  const [recentBookings, setRecentBookings] = React.useState<Booking[]>([]);
+  const [todayBookings, setTodayBookings] = React.useState<Booking[]>([]);
   const [business, setBusiness] = React.useState<Business | null>(null);
   const [stats, setStats] = React.useState<DashboardSummaryStats | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     let active = true;
-    Promise.all([bookingApi.listBookings(), businessApi.getBusiness()])
-      .then(([bks, biz]) => {
-        if (!active) return;
-        const bksList = Array.isArray(bks) ? bks : bks.items;
-        setBookings(bksList);
-        setBusiness(biz);
+    (async () => {
+      try {
+        const [biz, backendStats, recentRes] = await Promise.all([
+          businessApi.getBusiness(),
+          dashboardApi.getStats(),
+          bookingApi.listBookings({ limit: 5 }),
+        ]);
 
+        if (!active) return;
+        setBusiness(biz);
+        setStats(backendStats);
+        setRecentBookings(Array.isArray(recentRes) ? recentRes : recentRes.items);
+
+        // Fetch up to 10 of today's bookings specifically for the widget
         const tz = biz.timezone || "Asia/Jakarta";
         const todayStr = format(toZonedTime(new Date(), tz), "yyyy-MM-dd");
-        setStats(computeDashboardStats(bksList, todayStr));
-        setIsLoading(false);
-      })
-      .catch((err) => {
+        const todayRes = await bookingApi.listBookings({ date: todayStr, limit: 10 });
+
+        if (!active) return;
+        setTodayBookings(Array.isArray(todayRes) ? todayRes : todayRes.items);
+      } catch (err) {
         console.error("Failed to load dashboard overview:", err);
+      } finally {
         if (active) setIsLoading(false);
-      });
+      }
+    })();
 
     return () => {
       active = false;
@@ -73,11 +84,6 @@ export default function DashboardOverviewPage() {
       </div>
     );
   }
-
-  const tz = business.timezone || "Asia/Jakarta";
-  const todayStr = format(toZonedTime(new Date(), tz), "yyyy-MM-dd");
-  const todayBookings = bookings.filter((b) => b.date === todayStr);
-  const recentBookings = bookings.slice(0, 5);
 
   return (
     <div className="space-y-7">

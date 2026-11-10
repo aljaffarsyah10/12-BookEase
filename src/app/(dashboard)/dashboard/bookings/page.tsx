@@ -16,6 +16,7 @@ import {
   X,
   XCircle,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +25,6 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
-import { BookingCalendarView } from "@/features/bookings/components/booking-calendar-view";
 import {
   BookingTable,
   type BookingSortField,
@@ -32,6 +32,17 @@ import {
 import { bookingApi } from "@/features/bookings/services/booking.api";
 import { exportBookingsToCsv } from "@/lib/calendar-export";
 import type { Booking, BookingStatus } from "@/types";
+
+const BookingCalendarView = dynamic(
+  () =>
+    import("@/features/bookings/components/booking-calendar-view").then(
+      (m) => m.BookingCalendarView
+    ),
+  {
+    loading: () => <LoadingState variant="cards" count={3} />,
+    ssr: false,
+  }
+);
 
 export default function BookingsManagementPage() {
   const [viewMode, setViewMode] = React.useState<"table" | "calendar">("table");

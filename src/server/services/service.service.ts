@@ -1,9 +1,25 @@
+import { cacheDel, cacheGet, cacheInvalidatePrefix, cacheSet } from "@/lib/cache";
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 import type { ServiceFormValues } from "@/lib/validations/service.schema";
 
 export const serviceService = {
   async list(businessId: string, onlyActive = false) {
+    const cacheKey = `services:${businessId}:${onlyActive}`;
+    const cached = await cacheGet<Array<{
+      id: string;
+      businessId: string;
+      name: string;
+      description: string | null;
+      price: number;
+      durationMinutes: number;
+      isActive: boolean;
+      staffIds: string[];
+    }>>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const services = await prisma.service.findMany({
       where: {
         businessId,
@@ -17,7 +33,7 @@ export const serviceService = {
       orderBy: { createdAt: "desc" },
     });
 
-    return services.map((s) => ({
+    const result = services.map((s) => ({
       id: s.id,
       businessId: s.businessId,
       name: s.name,
@@ -27,10 +43,14 @@ export const serviceService = {
       isActive: s.isActive,
       staffIds: s.staffServices.map((ss) => ss.staffId),
     }));
+
+    await cacheSet(cacheKey, result, 60);
+
+    return result;
   },
 
   async create(businessId: string, input: ServiceFormValues) {
-    return prisma.$transaction(async (tx) => {
+    const created = await prisma.$transaction(async (tx) => {
       const service = await tx.service.create({
         data: {
           businessId,
@@ -62,6 +82,13 @@ export const serviceService = {
         staffIds: input.staffIds,
       };
     });
+
+    // Invalidate service and business public page caches
+    await cacheDel(`services:${businessId}:true`);
+    await cacheDel(`services:${businessId}:false`);
+    await cacheInvalidatePrefix("biz:slug:");
+
+    return created;
   },
 
   async update(businessId: string, id: string, input: ServiceFormValues) {
@@ -72,8 +99,8 @@ export const serviceService = {
       throw new AppError("SERVICE_NOT_FOUND", "Layanan tidak ditemukan.", 404);
     }
 
-    return prisma.$transaction(async (tx) => {
-      const updated = await tx.service.update({
+    const updated = await prisma.$transaction(async (tx) => {
+      const res = await tx.service.update({
         where: { id },
         data: {
           name: input.name,
@@ -95,16 +122,22 @@ export const serviceService = {
       }
 
       return {
-        id: updated.id,
-        businessId: updated.businessId,
-        name: updated.name,
-        description: updated.description,
-        price: updated.price,
-        durationMinutes: updated.durationMinutes,
-        isActive: updated.isActive,
+        id: res.id,
+        businessId: res.businessId,
+        name: res.name,
+        description: res.description,
+        price: res.price,
+        durationMinutes: res.durationMinutes,
+        isActive: res.isActive,
         staffIds: input.staffIds,
       };
     });
+
+    await cacheDel(`services:${businessId}:true`);
+    await cacheDel(`services:${businessId}:false`);
+    await cacheInvalidatePrefix("biz:slug:");
+
+    return updated;
   },
 
   async deleteOrDeactivate(businessId: string, id: string) {
@@ -116,13 +149,20 @@ export const serviceService = {
       throw new AppError("SERVICE_NOT_FOUND", "Layanan tidak ditemukan.", 404);
     }
 
+    let result;
     if (existing._count.bookings > 0) {
-      return prisma.service.update({
+      result = await prisma.service.update({
         where: { id },
         data: { isActive: false },
       });
+    } else {
+      result = await prisma.service.delete({ where: { id } });
     }
 
-    return prisma.service.delete({ where: { id } });
+    await cacheDel(`services:${businessId}:true`);
+    await cacheDel(`services:${businessId}:false`);
+    await cacheInvalidatePrefix("biz:slug:");
+
+    return result;
   },
 };

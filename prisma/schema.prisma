@@ -146,6 +146,9 @@ model Booking {
 
   @@index([businessId, startAt])
   @@index([businessId, status])
+  @@index([businessId, status, startAt])
+  @@index([businessId, createdAt])
+  @@index([staffId, status, startAt, occupiedEndAt])
   @@index([staffId, startAt, occupiedEndAt])
   @@map("bookings")
 }
