@@ -50,6 +50,27 @@ export type BookingStatusUpdateValues = z.infer<
   typeof bookingStatusUpdateSchema
 >;
 
+export const bulkBookingStatusUpdateSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1, "Minimal pilih 1 reservasi"),
+  status: z.enum([
+    "PENDING",
+    "CONFIRMED",
+    "CANCELLED",
+    "COMPLETED",
+    "NO_SHOW",
+  ]),
+  cancelReason: z
+    .string()
+    .trim()
+    .max(250, "Alasan pembatalan maksimal 250 karakter")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type BulkBookingStatusUpdateValues = z.infer<
+  typeof bulkBookingStatusUpdateSchema
+>;
+
 export const createBookingSchema = z.object({
   businessSlug: z.string().trim().min(1, "Slug bisnis wajib diisi"),
   serviceId: z.string().trim().min(1, "Layanan wajib dipilih"),

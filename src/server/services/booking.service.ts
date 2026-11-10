@@ -24,6 +24,8 @@ export interface BookingListFilters {
   search?: string;
   status?: BookingStatus | "ALL";
   date?: string;
+  sortBy?: "startAt" | "customerName" | "servicePriceSnapshot" | "status";
+  sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
 }
@@ -149,6 +151,19 @@ export const bookingService = {
         : {}),
     };
 
+    const validSortFields = [
+      "startAt",
+      "customerName",
+      "servicePriceSnapshot",
+      "status",
+    ] as const;
+    const sortBy =
+      filters?.sortBy && validSortFields.includes(filters.sortBy)
+        ? filters.sortBy
+        : "startAt";
+    const sortOrder = filters?.sortOrder === "asc" ? "asc" : "desc";
+    const orderBy = { [sortBy]: sortOrder };
+
     if (filters?.page) {
       const page = Math.max(1, filters.page);
       const limit = Math.max(1, filters.limit || 10);
@@ -161,7 +176,7 @@ export const bookingService = {
             service: true,
             staff: true,
           },
-          orderBy: { startAt: "desc" },
+          orderBy,
           skip: (page - 1) * limit,
           take: limit,
         }),
@@ -187,7 +202,7 @@ export const bookingService = {
         service: true,
         staff: true,
       },
-      orderBy: { startAt: "desc" },
+      orderBy,
     });
 
     return bookings.map((b) => mapBookingToDto(b, timezone));
@@ -253,6 +268,46 @@ export const bookingService = {
     });
 
     return mapBookingToDto(updated, updated.business.timezone);
+  },
+
+  async updateBulkStatus(
+    businessId: string,
+    ids: string[],
+    nextStatus: BookingStatus,
+    reason?: string
+  ): Promise<{ updatedCount: number; updatedIds: string[] }> {
+    if (!ids || ids.length === 0) {
+      return { updatedCount: 0, updatedIds: [] };
+    }
+
+    const terminalStates: BookingStatus[] = ["COMPLETED", "CANCELLED", "NO_SHOW"];
+    const eligibleBookings = await prisma.booking.findMany({
+      where: {
+        id: { in: ids },
+        businessId,
+        status: { notIn: terminalStates },
+      },
+      select: { id: true },
+    });
+
+    const eligibleIds = eligibleBookings.map((b) => b.id);
+    if (eligibleIds.length === 0) {
+      return { updatedCount: 0, updatedIds: [] };
+    }
+
+    await prisma.booking.updateMany({
+      where: { id: { in: eligibleIds } },
+      data: {
+        status: nextStatus,
+        cancelReason:
+          nextStatus === "CANCELLED"
+            ? reason || "Dibatalkan secara massal oleh pemilik bisnis."
+            : null,
+        cancelledAt: nextStatus === "CANCELLED" ? new Date() : null,
+      },
+    });
+
+    return { updatedCount: eligibleIds.length, updatedIds: eligibleIds };
   },
 
   async cancelByCustomer(params: {

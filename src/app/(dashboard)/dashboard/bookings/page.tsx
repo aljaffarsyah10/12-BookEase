@@ -4,12 +4,17 @@ import * as React from "react";
 import {
   CalendarDays,
   CalendarRange,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Download,
   List,
   RotateCcw,
   Search,
+  Sparkles,
+  X,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,7 +25,10 @@ import { LoadingState } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { BookingCalendarView } from "@/features/bookings/components/booking-calendar-view";
-import { BookingTable } from "@/features/bookings/components/booking-table";
+import {
+  BookingTable,
+  type BookingSortField,
+} from "@/features/bookings/components/booking-table";
 import { bookingApi } from "@/features/bookings/services/booking.api";
 import { exportBookingsToCsv } from "@/lib/calendar-export";
 import type { Booking, BookingStatus } from "@/types";
@@ -30,22 +38,43 @@ export default function BookingsManagementPage() {
   const [bookings, setBookings] = React.useState<Booking[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  // Filters & Search
   const [search, setSearch] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<BookingStatus | "ALL">(
     "ALL"
   );
   const [dateFilter, setDateFilter] = React.useState("");
 
+  // Sorting
+  const [sortBy, setSortBy] = React.useState<BookingSortField>("startAt");
+  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
+
+  // Multi-selection for bulk actions
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+  const [todayString, setTodayString] = React.useState<string>("");
+
+  React.useEffect(() => {
+    setTodayString(new Date().toISOString().split("T")[0]);
+  }, []);
+
   // Pagination state
   const [page, setPage] = React.useState<number>(1);
+  const [pageSize, setPageSize] = React.useState<number>(10);
   const [totalPages, setTotalPages] = React.useState<number>(1);
   const [totalCount, setTotalCount] = React.useState<number>(0);
 
+  // Single status update modal
   const [pendingAction, setPendingAction] = React.useState<{
     booking: Booking;
     nextStatus: BookingStatus;
   } | null>(null);
   const [isUpdating, setIsUpdating] = React.useState(false);
+
+  // Bulk action confirmation
+  const [pendingBulkAction, setPendingBulkAction] = React.useState<
+    "CONFIRMED" | "COMPLETED" | "CANCELLED" | null
+  >(null);
+  const [isBulkUpdating, setIsBulkUpdating] = React.useState(false);
 
   const reloadBookings = React.useCallback(async () => {
     setIsLoading(true);
@@ -54,7 +83,9 @@ export default function BookingsManagementPage() {
         search,
         status: statusFilter,
         date: dateFilter || undefined,
-        ...(viewMode === "table" ? { page, limit: 10 } : {}),
+        sortBy,
+        sortOrder,
+        ...(viewMode === "table" ? { page, limit: pageSize } : {}),
       });
 
       if (Array.isArray(res)) {
@@ -69,7 +100,7 @@ export default function BookingsManagementPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [search, statusFilter, dateFilter, page, viewMode]);
+  }, [search, statusFilter, dateFilter, sortBy, sortOrder, page, pageSize, viewMode]);
 
   React.useEffect(() => {
     let active = true;
@@ -78,7 +109,9 @@ export default function BookingsManagementPage() {
         search,
         status: statusFilter,
         date: dateFilter || undefined,
-        ...(viewMode === "table" ? { page, limit: 10 } : {}),
+        sortBy,
+        sortOrder,
+        ...(viewMode === "table" ? { page, limit: pageSize } : {}),
       })
       .then((res) => {
         if (!active) return;
@@ -104,7 +137,54 @@ export default function BookingsManagementPage() {
     return () => {
       active = false;
     };
-  }, [search, statusFilter, dateFilter, page, viewMode]);
+  }, [search, statusFilter, dateFilter, sortBy, sortOrder, page, pageSize, viewMode]);
+
+  // Handle Sort Change
+  const handleSortChange = (field: BookingSortField) => {
+    if (sortBy === field) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
+    setPage(1);
+  };
+
+  // Selection handlers
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    const allCurrentPageSelected =
+      bookings.length > 0 && bookings.every((b) => selectedIds.has(b.id));
+
+    if (allCurrentPageSelected) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        bookings.forEach((b) => next.delete(b.id));
+        return next;
+      });
+    } else {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        bookings.forEach((b) => next.add(b.id));
+        return next;
+      });
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIds(new Set());
+  };
 
   const handleResetFilters = () => {
     setIsLoading(true);
@@ -112,6 +192,22 @@ export default function BookingsManagementPage() {
     setStatusFilter("ALL");
     setDateFilter("");
     setPage(1);
+  };
+
+  const handleQuickFilter = (type: "ALL" | "TODAY" | BookingStatus) => {
+    setIsLoading(true);
+    setPage(1);
+    if (type === "ALL") {
+      setStatusFilter("ALL");
+      setDateFilter("");
+    } else if (type === "TODAY") {
+      const today = new Date().toISOString().split("T")[0];
+      setDateFilter(today);
+      setStatusFilter("ALL");
+    } else {
+      setStatusFilter(type);
+      setDateFilter("");
+    }
   };
 
   const handleConfirmStatusUpdate = async () => {
@@ -136,11 +232,43 @@ export default function BookingsManagementPage() {
     }
   };
 
+  // Bulk Status Update
+  const handleExecuteBulkUpdate = async () => {
+    if (!pendingBulkAction || selectedIds.size === 0) return;
+    setIsBulkUpdating(true);
+    try {
+      const ids = Array.from(selectedIds);
+      const res = await bookingApi.updateBulkStatus(ids, pendingBulkAction);
+      toast.success(
+        `Berhasil memperbarui ${res.updatedCount} dari ${ids.length} reservasi yang dipilih!`
+      );
+      setPendingBulkAction(null);
+      setSelectedIds(new Set());
+      await reloadBookings();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Gagal melakukan aksi massal."
+      );
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
+  const handleExportSelected = () => {
+    const selectedBookings = bookings.filter((b) => selectedIds.has(b.id));
+    if (selectedBookings.length === 0) {
+      toast.error("Tidak ada reservasi yang dipilih.");
+      return;
+    }
+    exportBookingsToCsv(selectedBookings, `bookease-terpilih-${selectedBookings.length}`);
+    toast.success(`${selectedBookings.length} reservasi berhasil diekspor ke CSV!`);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Daftar Reservasi"
-        description="Kelola seluruh reservasi pelanggan, filter jadwal harian, dan perbarui status kehadiran."
+        description="Kelola seluruh reservasi pelanggan, filter jadwal harian, aksi massal, dan perbarui kehadiran."
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
             <Button
@@ -148,7 +276,7 @@ export default function BookingsManagementPage() {
               variant="outline"
               size="sm"
               onClick={() => {
-                exportBookingsToCsv(bookings, "bookease");
+                exportBookingsToCsv(bookings, "bookease-semua");
                 toast.success("Data reservasi berhasil diekspor ke CSV!");
               }}
               disabled={bookings.length === 0}
@@ -187,6 +315,81 @@ export default function BookingsManagementPage() {
           </div>
         }
       />
+
+      {/* Quick Filter Pills */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => handleQuickFilter("ALL")}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+            statusFilter === "ALL" && !dateFilter
+              ? "bg-indigo-600 text-white shadow-2xs"
+              : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          Semua ({totalCount})
+        </button>
+        <button
+          type="button"
+          onClick={() => handleQuickFilter("TODAY")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+            Boolean(todayString && dateFilter === todayString)
+              ? "bg-indigo-600 text-white shadow-2xs"
+              : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          <CalendarDays className="size-3" />
+          Hari Ini
+        </button>
+        <button
+          type="button"
+          onClick={() => handleQuickFilter("PENDING")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+            statusFilter === "PENDING"
+              ? "bg-amber-600 text-white shadow-2xs"
+              : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          <Clock className="size-3 text-amber-500" />
+          Menunggu
+        </button>
+        <button
+          type="button"
+          onClick={() => handleQuickFilter("CONFIRMED")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+            statusFilter === "CONFIRMED"
+              ? "bg-blue-600 text-white shadow-2xs"
+              : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          <CheckCircle2 className="size-3 text-blue-500" />
+          Terkonfirmasi
+        </button>
+        <button
+          type="button"
+          onClick={() => handleQuickFilter("COMPLETED")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+            statusFilter === "COMPLETED"
+              ? "bg-emerald-600 text-white shadow-2xs"
+              : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          <Sparkles className="size-3 text-emerald-500" />
+          Selesai
+        </button>
+        <button
+          type="button"
+          onClick={() => handleQuickFilter("CANCELLED")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
+            statusFilter === "CANCELLED"
+              ? "bg-rose-600 text-white shadow-2xs"
+              : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          <XCircle className="size-3 text-rose-500" />
+          Dibatalkan
+        </button>
+      </div>
 
       {/* Filter Bar */}
       <SectionCard contentClassName="p-4 sm:p-5">
@@ -255,6 +458,75 @@ export default function BookingsManagementPage() {
         </div>
       </SectionCard>
 
+      {/* Floating / Sticky Bulk Action Bar */}
+      {selectedIds.size > 0 && (
+        <div className="sticky top-20 z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-200/80 bg-gradient-to-r from-indigo-50/95 via-white/95 to-indigo-50/95 px-5 py-3 shadow-lg shadow-indigo-500/10 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="flex items-center gap-3">
+            <span className="flex size-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white shadow-2xs">
+              {selectedIds.size}
+            </span>
+            <span className="text-xs sm:text-sm font-semibold text-slate-900">
+              {selectedIds.size} reservasi dipilih
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setPendingBulkAction("CONFIRMED")}
+              className="gap-1.5 h-8 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium"
+            >
+              <CheckCircle2 className="size-3.5" />
+              <span>Konfirmasi Massal</span>
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setPendingBulkAction("COMPLETED")}
+              className="gap-1.5 h-8 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium"
+            >
+              <Sparkles className="size-3.5" />
+              <span>Selesai Massal</span>
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setPendingBulkAction("CANCELLED")}
+              className="gap-1.5 h-8 text-rose-600 border-rose-200/80 hover:bg-rose-50 text-xs font-medium"
+            >
+              <XCircle className="size-3.5" />
+              <span>Batalkan Massal</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleExportSelected}
+              className="gap-1.5 h-8 text-slate-700 text-xs font-medium"
+            >
+              <Download className="size-3.5" />
+              <span>Export Terpilih</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleClearSelection}
+              className="size-8 p-0 text-slate-400 hover:text-slate-700"
+              title="Batalkan Pilihan"
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Bookings View: Table or Calendar */}
       {isLoading ? (
         <LoadingState variant="table" count={5} />
@@ -262,7 +534,7 @@ export default function BookingsManagementPage() {
         <EmptyState
           icon={CalendarDays}
           title="Tidak Ada Reservasi yang Sesuai"
-          description="Belum ada data reservasi untuk filter pencarian atau tanggal yang dipilih."
+          description="Belum ada data reservasi untuk filter pencarian, status, atau tanggal yang dipilih."
           action={
             <Button variant="outline" onClick={handleResetFilters}>
               Tampilkan Semua Reservasi
@@ -283,63 +555,88 @@ export default function BookingsManagementPage() {
             onRequestStatusChange={(booking, nextStatus) =>
               setPendingAction({ booking, nextStatus })
             }
+            selectedIds={selectedIds}
+            onToggleSelect={handleToggleSelect}
+            onSelectAll={handleSelectAll}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSortChange={handleSortChange}
           />
 
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-xs text-slate-600 shadow-2xs">
+          {/* Pagination Controls & Page Size Selector */}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white px-4 py-3 text-xs text-slate-600 shadow-2xs">
+            <div className="flex items-center gap-3">
               <div>
                 Menampilkan{" "}
                 <span className="font-semibold text-slate-900">
-                  {(page - 1) * 10 + 1}
+                  {totalCount === 0 ? 0 : (page - 1) * pageSize + 1}
                 </span>{" "}
                 –{" "}
                 <span className="font-semibold text-slate-900">
-                  {Math.min(page * 10, totalCount)}
+                  {Math.min(page * pageSize, totalCount)}
                 </span>{" "}
                 dari{" "}
                 <span className="font-semibold text-slate-900">{totalCount}</span>{" "}
                 reservasi
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={page <= 1}
-                  onClick={() => {
+              <div className="hidden sm:flex items-center gap-1.5 pl-3 border-l border-slate-200">
+                <span>Per halaman:</span>
+                <select
+                  aria-label="Jumlah reservasi per halaman"
+                  value={pageSize}
+                  onChange={(e) => {
                     setIsLoading(true);
-                    setPage((p) => Math.max(1, p - 1));
+                    setPageSize(Number(e.target.value));
+                    setPage(1);
                   }}
-                  className="gap-1 h-8 text-xs"
+                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-800 shadow-2xs focus:border-indigo-500 focus:outline-none"
                 >
-                  <ChevronLeft className="size-3.5" />
-                  <span>Sebelumnya</span>
-                </Button>
-                <span className="px-2 font-medium">
-                  {page} / {totalPages}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={page >= totalPages}
-                  onClick={() => {
-                    setIsLoading(true);
-                    setPage((p) => Math.min(totalPages, p + 1));
-                  }}
-                  className="gap-1 h-8 text-xs"
-                >
-                  <span>Berikutnya</span>
-                  <ChevronRight className="size-3.5" />
-                </Button>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
               </div>
             </div>
-          )}
+
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={page <= 1}
+                onClick={() => {
+                  setIsLoading(true);
+                  setPage((p) => Math.max(1, p - 1));
+                }}
+                className="gap-1 h-8 text-xs"
+              >
+                <ChevronLeft className="size-3.5" />
+                <span>Sebelumnya</span>
+              </Button>
+              <span className="px-2 font-medium">
+                {page} / {Math.max(1, totalPages)}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={page >= totalPages}
+                onClick={() => {
+                  setIsLoading(true);
+                  setPage((p) => Math.min(totalPages, p + 1));
+                }}
+                className="gap-1 h-8 text-xs"
+              >
+                <span>Berikutnya</span>
+                <ChevronRight className="size-3.5" />
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
+      {/* Single status update dialog */}
       <ConfirmDialog
         open={!!pendingAction}
         onOpenChange={(open) => !open && setPendingAction(null)}
@@ -355,6 +652,24 @@ export default function BookingsManagementPage() {
         }
         isLoading={isUpdating}
         onConfirm={handleConfirmStatusUpdate}
+      />
+
+      {/* Bulk status update dialog */}
+      <ConfirmDialog
+        open={!!pendingBulkAction}
+        onOpenChange={(open) => !open && setPendingBulkAction(null)}
+        title={`Perbarui ${selectedIds.size} Reservasi ke ${pendingBulkAction}?`}
+        description={
+          pendingBulkAction === "CANCELLED"
+            ? `Sebanyak ${selectedIds.size} reservasi yang dipilih akan dibatalkan secara bersamaan. Reservasi yang sudah selesai atau sudah dibatalkan tidak akan terpengaruh.`
+            : `Sebanyak ${selectedIds.size} reservasi yang dipilih akan diubah statusnya menjadi ${pendingBulkAction}.`
+        }
+        confirmLabel={`Ya, Ubah ${selectedIds.size} Reservasi`}
+        variant={
+          pendingBulkAction === "CANCELLED" ? "destructive" : "default"
+        }
+        isLoading={isBulkUpdating}
+        onConfirm={handleExecuteBulkUpdate}
       />
     </div>
   );

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 // @ts-expect-error Node experimental strip types requires extension
 import { loginSchema, registerSchema } from "../src/lib/validations/auth.schema.ts";
 // @ts-expect-error Node experimental strip types requires extension
-import { customerDetailsSchema, bookingStatusUpdateSchema } from "../src/lib/validations/booking.schema.ts";
+import { customerDetailsSchema, bookingStatusUpdateSchema, bulkBookingStatusUpdateSchema } from "../src/lib/validations/booking.schema.ts";
 // @ts-expect-error Node experimental strip types requires extension
 import { serviceFormSchema } from "../src/lib/validations/service.schema.ts";
 
@@ -157,4 +157,35 @@ test("Validation: bookingStatusUpdateSchema allows legitimate status transitions
   const bad = bookingStatusUpdateSchema.safeParse({ status: "REFUNDED" });
   assert.equal(bad.success, false);
 });
+
+test("Validation: bulkBookingStatusUpdateSchema validates ids array and status correctly", () => {
+  // Valid bulk payload
+  const valid = bulkBookingStatusUpdateSchema.safeParse({
+    ids: ["clerk_bk_1", "clerk_bk_2"],
+    status: "CONFIRMED",
+  });
+  assert.equal(valid.success, true);
+
+  // Empty ids array should fail
+  const emptyIds = bulkBookingStatusUpdateSchema.safeParse({
+    ids: [],
+    status: "CONFIRMED",
+  });
+  assert.equal(emptyIds.success, false);
+
+  // Missing status should fail
+  const missingStatus = bulkBookingStatusUpdateSchema.safeParse({
+    ids: ["clerk_bk_1"],
+  });
+  assert.equal(missingStatus.success, false);
+
+  // Cancel with reason is allowed
+  const cancelWithReason = bulkBookingStatusUpdateSchema.safeParse({
+    ids: ["clerk_bk_1"],
+    status: "CANCELLED",
+    cancelReason: "Toko tutup sementara",
+  });
+  assert.equal(cancelWithReason.success, true);
+});
+
 

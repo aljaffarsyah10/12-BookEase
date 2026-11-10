@@ -19,10 +19,20 @@ export async function GET(request: NextRequest) {
     const page = pageParam ? parseInt(pageParam, 10) : undefined;
     const limit = limitParam ? parseInt(limitParam, 10) : undefined;
 
+    const sortBy = (searchParams.get("sortBy") as
+      | "startAt"
+      | "customerName"
+      | "servicePriceSnapshot"
+      | "status"
+      | null) || undefined;
+    const sortOrder = (searchParams.get("sortOrder") as "asc" | "desc" | null) || undefined;
+
     const bookings = await bookingService.listByOwner(user.businessId, {
       search,
       status,
       date,
+      sortBy,
+      sortOrder,
       page,
       limit,
     });

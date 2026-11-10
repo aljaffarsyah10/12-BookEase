@@ -25,6 +25,8 @@ export const bookingApi = {
     search?: string;
     status?: BookingStatus | "ALL";
     date?: string;
+    sortBy?: "startAt" | "customerName" | "servicePriceSnapshot" | "status";
+    sortOrder?: "asc" | "desc";
     page?: number;
     limit?: number;
   }): Promise<Booking[] | PaginatedBookingsResponse> {
@@ -33,6 +35,8 @@ export const bookingApi = {
     if (filters?.status && filters.status !== "ALL")
       params.set("status", filters.status);
     if (filters?.date) params.set("date", filters.date);
+    if (filters?.sortBy) params.set("sortBy", filters.sortBy);
+    if (filters?.sortOrder) params.set("sortOrder", filters.sortOrder);
     if (filters?.page) params.set("page", String(filters.page));
     if (filters?.limit) params.set("limit", String(filters.limit));
 
@@ -61,6 +65,17 @@ export const bookingApi = {
       status,
       cancelReason,
     });
+  },
+
+  async updateBulkStatus(
+    ids: string[],
+    status: BookingStatus,
+    cancelReason?: string
+  ): Promise<{ updatedCount: number; updatedIds: string[] }> {
+    return apiClient.post<{ updatedCount: number; updatedIds: string[] }>(
+      "/api/v1/bookings/bulk-status",
+      { ids, status, cancelReason }
+    );
   },
 
   async customerCancel(params: {

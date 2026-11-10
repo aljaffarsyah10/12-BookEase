@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Edit3, Power, Trash2, Users } from "lucide-react";
+import { Clock, Copy, Edit3, Power, Trash2, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDuration, formatRupiah } from "@/lib/format";
@@ -10,6 +10,7 @@ interface ServiceCardProps {
   service: Service;
   staffList: Staff[];
   onEdit: (service: Service) => void;
+  onDuplicate?: (service: Service) => void;
   onToggleActive: (service: Service) => void;
   onDelete: (service: Service) => void;
 }
@@ -18,6 +19,7 @@ export function ServiceCard({
   service,
   staffList,
   onEdit,
+  onDuplicate,
   onToggleActive,
   onDelete,
 }: ServiceCardProps) {
@@ -68,39 +70,54 @@ export function ServiceCard({
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => onEdit(service)}
-          className="gap-1.5 text-xs h-8 text-slate-700 hover:text-slate-900"
-        >
-          <Edit3 className="size-3.5" />
-          <span>Edit</span>
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => onToggleActive(service)}
-          className="gap-1.5 text-xs h-8 text-slate-700 hover:text-slate-900"
-        >
-          <Power className="size-3.5" />
-          <span>{service.isActive ? "Nonaktifkan" : "Aktifkan"}</span>
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => onDelete(service)}
-          aria-label={`Hapus ${service.name}`}
-          className="h-8 text-rose-600 border-rose-200/80 hover:bg-rose-50 hover:text-rose-700"
-        >
-          <Trash2 className="size-3.5" />
-        </Button>
+      <div className="mt-5 flex items-center justify-between gap-2 border-t border-slate-100 pt-4">
+        {onDuplicate ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onDuplicate(service)}
+            className="gap-1.5 text-xs h-8 text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2"
+            title="Duplikat Layanan ini"
+          >
+            <Copy className="size-3.5" />
+            <span className="hidden sm:inline">Duplikat</span>
+          </Button>
+        ) : <div />}
+
+        <div className="flex items-center gap-1.5">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onEdit(service)}
+            className="gap-1.5 text-xs h-8 text-slate-700 hover:text-slate-900"
+          >
+            <Edit3 className="size-3.5" />
+            <span>Edit</span>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onToggleActive(service)}
+            className="gap-1.5 text-xs h-8 text-slate-700 hover:text-slate-900"
+          >
+            <Power className="size-3.5" />
+            <span>{service.isActive ? "Nonaktifkan" : "Aktifkan"}</span>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onDelete(service)}
+            aria-label={`Hapus ${service.name}`}
+            className="h-8 text-rose-600 border-rose-200/80 hover:bg-rose-50 hover:text-rose-700"
+          >
+            <Trash2 className="size-3.5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
 }
-
