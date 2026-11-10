@@ -21,9 +21,11 @@ export function DashboardHeader({
   ownerName = "Owner",
 }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [actualName, setActualName] = React.useState(businessName);
-  const [actualSlug, setActualSlug] = React.useState(businessSlug);
-  const [actualOwner, setActualOwner] = React.useState(ownerName);
+  const [fetchedBiz, setFetchedBiz] = React.useState<{
+    name: string;
+    slug: string;
+  } | null>(null);
+  const [fetchedOwner, setFetchedOwner] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     let active = true;
@@ -32,14 +34,10 @@ export function DashboardHeader({
         .getBusiness()
         .then((biz) => {
           if (active && biz) {
-            setActualName(biz.name);
-            setActualSlug(biz.slug);
+            setFetchedBiz({ name: biz.name, slug: biz.slug });
           }
         })
         .catch(() => {});
-    } else {
-      setActualName(businessName);
-      setActualSlug(businessSlug);
     }
 
     if (ownerName === "Owner") {
@@ -47,18 +45,20 @@ export function DashboardHeader({
         .getMe()
         .then((data) => {
           if (active && data.user) {
-            setActualOwner(data.user.name);
+            setFetchedOwner(data.user.name);
           }
         })
         .catch(() => {});
-    } else {
-      setActualOwner(ownerName);
     }
 
     return () => {
       active = false;
     };
-  }, [businessName, businessSlug, ownerName]);
+  }, [businessName, ownerName]);
+
+  const actualName = fetchedBiz?.name ?? businessName;
+  const actualSlug = fetchedBiz?.slug ?? businessSlug;
+  const actualOwner = fetchedOwner ?? ownerName;
 
   const handleCopyBookingLink = () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";

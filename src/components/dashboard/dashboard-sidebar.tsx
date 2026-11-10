@@ -121,8 +121,10 @@ export function DashboardSidebar({
   onNavigate,
   className,
 }: DashboardSidebarProps) {
-  const [actualName, setActualName] = React.useState(businessName);
-  const [actualSlug, setActualSlug] = React.useState(businessSlug);
+  const [fetchedBiz, setFetchedBiz] = React.useState<{
+    name: string;
+    slug: string;
+  } | null>(null);
 
   React.useEffect(() => {
     let active = true;
@@ -131,19 +133,18 @@ export function DashboardSidebar({
         .getBusiness()
         .then((biz) => {
           if (active && biz) {
-            setActualName(biz.name);
-            setActualSlug(biz.slug);
+            setFetchedBiz({ name: biz.name, slug: biz.slug });
           }
         })
         .catch(() => {});
-    } else {
-      setActualName(businessName);
-      setActualSlug(businessSlug);
     }
     return () => {
       active = false;
     };
-  }, [businessName, businessSlug]);
+  }, [businessName]);
+
+  const actualName = fetchedBiz?.name ?? businessName;
+  const actualSlug = fetchedBiz?.slug ?? businessSlug;
   return (
     <aside
       aria-label="Dashboard Sidebar"
