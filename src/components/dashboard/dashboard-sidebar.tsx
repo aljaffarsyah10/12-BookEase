@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -15,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { businessApi } from "@/features/business/services/business.api";
 
 interface DashboardSidebarProps {
   businessName?: string;
@@ -119,6 +121,29 @@ export function DashboardSidebar({
   onNavigate,
   className,
 }: DashboardSidebarProps) {
+  const [actualName, setActualName] = React.useState(businessName);
+  const [actualSlug, setActualSlug] = React.useState(businessSlug);
+
+  React.useEffect(() => {
+    let active = true;
+    if (businessName === "Bisnis Jasa") {
+      businessApi
+        .getBusiness()
+        .then((biz) => {
+          if (active && biz) {
+            setActualName(biz.name);
+            setActualSlug(biz.slug);
+          }
+        })
+        .catch(() => {});
+    } else {
+      setActualName(businessName);
+      setActualSlug(businessSlug);
+    }
+    return () => {
+      active = false;
+    };
+  }, [businessName, businessSlug]);
   return (
     <aside
       aria-label="Dashboard Sidebar"
@@ -166,15 +191,15 @@ export function DashboardSidebar({
             </span>
           </div>
           <p className="mt-1.5 truncate text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
-            {businessName}
+            {actualName}
           </p>
           <Link
-            href={`/book/${businessSlug}`}
+            href={`/book/${actualSlug}`}
             target="_blank"
             onClick={onNavigate}
             className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-white border border-slate-200/90 px-2 py-1 text-[11px] font-medium text-indigo-600 hover:text-indigo-700 hover:bg-slate-50 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-indigo-400"
           >
-            <span className="truncate">/book/{businessSlug}</span>
+            <span className="truncate">/book/{actualSlug}</span>
             <ExternalLink className="size-3 shrink-0 text-slate-400" />
           </Link>
         </div>

@@ -6,6 +6,8 @@ import { Copy, ExternalLink, Globe, Menu, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+import { businessApi } from "@/features/business/services/business.api";
+import { authApi } from "@/features/auth/services/auth.api";
 
 interface DashboardHeaderProps {
   businessName?: string;
@@ -19,10 +21,48 @@ export function DashboardHeader({
   ownerName = "Owner",
 }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [actualName, setActualName] = React.useState(businessName);
+  const [actualSlug, setActualSlug] = React.useState(businessSlug);
+  const [actualOwner, setActualOwner] = React.useState(ownerName);
+
+  React.useEffect(() => {
+    let active = true;
+    if (businessName === "Bisnis Jasa") {
+      businessApi
+        .getBusiness()
+        .then((biz) => {
+          if (active && biz) {
+            setActualName(biz.name);
+            setActualSlug(biz.slug);
+          }
+        })
+        .catch(() => {});
+    } else {
+      setActualName(businessName);
+      setActualSlug(businessSlug);
+    }
+
+    if (ownerName === "Owner") {
+      authApi
+        .getMe()
+        .then((data) => {
+          if (active && data.user) {
+            setActualOwner(data.user.name);
+          }
+        })
+        .catch(() => {});
+    } else {
+      setActualOwner(ownerName);
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [businessName, businessSlug, ownerName]);
 
   const handleCopyBookingLink = () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${origin}/book/${businessSlug}`;
+    const url = `${origin}/book/${actualSlug}`;
     navigator.clipboard.writeText(url);
     toast.success("Tautan halaman booking berhasil disalin!", {
       description: url,
@@ -44,7 +84,7 @@ export function DashboardHeader({
           <div>
             <div className="flex items-center gap-2">
               <p className="text-sm font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                {businessName}
+                {actualName}
               </p>
               <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-slate-100 border border-slate-200/60 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">
                 <span className="size-1.5 rounded-full bg-emerald-500" />
@@ -72,7 +112,7 @@ export function DashboardHeader({
           </Button>
 
           <Link
-            href={`/book/${businessSlug}`}
+            href={`/book/${actualSlug}`}
             target="_blank"
             className="inline-flex h-8.5 items-center gap-1.5 rounded-lg border border-indigo-200/90 bg-indigo-50/80 px-3 text-xs font-semibold text-indigo-700 shadow-2xs transition-all hover:bg-indigo-100/90 active:scale-[0.98] dark:border-indigo-900/60 dark:bg-indigo-950/50 dark:text-indigo-300"
           >
@@ -81,10 +121,10 @@ export function DashboardHeader({
           </Link>
 
           <div
-            title={ownerName}
+            title={actualOwner}
             className="ml-1 flex size-8.5 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-slate-900 to-slate-700 ring-2 ring-slate-200/80 text-[11px] font-bold text-white shadow-2xs select-none dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:ring-slate-800"
           >
-            {ownerName
+            {actualOwner
               .split(" ")
               .map((part) => part[0])
               .join("")

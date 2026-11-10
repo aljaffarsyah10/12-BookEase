@@ -43,6 +43,22 @@ export async function requireBusinessOwner(): Promise<AuthenticatedUser> {
   });
 
   if (!user || !user.business) {
+    // In development mode: allow seed fallback if stale cookie is present
+    if (process.env.NODE_ENV !== "production") {
+      const firstUser = await prisma.user.findFirst({
+        include: { business: true },
+      });
+
+      if (firstUser && firstUser.business) {
+        return {
+          id: firstUser.id,
+          email: firstUser.email,
+          name: firstUser.name,
+          businessId: firstUser.business.id,
+        };
+      }
+    }
+
     throw new AppError(
       "UNAUTHORIZED",
       "Pengguna tidak ditemukan atau tidak memiliki workspace bisnis.",

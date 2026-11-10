@@ -9,20 +9,45 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
+import { authApi } from "@/features/auth/services/auth.api";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [ownerName, setOwnerName] = React.useState("Budi Santoso");
-  const [ownerEmail] = React.useState("budi@glowstudio.id");
+  const [ownerEmail, setOwnerEmail] = React.useState("budi@glowstudio.id");
+
+  React.useEffect(() => {
+    let active = true;
+    authApi
+      .getMe()
+      .then((data) => {
+        if (!active) return;
+        if (data.user) {
+          setOwnerName(data.user.name);
+          setOwnerEmail(data.user.email);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load user in settings:", err);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleSaveAccount = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success("Informasi akun berhasil diperbarui!");
   };
 
-  const handleLogout = () => {
-    toast.info("Anda telah keluar dari sesi dashboard.");
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+      toast.info("Anda telah keluar dari sesi dashboard.");
+      router.push("/login");
+    } catch {
+      router.push("/login");
+    }
   };
 
   return (
