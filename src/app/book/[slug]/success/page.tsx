@@ -4,13 +4,18 @@ import * as React from "react";
 import { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, Copy } from "lucide-react";
+import { CalendarPlus, CheckCircle2, Copy, Download, MessageSquareShare } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/shared/loading-state";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { bookingApi } from "@/features/bookings/services/booking.api";
+import {
+  downloadIcsFile,
+  generateGoogleCalendarUrl,
+  generateWhatsAppReminderUrl,
+} from "@/lib/calendar-export";
 import { formatDateId, formatDuration, formatRupiah } from "@/lib/format";
 import type { Booking } from "@/types";
 
@@ -116,7 +121,58 @@ function BookingSuccessView({ slug }: { slug: string }) {
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row w-full gap-2.5 pt-2">
+            {/* Calendar & Share Integration */}
+            {booking && (
+              <div className="w-full space-y-2 pt-1">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left">
+                  Simpan Jadwal ke Kalender
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <a
+                    href={generateGoogleCalendarUrl(
+                      booking,
+                      booking.serviceNameSnapshot,
+                      "Glow Beauty Studio"
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-2xs transition-colors"
+                  >
+                    <CalendarPlus className="size-3.5 text-indigo-600" />
+                    <span>Google Calendar</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      downloadIcsFile(
+                        booking,
+                        booking.serviceNameSnapshot,
+                        "Glow Beauty Studio"
+                      )
+                    }
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-2xs transition-colors cursor-pointer"
+                  >
+                    <Download className="size-3.5 text-slate-500" />
+                    <span>Apple / Outlook (.ics)</span>
+                  </button>
+                </div>
+                <a
+                  href={generateWhatsAppReminderUrl(
+                    booking,
+                    "Glow Beauty Studio",
+                    "Jl. Jenderal Sudirman No. 45, Jakarta Selatan"
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-emerald-200/80 bg-emerald-50/80 px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-100/80 shadow-2xs transition-colors"
+                >
+                  <MessageSquareShare className="size-3.5 text-emerald-600" />
+                  <span>Kirim Rincian Reservasi ke WhatsApp Saya</span>
+                </a>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row w-full gap-2.5 pt-3 border-t border-slate-100">
               <Link
                 href={`/book/${slug}`}
                 className="inline-flex h-10 flex-1 items-center justify-center rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700 shadow-2xs transition-colors"

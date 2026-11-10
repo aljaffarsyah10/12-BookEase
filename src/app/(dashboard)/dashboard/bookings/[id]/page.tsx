@@ -9,6 +9,7 @@ import {
   CheckCheck,
   CheckCircle2,
   Mail,
+  MessageSquareShare,
   Phone,
   Sparkles,
   UserX,
@@ -23,6 +24,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { bookingApi } from "@/features/bookings/services/booking.api";
+import { generateWhatsAppReminderUrl } from "@/lib/calendar-export";
 import { formatDateId, formatDuration, formatRupiah } from "@/lib/format";
 import type { Booking, BookingStatus } from "@/types";
 
@@ -82,13 +84,28 @@ function BookingDetailView({ bookingId }: { bookingId: string }) {
         description={`Dibuat pada ${formatDateId(booking.createdAt.slice(0, 10))}`}
         badge={<StatusBadge status={booking.status} />}
         actions={
-          <Link
-            href="/dashboard/bookings"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-colors"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Kembali ke Daftar</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <a
+              href={generateWhatsAppReminderUrl(
+                booking,
+                "Glow Beauty Studio",
+                "Jl. Senopati No. 45, Kebayoran Baru, Jakarta Selatan"
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-emerald-200/90 bg-emerald-50/80 px-3.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-100/80 shadow-2xs transition-colors"
+            >
+              <MessageSquareShare className="size-3.5 text-emerald-600" />
+              <span>Kirim Pengingat WhatsApp</span>
+            </a>
+            <Link
+              href="/dashboard/bookings"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-colors"
+            >
+              <ArrowLeft className="size-3.5" />
+              <span>Kembali ke Daftar</span>
+            </Link>
+          </div>
         }
       />
 

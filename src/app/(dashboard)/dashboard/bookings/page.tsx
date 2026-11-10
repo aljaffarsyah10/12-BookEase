@@ -6,6 +6,7 @@ import {
   CalendarRange,
   ChevronLeft,
   ChevronRight,
+  Download,
   List,
   RotateCcw,
   Search,
@@ -21,6 +22,7 @@ import { SectionCard } from "@/components/shared/section-card";
 import { BookingCalendarView } from "@/features/bookings/components/booking-calendar-view";
 import { BookingTable } from "@/features/bookings/components/booking-table";
 import { bookingApi } from "@/features/bookings/services/booking.api";
+import { exportBookingsToCsv } from "@/lib/calendar-export";
 import type { Booking, BookingStatus } from "@/types";
 
 export default function BookingsManagementPage() {
@@ -140,31 +142,48 @@ export default function BookingsManagementPage() {
         title="Daftar Reservasi"
         description="Kelola seluruh reservasi pelanggan, filter jadwal harian, dan perbarui status kehadiran."
         actions={
-          <div className="inline-flex items-center rounded-lg border border-slate-200/90 bg-slate-100/80 p-1 shadow-2xs">
-            <button
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button
               type="button"
-              onClick={() => setViewMode("table")}
-              className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                viewMode === "table"
-                  ? "bg-white text-slate-900 shadow-2xs font-semibold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                exportBookingsToCsv(bookings, "bookease");
+                toast.success("Data reservasi berhasil diekspor ke CSV!");
+              }}
+              disabled={bookings.length === 0}
+              className="gap-1.5 h-8.5 text-xs font-semibold text-slate-700 shadow-2xs"
             >
-              <List className="size-3.5" />
-              <span>Tabel</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("calendar")}
-              className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                viewMode === "calendar"
-                  ? "bg-white text-slate-900 shadow-2xs font-semibold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <CalendarRange className="size-3.5" />
-              <span>Kalender</span>
-            </button>
+              <Download className="size-3.5 text-slate-500" />
+              <span>Export CSV</span>
+            </Button>
+
+            <div className="inline-flex items-center rounded-lg border border-slate-200/90 bg-slate-100/80 p-1 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                  viewMode === "table"
+                    ? "bg-white text-slate-900 shadow-2xs font-semibold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <List className="size-3.5" />
+                <span>Tabel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("calendar")}
+                className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                  viewMode === "calendar"
+                    ? "bg-white text-slate-900 shadow-2xs font-semibold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <CalendarRange className="size-3.5" />
+                <span>Kalender</span>
+              </button>
+            </div>
           </div>
         }
       />

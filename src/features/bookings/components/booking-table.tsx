@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Eye, Phone } from "lucide-react";
+import { Calendar, Eye, MessageSquareShare, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { generateWhatsAppReminderUrl } from "@/lib/calendar-export";
 import { formatDateId, formatDuration, formatRupiah } from "@/lib/format";
 import type { Booking, BookingStatus } from "@/types";
 
@@ -101,6 +102,16 @@ export function BookingTable({
                   Batalkan
                 </Button>
               )}
+              <a
+                href={generateWhatsAppReminderUrl(b, "Glow Beauty Studio")}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Kirim Pengingat WhatsApp"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-emerald-200/90 bg-emerald-50/80 px-2.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 shadow-2xs transition-colors"
+              >
+                <MessageSquareShare className="size-3.5 text-emerald-600" />
+                <span>WhatsApp</span>
+              </a>
               <Link
                 href={`/dashboard/bookings/${b.id}`}
                 className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-colors"
@@ -224,6 +235,16 @@ export function BookingTable({
                         Batalkan
                       </Button>
                     )}
+                    <a
+                      href={generateWhatsAppReminderUrl(b, "Glow Beauty Studio")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Kirim Pengingat WhatsApp"
+                      className="inline-flex h-7.5 items-center gap-1 rounded-lg border border-emerald-200/90 bg-emerald-50/80 px-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 shadow-2xs transition-colors"
+                    >
+                      <MessageSquareShare className="size-3 text-emerald-600" />
+                      <span>WA</span>
+                    </a>
                     <Link
                       href={`/dashboard/bookings/${b.id}`}
                       className="inline-flex h-7.5 items-center gap-1 rounded-lg border border-slate-200/90 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-colors"
