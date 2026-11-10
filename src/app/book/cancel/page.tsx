@@ -103,8 +103,8 @@ function CustomerCancellationView() {
         <div className="w-full max-w-md">
           <SectionCard>
             <div className="flex flex-col items-center text-center space-y-3">
-              <div className="flex size-12 items-center justify-center rounded-full bg-red-100 text-red-600">
-                <XCircle className="size-6" />
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-200/60 shadow-2xs">
+                <XCircle className="size-7" />
               </div>
               <h1 className="text-xl font-bold text-slate-900">
                 Tautan Tidak Valid

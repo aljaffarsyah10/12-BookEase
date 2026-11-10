@@ -22,7 +22,7 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        "rounded-xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-200 hover:border-slate-300 hover:shadow-xs dark:border-slate-800 dark:bg-slate-900",
+        "rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-xs dark:border-slate-800 dark:bg-slate-900",
         className
       )}
     >
@@ -32,7 +32,7 @@ export function StatCard({
             <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
               {title}
             </p>
-            <p className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <p className="text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
               {value}
             </p>
           </div>

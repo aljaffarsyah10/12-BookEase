@@ -539,7 +539,7 @@ export function BookingWizard({
                     {...register("customerName")}
                   />
                   {errors.customerName && (
-                    <p className="text-xs text-red-600">
+                    <p className="text-xs text-rose-600 font-medium">
                       {errors.customerName.message}
                     </p>
                   )}
@@ -556,7 +556,7 @@ export function BookingWizard({
                       {...register("customerEmail")}
                     />
                     {errors.customerEmail && (
-                      <p className="text-xs text-red-600">
+                      <p className="text-xs text-rose-600 font-medium">
                         {errors.customerEmail.message}
                       </p>
                     )}
@@ -574,7 +574,7 @@ export function BookingWizard({
                       {...register("customerPhone")}
                     />
                     {errors.customerPhone && (
-                      <p className="text-xs text-red-600">
+                      <p className="text-xs text-rose-600 font-medium">
                         {errors.customerPhone.message}
                       </p>
                     )}

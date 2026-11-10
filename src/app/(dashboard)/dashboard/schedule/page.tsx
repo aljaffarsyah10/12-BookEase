@@ -126,7 +126,7 @@ export default function ScheduleManagementPage() {
       {errorMsg && (
         <div
           role="alert"
-          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          className="rounded-xl border border-rose-200/80 bg-rose-50/70 px-4 py-3 text-sm text-rose-800 font-medium"
         >
           {errorMsg}
         </div>

@@ -116,7 +116,7 @@ export default function BusinessProfilePage() {
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-xs text-red-600">{errors.name.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.name.message}</p>
               )}
             </div>
 
@@ -132,7 +132,7 @@ export default function BusinessProfilePage() {
                 URL Publik: bookease.com/book/{currentSlug || "nama-bisnis"}
               </p>
               {errors.slug && (
-                <p className="text-xs text-red-600">{errors.slug.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.slug.message}</p>
               )}
             </div>
 
@@ -257,7 +257,7 @@ export default function BusinessProfilePage() {
                 Waktu persiapan staf setelah satu sesi layanan selesai.
               </p>
               {errors.bufferTimeMinutes && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-rose-600 font-medium">
                   {errors.bufferTimeMinutes.message}
                 </p>
               )}

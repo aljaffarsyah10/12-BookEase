@@ -116,7 +116,7 @@ export function ServiceFormDialog({
               {...register("name")}
             />
             {errors.name && (
-              <p className="text-xs text-red-600">{errors.name.message}</p>
+              <p className="text-xs text-rose-600 font-medium">{errors.name.message}</p>
             )}
           </div>
 
@@ -132,7 +132,7 @@ export function ServiceFormDialog({
                 {...register("price", { valueAsNumber: true })}
               />
               {errors.price && (
-                <p className="text-xs text-red-600">{errors.price.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.price.message}</p>
               )}
             </div>
 
@@ -148,7 +148,7 @@ export function ServiceFormDialog({
                 {...register("durationMinutes", { valueAsNumber: true })}
               />
               {errors.durationMinutes && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-rose-600 font-medium">
                   {errors.durationMinutes.message}
                 </p>
               )}

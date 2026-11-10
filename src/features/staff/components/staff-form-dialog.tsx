@@ -114,7 +114,7 @@ export function StaffFormDialog({
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-xs text-red-600">{errors.name.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.name.message}</p>
               )}
             </div>
 
@@ -127,7 +127,7 @@ export function StaffFormDialog({
                 {...register("roleOrTitle")}
               />
               {errors.roleOrTitle && (
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-rose-600 font-medium">
                   {errors.roleOrTitle.message}
                 </p>
               )}
