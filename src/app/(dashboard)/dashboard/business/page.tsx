@@ -92,7 +92,8 @@ export default function BusinessProfilePage() {
         actions={
           <Link
             href={`/book/${currentSlug || "glow-beauty-studio"}`}
-            className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50"
+            target="_blank"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200/90 bg-white px-3.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-colors"
           >
             <span>Lihat Halaman Publik</span>
             <ExternalLink className="size-3.5" />

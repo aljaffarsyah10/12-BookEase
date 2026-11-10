@@ -13,10 +13,10 @@ export default function AuthLayout({
           href="/"
           className="inline-flex items-center gap-2.5 text-slate-900 font-bold tracking-tight text-xl group"
         >
-          <span className="flex size-10.5 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-2xs group-hover:scale-105 transition-transform">
+          <span className="flex size-10.5 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-700 via-indigo-600 to-violet-500 text-white shadow-xs shadow-indigo-500/20 group-hover:scale-105 transition-transform">
             <CalendarCheck className="size-5.5" />
           </span>
-          <span className="text-xl font-bold tracking-tight">BookEase</span>
+          <span className="text-xl font-extrabold tracking-tight">BookEase</span>
         </Link>
       </div>
 

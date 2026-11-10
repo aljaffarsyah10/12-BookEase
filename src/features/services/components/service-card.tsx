@@ -26,14 +26,14 @@ export function ServiceCard({
     .map((st) => st.name);
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 bg-white p-5.5 shadow-2xs transition-all hover:border-slate-300 hover:shadow-xs">
+    <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-sm">
       <div className="space-y-3.5">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1">
             <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
               {service.name}
             </h3>
-            <p className="text-lg font-bold text-indigo-600">
+            <p className="text-lg font-extrabold text-indigo-600">
               {formatRupiah(service.price)}
             </p>
           </div>
@@ -41,11 +41,12 @@ export function ServiceCard({
             variant="outline"
             className={
               service.isActive
-                ? "bg-emerald-50 text-emerald-700 border-emerald-200/80 font-medium text-[11px]"
-                : "bg-slate-100 text-slate-600 border-slate-200 font-medium text-[11px]"
+                ? "inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200/80 font-semibold text-[11px] px-2.5 py-0.5"
+                : "bg-slate-100 text-slate-600 border-slate-200 font-semibold text-[11px] px-2.5 py-0.5"
             }
           >
-            {service.isActive ? "Aktif" : "Nonaktif"}
+            {service.isActive && <span className="size-1.5 rounded-full bg-emerald-500" />}
+            <span>{service.isActive ? "Aktif" : "Nonaktif"}</span>
           </Badge>
         </div>
 
@@ -54,11 +55,11 @@ export function ServiceCard({
         </p>
 
         <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-          <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2.5 py-1 font-medium text-slate-700 border border-slate-200/60">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100/80 px-2.5 py-1 font-semibold text-slate-700 border border-slate-200/60">
             <Clock className="size-3.5 text-slate-500" />
             {formatDuration(service.durationMinutes)}
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-md bg-indigo-50/80 px-2.5 py-1 font-medium text-indigo-700 border border-indigo-100/80">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50/80 px-2.5 py-1 font-semibold text-indigo-700 border border-indigo-100/80">
             <Users className="size-3.5 text-indigo-500" />
             {assignedStaffNames.length > 0
               ? assignedStaffNames.join(", ")

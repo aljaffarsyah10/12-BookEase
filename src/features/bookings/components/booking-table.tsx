@@ -31,18 +31,18 @@ export function BookingTable({
         {bookings.map((b) => (
           <div
             key={b.id}
-            className="rounded-xl border border-slate-200/90 bg-white p-4 space-y-3.5 shadow-2xs hover:border-slate-300 transition-all"
+            className="rounded-2xl border border-slate-200/90 bg-white p-4.5 space-y-3.5 shadow-2xs hover:border-slate-300 transition-all"
           >
             <div className="flex items-start justify-between gap-2.5">
               <div className="flex items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 font-semibold text-xs text-indigo-700">
+                <div className="flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-50 to-indigo-100/80 border border-indigo-200/60 font-extrabold text-xs text-indigo-700">
                   {b.customerName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900 leading-tight">
+                  <h3 className="text-sm font-bold text-slate-900 leading-tight">
                     {b.customerName}
                   </h3>
-                  <p className="font-mono text-[11px] font-medium text-indigo-600 mt-0.5">
+                  <p className="font-mono text-[11px] font-bold text-indigo-600 mt-0.5">
                     {b.reference}
                   </p>
                 </div>
@@ -50,21 +50,21 @@ export function BookingTable({
               <StatusBadge status={b.status} />
             </div>
 
-            <div className="rounded-lg bg-slate-50/80 p-3 text-xs space-y-1.5 border border-slate-200/60">
+            <div className="rounded-xl bg-slate-50/80 p-3.5 text-xs space-y-1.5 border border-slate-200/60">
               <div className="flex items-center justify-between text-slate-800">
-                <span className="font-semibold text-slate-900">
+                <span className="font-bold text-slate-900">
                   {b.serviceNameSnapshot}
                 </span>
-                <span className="font-semibold text-indigo-600">
+                <span className="font-bold text-indigo-600">
                   {formatRupiah(b.servicePriceSnapshot)}
                 </span>
               </div>
-              <div className="flex items-center gap-3 text-slate-500 text-[11px]">
-                <span>Staf: {b.staffName}</span>
+              <div className="flex items-center gap-3 text-slate-500 text-[11px] font-medium">
+                <span>Staf: <strong className="text-slate-700 font-semibold">{b.staffName}</strong></span>
                 <span>•</span>
                 <span>{formatDuration(b.durationMinutesSnapshot)}</span>
               </div>
-              <p className="font-mono text-slate-600 text-[11px] pt-0.5">
+              <p className="font-mono text-slate-600 text-[11px] pt-0.5 font-medium">
                 {formatDateId(b.date)} • {b.time} WIB
               </p>
             </div>
@@ -149,7 +149,7 @@ export function BookingTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-slate-100 font-semibold text-[11px] text-slate-700">
+                    <div className="flex size-7.5 shrink-0 items-center justify-center rounded-lg bg-indigo-50 border border-indigo-100/80 font-bold text-[11px] text-indigo-700">
                       {b.customerName.charAt(0).toUpperCase()}
                     </div>
                     <div className="space-y-0.5">

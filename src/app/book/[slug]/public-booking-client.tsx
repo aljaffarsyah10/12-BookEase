@@ -64,15 +64,15 @@ export function PublicBookingClientView({ slug }: { slug: string }) {
         <div className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2.5">
-              <div className="flex items-center gap-3">
-                <span className="flex size-11 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-2xs">
-                  <CalendarCheck className="size-5.5" />
+              <div className="flex items-center gap-3.5">
+                <span className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-700 via-indigo-600 to-violet-500 text-white shadow-xs shadow-indigo-500/20">
+                  <CalendarCheck className="size-6" />
                 </span>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                  <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                     {business.name}
                   </h1>
-                  <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">
+                  <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider">
                     {business.category}
                   </p>
                 </div>
@@ -106,8 +106,9 @@ export function PublicBookingClientView({ slug }: { slug: string }) {
 
             <Badge
               variant="outline"
-              className="w-fit bg-emerald-50 text-emerald-700 border-emerald-200/80 px-3 py-1 font-semibold text-xs shrink-0 self-start"
+              className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200/80 px-3 py-1 font-semibold text-xs shrink-0 self-start shadow-2xs"
             >
+              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
               Menerima Reservasi Online
             </Badge>
           </div>

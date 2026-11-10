@@ -24,11 +24,11 @@ export function StaffCard({
   );
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-slate-200/90 bg-white p-5.5 shadow-2xs transition-all hover:border-slate-300 hover:shadow-xs">
+    <div className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-sm">
       <div className="space-y-3.5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 font-bold text-sm border border-indigo-100">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-50 to-indigo-100/80 text-indigo-700 font-extrabold text-sm border border-indigo-200/60 shadow-2xs">
               {staff.name
                 .split(" ")
                 .map((n) => n[0])
@@ -40,7 +40,7 @@ export function StaffCard({
               <h3 className="text-base font-bold text-slate-900 tracking-tight">
                 {staff.name}
               </h3>
-              <p className="text-xs font-medium text-slate-500">
+              <p className="text-xs font-semibold text-slate-500">
                 {staff.roleOrTitle || "Penyedia Layanan"}
               </p>
             </div>
@@ -50,11 +50,12 @@ export function StaffCard({
             variant="outline"
             className={
               staff.isActive
-                ? "bg-emerald-50 text-emerald-700 border-emerald-200/80 font-medium text-[11px]"
-                : "bg-slate-100 text-slate-600 border-slate-200 font-medium text-[11px]"
+                ? "inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border-emerald-200/80 font-semibold text-[11px] px-2.5 py-0.5"
+                : "bg-slate-100 text-slate-600 border-slate-200 font-semibold text-[11px] px-2.5 py-0.5"
             }
           >
-            {staff.isActive ? "Aktif" : "Nonaktif"}
+            {staff.isActive && <span className="size-1.5 rounded-full bg-emerald-500" />}
+            <span>{staff.isActive ? "Aktif" : "Nonaktif"}</span>
           </Badge>
         </div>
 

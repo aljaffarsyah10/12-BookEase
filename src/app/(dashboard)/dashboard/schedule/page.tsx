@@ -13,6 +13,7 @@ import { businessApi } from "@/features/business/services/business.api";
 import { scheduleApi } from "@/features/schedule/services/schedule.api";
 import { DAY_NAMES_ID } from "@/lib/format";
 import { scheduleFormSchema } from "@/lib/validations/schedule.schema";
+import { cn } from "@/lib/utils";
 import type { OperatingHour } from "@/types";
 
 const ORDERED_DAYS = [1, 2, 3, 4, 5, 6, 0]; // Senin s/d Minggu
@@ -155,19 +156,26 @@ export default function ScheduleManagementPage() {
                     </span>
                   </div>
 
-                  <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={!item.isClosed}
-                      onChange={(e) =>
-                        updateDayField(dayNum, { isClosed: !e.target.checked })
-                      }
-                      className="size-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateDayField(dayNum, { isClosed: !item.isClosed })
+                    }
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold border transition-all cursor-pointer select-none",
+                      item.isClosed
+                        ? "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200/70"
+                        : "bg-emerald-50 text-emerald-700 border-emerald-200/80 hover:bg-emerald-100/70"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "size-1.5 rounded-full",
+                        item.isClosed ? "bg-slate-400" : "bg-emerald-500"
+                      )}
                     />
-                    <span className={item.isClosed ? "text-slate-400" : "text-emerald-700"}>
-                      {item.isClosed ? "Tutup" : "Buka"}
-                    </span>
-                  </label>
+                    <span>{item.isClosed ? "Tutup" : "Buka"}</span>
+                  </button>
                 </div>
 
                 {item.isClosed ? (
