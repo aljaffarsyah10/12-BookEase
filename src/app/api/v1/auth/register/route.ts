@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { type NextRequest } from "next/server";
 import { apiSuccess, handleApiError } from "@/lib/api-response";
+import { signSessionToken } from "@/lib/auth-session";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { registerSchema } from "@/lib/validations/auth.schema";
 import { authService } from "@/server/services/auth.service";
@@ -15,9 +16,9 @@ export async function POST(request: NextRequest) {
 
     const result = await authService.register(validatedData);
 
-    // Set auth cookie
+    // Set secure signed auth cookie
     const cookieStore = await cookies();
-    cookieStore.set("bookease_session", result.user.id, {
+    cookieStore.set("bookease_session", signSessionToken(result.user.id), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

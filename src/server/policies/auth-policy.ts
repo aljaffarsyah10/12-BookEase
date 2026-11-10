@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { verifySessionToken } from "@/lib/auth-session";
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
 
@@ -12,8 +13,9 @@ export interface AuthenticatedUser {
 export async function requireBusinessOwner(): Promise<AuthenticatedUser> {
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get("bookease_session")?.value;
+  const userId = verifySessionToken(sessionToken);
 
-  if (!sessionToken) {
+  if (!userId) {
     // In development mode only: allow seed fallback for quick local testing
     if (process.env.NODE_ENV !== "production") {
       const firstUser = await prisma.user.findFirst({
@@ -38,7 +40,7 @@ export async function requireBusinessOwner(): Promise<AuthenticatedUser> {
   }
 
   const user = await prisma.user.findUnique({
-    where: { id: sessionToken },
+    where: { id: userId },
     include: { business: true },
   });
 
